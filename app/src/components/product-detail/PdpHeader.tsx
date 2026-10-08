@@ -1,6 +1,5 @@
 "use client";
 
-import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { ArrowLeft, ShoppingCart } from "lucide-react";
@@ -41,8 +40,7 @@ export function PdpHeader({ productName, category, isLoggedIn }: PdpHeaderProps)
 
             {/* Right Actions */}
             <div className="flex items-center gap-2">
-               <LanguageSwitcher />
-               {isLoggedIn && (
+               {isLoggedIn ? (
                   <button
                      onClick={openCart}
                      className="relative w-11 h-11 flex items-center justify-center rounded-2xl bg-white/15 hover:bg-white/25 text-white active:scale-95 transition-all duration-150 cursor-pointer"
@@ -55,9 +53,12 @@ export function PdpHeader({ productName, category, isLoggedIn }: PdpHeaderProps)
                         </span>
                      )}
                   </button>
+               ) : (
+                  <div className="w-11 h-11" />
                )}
             </div>
          </div>
       </header>
    );
 }
+

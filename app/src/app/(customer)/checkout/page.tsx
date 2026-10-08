@@ -1,7 +1,6 @@
 "use client";
 
 import { AuthGuard } from "@/components/auth/AuthGuard";
-import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
@@ -142,7 +141,7 @@ export default function CheckoutPage() {
                      <ArrowLeft size={22} />
                   </Link>
                   <h1 className="text-xl font-bold">{t("checkout.title")}</h1>
-                  <LanguageSwitcher />
+                  <div className="w-9" />
                </div>
             </header>
 

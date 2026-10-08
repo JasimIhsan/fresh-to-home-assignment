@@ -4,7 +4,6 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
 import { ShoppingBag, ArrowRight, ShieldCheck, Truck, Clock } from "lucide-react";
 import Link from "next/link";
-import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 
 export default function SplashScreen() {
   const { t } = useLanguage();
@@ -16,7 +15,7 @@ export default function SplashScreen() {
       <div className="absolute -top-32 -right-32 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Top bar with Language Switcher */}
+      {/* Top bar */}
       <div className="flex justify-between items-center z-10 pt-2">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-md">
@@ -24,7 +23,6 @@ export default function SplashScreen() {
           </div>
           <span className="font-bold tracking-tight text-lg">FreshToHome</span>
         </div>
-        <LanguageSwitcher />
       </div>
 
       {/* Center Hero Animation & Branding */}

@@ -2,10 +2,9 @@
 
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
-import { ArrowLeft, Package, Clock, CheckCircle2, Truck, ChevronRight, AlertCircle } from "lucide-react";
+import { Package, Clock, CheckCircle2, Truck, ChevronRight, AlertCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
-import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { getStoredOrders } from "@/lib/store";
 import { Order, OrderStatus } from "@/types";
 import { AuthGuard } from "@/components/auth/AuthGuard";
@@ -66,19 +65,8 @@ export default function OrdersPage() {
       <AuthGuard requireAuth>
         <div className="min-h-screen bg-background pb-20">
           <header className="bg-primary md:bg-transparent text-white md:text-gray-900 p-6 md:px-8 md:pt-8 md:pb-4 rounded-b-3xl md:rounded-none shadow-lg md:shadow-none sticky md:static top-0 z-40">
-            <div className="flex justify-between items-center max-w-6xl mx-auto">
-              <div className="flex items-center gap-3">
-                <Link
-                  href="/catalog"
-                  className="md:hidden p-2 hover:bg-white/20 rounded-full transition-colors flex items-center cursor-pointer"
-                >
-                  <ArrowLeft size={22} />
-                </Link>
-                <h1 className="text-xl md:text-3xl font-extrabold">{t("orders.title")}</h1>
-              </div>
-              <div className="md:hidden">
-                <LanguageSwitcher />
-              </div>
+            <div className="flex justify-center md:justify-start items-center max-w-6xl mx-auto">
+              <h1 className="text-xl md:text-3xl font-extrabold text-center md:text-left">{t("orders.title")}</h1>
             </div>
 
             {/* Status Filters */}

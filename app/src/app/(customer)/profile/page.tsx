@@ -3,10 +3,12 @@
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileIdentityCard } from "@/components/profile/ProfileIdentityCard";
+import { ProfileLanguageFeature } from "@/components/profile/ProfileLanguageFeature";
 import { ProfileLogoutButton } from "@/components/profile/ProfileLogoutButton";
 import { ProfileQuickActions } from "@/components/profile/ProfileQuickActions";
 import { ProfileSecuritySection } from "@/components/profile/ProfileSecuritySection";
 import { ProfileStats } from "@/components/profile/ProfileStats";
+import { LogoutConfirmModal } from "@/components/ui/LogoutConfirmModal";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { getStoredOrders } from "@/lib/store";
@@ -18,6 +20,7 @@ export default function ProfilePage() {
    const { user, userName, isAdmin, signOut } = useAuth();
    const router = useRouter();
    const [loggingOut, setLoggingOut] = useState(false);
+   const [showLogoutModal, setShowLogoutModal] = useState(false);
    const [orderCount, setOrderCount] = useState(0);
 
    useEffect(() => {
@@ -31,6 +34,7 @@ export default function ProfilePage() {
       setLoggingOut(true);
       try {
          await signOut();
+         setShowLogoutModal(false);
          router.push("/");
       } finally {
          setLoggingOut(false);
@@ -54,15 +58,24 @@ export default function ProfilePage() {
                         <ProfileStats orderCount={orderCount} />
                      </div>
 
-                     {/* Right Column: Navigation Groups & Logout Action */}
+                     {/* Right Column: Language, Navigation Groups & Logout Action */}
                      <div className="lg:col-span-7 space-y-5">
+                        <ProfileLanguageFeature />
                         <ProfileQuickActions orderCount={orderCount} />
                         <ProfileSecuritySection isAdmin={isAdmin} />
-                        <ProfileLogoutButton onLogout={handleLogout} loading={loggingOut} />
+                        <ProfileLogoutButton onLogout={() => setShowLogoutModal(true)} loading={loggingOut} />
                      </div>
                   </div>
                )}
             </main>
+
+            {/* Responsive Logout Confirmation: Bottom Sheet on Mobile, Modal on Desktop */}
+            <LogoutConfirmModal
+               isOpen={showLogoutModal}
+               onClose={() => setShowLogoutModal(false)}
+               onConfirm={handleLogout}
+               loading={loggingOut}
+            />
          </div>
       </AuthGuard>
    );

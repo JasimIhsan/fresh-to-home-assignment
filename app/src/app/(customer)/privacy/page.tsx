@@ -1,6 +1,5 @@
 "use client";
 
-import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { useLanguage } from "@/context/LanguageContext";
 import { ArrowLeft, Shield } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -22,8 +21,6 @@ export default function PrivacyPage() {
                </span>
                <span className="font-bold">{t("productDetail.back")}</span>
             </button>
-
-            <LanguageSwitcher variant="light" className="shadow-xs rounded-xl" />
          </div>
 
       <div className="bg-white p-8 rounded-3xl shadow-xs border border-gray-100 space-y-6">

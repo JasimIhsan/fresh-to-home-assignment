@@ -1,7 +1,7 @@
 "use client";
 
 import { AuthGuard } from "@/components/auth/AuthGuard";
-import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { LogoutConfirmModal } from "@/components/ui/LogoutConfirmModal";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { LayoutDashboard, LogOut, Menu, Package, PlusCircle, ShoppingBag, Store, X } from "lucide-react";
@@ -15,6 +15,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
    const router = useRouter();
    const pathname = usePathname();
    const [loggingOut, setLoggingOut] = useState(false);
+   const [showLogoutModal, setShowLogoutModal] = useState(false);
    const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
    useEffect(() => {
@@ -96,7 +97,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                      <span className="font-semibold text-slate-900">{t("catalog.adminDashboard")}</span>
                   </div>
                </div>
-               <LanguageSwitcher variant="light" />
             </header>
 
             {/* Mobile Overlay */}
@@ -160,9 +160,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         <Store size={18} className="text-slate-500" />
                         {t("admin.viewShop")}
                      </Link>
-                     <button onClick={handleLogout} disabled={loggingOut} className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50">
+                     <button
+                        onClick={() => setShowLogoutModal(true)}
+                        disabled={loggingOut}
+                        className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 cursor-pointer"
+                     >
                         <LogOut size={18} className="text-red-500" />
-                        {loggingOut ? t("catalog.logout") + "..." : t("catalog.logout")}
+                        <span>{t("catalog.logout")}</span>
                      </button>
                   </div>
                </div>
@@ -172,6 +176,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <main className="flex-1 overflow-y-auto p-4 md:p-8">
                <div className="w-full h-full">{children}</div>
             </main>
+
+            <LogoutConfirmModal
+               isOpen={showLogoutModal}
+               onClose={() => setShowLogoutModal(false)}
+               onConfirm={handleLogout}
+               loading={loggingOut}
+            />
          </div>
       </AuthGuard>
    );
