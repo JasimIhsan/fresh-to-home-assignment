@@ -506,7 +506,9 @@
          "checking": "Verbindung prüfen...",
          "onlineRestored": "Verbindung wiederhergestellt!",
          "dismiss": "Ausblenden",
-         "cachedNotice": "Sie surfen offline mit gespeicherten Daten."
+         "cachedNotice": "Sie surfen offline mit gespeicherten Daten.",
+         "cartOfflineNotice": "Warenkorb-Änderungen sind offline deaktiviert.",
+         "cartOfflineBadge": "Offline (Änderungen gesperrt)"
       }
    },
    "en": {
@@ -1016,7 +1018,9 @@
          "checking": "Checking connection...",
          "onlineRestored": "Back online!",
          "dismiss": "Dismiss",
-         "cachedNotice": "You are viewing cached offline content."
+         "cachedNotice": "You are viewing cached offline content.",
+         "cartOfflineNotice": "Cart modifications are disabled while offline to preserve sync accuracy.",
+         "cartOfflineBadge": "Offline (Modifications Locked)"
       }
    }
 }

@@ -28,7 +28,7 @@ export default function ProductDetailPage({
    const { id } = use(params);
    const { t } = useLanguage();
    const { user } = useAuth();
-   const { addToCart, openCart } = useCart();
+   const { addToCart, openCart, isOffline } = useCart();
 
    const [product, setProduct] = useState<Product | null>(null);
    const [weight, setWeight] = useState(1.0); // Pre-selected popular weight (Hick's Law)
@@ -137,6 +137,7 @@ export default function ProductDetailPage({
                         calculatedPrice={calculatedPrice}
                         onAddToCart={handleAddToCart}
                         weight={weight}
+                        isOffline={isOffline}
                      />
                   </div>
 
@@ -196,6 +197,7 @@ export default function ProductDetailPage({
             isLoggedIn={!!user}
             onAddToCart={handleAddToCart}
             productName={product.name}
+            isOffline={isOffline}
          />
       </div>
    );

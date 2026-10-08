@@ -1,10 +1,13 @@
-const CACHE_NAME = "fresh-to-home-v1";
+const CACHE_NAME = "fresh-to-home-v2";
 const PRECACHE_ASSETS = [
    "/",
    "/offline.html",
    "/favicon.ico",
    "/favicon.svg",
-   "/manifest.json"
+   "/manifest.json",
+   "/images/products/raw_beef_steak.jpg",
+   "/images/products/raw_chicken_breast.jpg",
+   "/images/products/raw_lamb_chops.jpg"
 ];
 
 self.addEventListener("install", (event) => {
@@ -47,7 +50,7 @@ self.addEventListener("fetch", (event) => {
       event.respondWith(
          fetch(event.request)
             .then((networkResponse) => {
-               // Clone and cache the successfully fetched page for offline use
+               // Cache the successfully fetched page for offline use
                if (networkResponse && networkResponse.status === 200) {
                   const responseToCache = networkResponse.clone();
                   caches.open(CACHE_NAME).then((cache) => {
@@ -57,11 +60,12 @@ self.addEventListener("fetch", (event) => {
                return networkResponse;
             })
             .catch(async () => {
-               // If network fails, try cached version first, then offline fallback page
+               // If network fails, try cached version of requested page first
                const cachedResponse = await caches.match(event.request);
                if (cachedResponse) {
                   return cachedResponse;
                }
+               // Otherwise serve the branded offline fallback page
                const offlinePage = await caches.match("/offline.html");
                if (offlinePage) {
                   return offlinePage;
@@ -75,7 +79,7 @@ self.addEventListener("fetch", (event) => {
       return;
    }
 
-   // For static assets (images, css, js, icons): Stale-While-Revalidate or Network-first with Cache fallback
+   // For static assets (images, CSS, JS, fonts): Cache-first with Network update fallback
    event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
          const fetchPromise = fetch(event.request)

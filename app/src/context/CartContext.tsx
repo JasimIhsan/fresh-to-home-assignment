@@ -6,21 +6,22 @@ import { useAuth } from "./AuthContext";
 
 interface AddToCartResult {
   success: boolean;
-  reason?: "not_logged_in" | "invalid_weight";
+  reason?: "not_logged_in" | "invalid_weight" | "offline";
 }
 
 interface CartContextType {
   items: CartItem[];
   addToCart: (product: Product, weightKg: number) => AddToCartResult;
-  updateWeight: (productId: string, weightKg: number) => void;
-  removeFromCart: (productId: string) => void;
-  clearCart: () => void;
+  updateWeight: (productId: string, weightKg: number) => boolean;
+  removeFromCart: (productId: string) => boolean;
+  clearCart: () => boolean;
   totalAmount: number;
   totalItemsCount: number;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
   openCart: () => void;
   closeCart: () => void;
+  isOffline: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -30,6 +31,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
+
+  // Monitor network online/offline state
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setIsOffline(!navigator.onLine);
+
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   // Load user-specific cart when user logs in, or clear when logged out
   useEffect(() => {
@@ -53,7 +72,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsLoaded(true);
   }, [user]);
 
-  // Save cart to local storage whenever items change (only if user is logged in)
+  // Save cart to local storage whenever items change (only if user is logged in and online)
   useEffect(() => {
     if (!isLoaded || !user) return;
     try {
@@ -65,6 +84,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addToCart = useCallback(
     (product: Product, weightKg: number): AddToCartResult => {
+      if (typeof window !== "undefined" && !navigator.onLine) {
+        return { success: false, reason: "offline" };
+      }
       if (!user) {
         return { success: false, reason: "not_logged_in" };
       }
@@ -91,11 +113,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const updateWeight = useCallback(
-    (productId: string, weightKg: number) => {
-      if (!user) return;
+    (productId: string, weightKg: number): boolean => {
+      if (typeof window !== "undefined" && !navigator.onLine) {
+        return false;
+      }
+      if (!user) return false;
       if (weightKg <= 0) {
-        removeFromCart(productId);
-        return;
+        return removeFromCart(productId);
       }
       setItems((prev) =>
         prev.map((item) =>
@@ -104,15 +128,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             : item
         )
       );
+      return true;
     },
     [user]
   );
 
-  const removeFromCart = useCallback((productId: string) => {
+  const removeFromCart = useCallback((productId: string): boolean => {
+    if (typeof window !== "undefined" && !navigator.onLine) {
+      return false;
+    }
     setItems((prev) => prev.filter((item) => item.product.id !== productId));
+    return true;
   }, []);
 
-  const clearCart = useCallback(() => {
+  const clearCart = useCallback((): boolean => {
+    if (typeof window !== "undefined" && !navigator.onLine) {
+      return false;
+    }
     setItems([]);
     if (user) {
       try {
@@ -121,6 +153,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         console.error("Failed to clear cart in localStorage:", e);
       }
     }
+    return true;
   }, [user]);
 
   const openCart = useCallback(() => setIsCartOpen(true), []);
@@ -148,6 +181,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         setIsCartOpen,
         openCart,
         closeCart,
+        isOffline,
       }}
     >
       {children}
@@ -162,3 +196,4 @@ export function useCart() {
   }
   return context;
 }
+

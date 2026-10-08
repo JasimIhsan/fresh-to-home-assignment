@@ -10,9 +10,10 @@ interface CartItemCardProps {
    weightKg: number;
    onUpdateWeight: (newWeight: number) => void;
    onRemove: () => void;
+   disabled?: boolean;
 }
 
-export function CartItemCard({ product, weightKg, onUpdateWeight, onRemove }: CartItemCardProps) {
+export function CartItemCard({ product, weightKg, onUpdateWeight, onRemove, disabled = false }: CartItemCardProps) {
    const { t } = useLanguage();
    const lineTotal = (product.pricePerKg * weightKg).toFixed(2).replace(".", ",");
    const step = 0.5;
@@ -57,8 +58,8 @@ export function CartItemCard({ product, weightKg, onUpdateWeight, onRemove }: Ca
             <div className="flex items-center bg-purple-50/80 border border-purple-100 rounded-2xl p-1 shadow-xs">
                <button
                   type="button"
-                  onClick={() => weightKg > step && onUpdateWeight(weightKg - step)}
-                  disabled={weightKg <= step}
+                  onClick={() => !disabled && weightKg > step && onUpdateWeight(weightKg - step)}
+                  disabled={disabled || weightKg <= step}
                   className="w-8 h-8 rounded-xl bg-white hover:bg-white/80 active:scale-90 text-primary flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-xs"
                   aria-label="Decrease weight"
                >
@@ -71,8 +72,9 @@ export function CartItemCard({ product, weightKg, onUpdateWeight, onRemove }: Ca
 
                <button
                   type="button"
-                  onClick={() => onUpdateWeight(weightKg + step)}
-                  className="w-8 h-8 rounded-xl bg-white hover:bg-white/80 active:scale-90 text-primary flex items-center justify-center transition-all cursor-pointer shadow-xs"
+                  onClick={() => !disabled && onUpdateWeight(weightKg + step)}
+                  disabled={disabled}
+                  className="w-8 h-8 rounded-xl bg-white hover:bg-white/80 active:scale-90 text-primary flex items-center justify-center transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-xs"
                   aria-label="Increase weight"
                >
                   <Plus size={15} strokeWidth={2.5} />
@@ -82,8 +84,9 @@ export function CartItemCard({ product, weightKg, onUpdateWeight, onRemove }: Ca
             {/* Trash Delete Button */}
             <button
                type="button"
-               onClick={onRemove}
-               className="w-10 h-10 rounded-2xl bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-600 transition-colors flex items-center justify-center cursor-pointer active:scale-90"
+               onClick={() => !disabled && onRemove()}
+               disabled={disabled}
+               className="w-10 h-10 rounded-2xl bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-600 transition-colors flex items-center justify-center cursor-pointer active:scale-90 disabled:opacity-40 disabled:cursor-not-allowed"
                title={t("cart.remove")}
                aria-label={t("cart.remove")}
             >

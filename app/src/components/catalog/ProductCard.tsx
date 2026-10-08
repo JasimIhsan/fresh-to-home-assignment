@@ -13,9 +13,10 @@ interface ProductCardProps {
    isLoggedIn: boolean;
    onWeightChange: (id: string, weight: number) => void;
    onAddToCart: (product: Product) => void;
+   isOffline?: boolean;
 }
 
-export const ProductCard = ({ product, currentWeight, isAdded, isLoggedIn, onWeightChange, onAddToCart }: ProductCardProps) => {
+export const ProductCard = ({ product, currentWeight, isAdded, isLoggedIn, onWeightChange, onAddToCart, isOffline = false }: ProductCardProps) => {
    const { t } = useLanguage();
 
    return (
@@ -52,10 +53,17 @@ export const ProductCard = ({ product, currentWeight, isAdded, isLoggedIn, onWei
                   <WeightStepper weight={currentWeight} onChange={(w) => onWeightChange(product.id, w)} />
 
                   <button
-                     onClick={() => onAddToCart(product)}
-                     className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-95 cursor-pointer shrink-0 shadow-sm ${isAdded ? "bg-emerald-500 text-white" : "bg-primary text-white hover:bg-primary/90"}`}
-                     title={isLoggedIn ? t("catalog.addToCart") : t("catalog.loginToOrder")}
-                     aria-label={isLoggedIn ? t("catalog.addToCart") : t("catalog.loginToOrder")}
+                     onClick={() => !isOffline && onAddToCart(product)}
+                     disabled={isOffline}
+                     className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-95 shrink-0 shadow-sm ${
+                        isOffline
+                           ? "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"
+                           : isAdded
+                           ? "bg-emerald-500 text-white cursor-pointer"
+                           : "bg-primary text-white hover:bg-primary/90 cursor-pointer"
+                     }`}
+                     title={isOffline ? t("network.cartOfflineBadge") : isLoggedIn ? t("catalog.addToCart") : t("catalog.loginToOrder")}
+                     aria-label={isOffline ? t("network.cartOfflineBadge") : isLoggedIn ? t("catalog.addToCart") : t("catalog.loginToOrder")}
                   >
                      {isAdded ? <Check size={18} className="stroke-3" /> : <ShoppingCart size={18} className="stroke-[2.5]" />}
                   </button>

@@ -18,7 +18,7 @@ const ITEMS_PER_PAGE = 9;
 export default function CatalogPage() {
    const { t } = useLanguage();
    const { user } = useAuth();
-   const { addToCart, openCart } = useCart();
+   const { addToCart, openCart, isOffline } = useCart();
 
    const [products, setProducts] = useState<Product[]>([]);
    const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -119,7 +119,18 @@ export default function CatalogPage() {
                      </button>
                   </div>
                ) : (
-                  paginatedProducts.map((product) => <ProductCard key={product.id} product={product} currentWeight={itemWeights[product.id] || 0.5} isAdded={addedProductId === product.id} isLoggedIn={!!user} onWeightChange={handleWeightChange} onAddToCart={handleAddToCart} />)
+                  paginatedProducts.map((product) => (
+                     <ProductCard
+                        key={product.id}
+                        product={product}
+                        currentWeight={itemWeights[product.id] || 0.5}
+                        isAdded={addedProductId === product.id}
+                        isLoggedIn={!!user}
+                        onWeightChange={handleWeightChange}
+                        onAddToCart={handleAddToCart}
+                        isOffline={isOffline}
+                     />
+                  ))
                )}
             </div>
 

@@ -11,7 +11,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { Trash2 } from "lucide-react";
 
 export default function CartPage() {
-   const { items, updateWeight, removeFromCart, clearCart, totalAmount, totalItemsCount } = useCart();
+   const { items, updateWeight, removeFromCart, clearCart, totalAmount, totalItemsCount, isOffline } = useCart();
    const { user } = useAuth();
    const { t } = useLanguage();
 
@@ -29,6 +29,13 @@ export default function CartPage() {
          />
 
          <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
+            {isOffline && (
+               <div className="mb-5 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm font-semibold flex items-center gap-3">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse shrink-0" />
+                  <span>{t("network.cartOfflineNotice")}</span>
+               </div>
+            )}
+
             {!user ? (
                <CartEmptyState isGuest />
             ) : items.length === 0 ? (
@@ -52,7 +59,8 @@ export default function CartPage() {
                            <button
                               type="button"
                               onClick={clearCart}
-                              className="text-xs font-bold text-red-600 hover:text-red-700 transition-colors flex items-center gap-1.5 cursor-pointer bg-red-50 hover:bg-red-100/80 px-3 py-1.5 rounded-xl active:scale-95"
+                              disabled={isOffline}
+                              className="text-xs font-bold text-red-600 hover:text-red-700 transition-colors flex items-center gap-1.5 cursor-pointer bg-red-50 hover:bg-red-100/80 px-3 py-1.5 rounded-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                            >
                               <Trash2 size={13} />
                               <span>{t("cart.clearCart")}</span>
@@ -67,6 +75,7 @@ export default function CartPage() {
                                  weightKg={weightKg}
                                  onUpdateWeight={(w) => updateWeight(product.id, w)}
                                  onRemove={() => removeFromCart(product.id)}
+                                 disabled={isOffline}
                               />
                            ))}
                         </div>
@@ -78,6 +87,7 @@ export default function CartPage() {
                            totalAmount={totalAmount}
                            deliveryFee={deliveryFee}
                            grandTotal={grandTotal}
+                           disabled={isOffline}
                         />
                      </div>
                   </div>

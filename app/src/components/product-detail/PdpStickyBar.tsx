@@ -10,6 +10,7 @@ interface PdpStickyBarProps {
    isLoggedIn: boolean;
    onAddToCart: () => void;
    productName: string;
+   isOffline?: boolean;
 }
 
 export function PdpStickyBar({
@@ -17,6 +18,8 @@ export function PdpStickyBar({
    isAdded,
    isLoggedIn,
    onAddToCart,
+   productName,
+   isOffline = false,
 }: PdpStickyBarProps) {
    const { t } = useLanguage();
    const { totalItemsCount } = useCart();
@@ -41,26 +44,35 @@ export function PdpStickyBar({
             {/* Primary CTA */}
             <button
                onClick={onAddToCart}
-               className={`flex-1 h-14 rounded-2xl font-bold text-[15px] flex items-center justify-center gap-2.5 transition-all duration-200 cursor-pointer shadow-lg select-none ${
-                  isAdded
-                     ? "bg-emerald-500 text-white shadow-emerald-500/40"
-                     : "bg-primary hover:bg-purple-700 active:scale-[0.98] text-white shadow-primary/40"
+               disabled={isOffline}
+               className={`flex-1 h-14 rounded-2xl font-bold text-[15px] flex items-center justify-center gap-2.5 transition-all duration-200 select-none shadow-lg ${
+                  isOffline
+                     ? "bg-gray-200 text-gray-500 cursor-not-allowed shadow-none"
+                     : isAdded
+                     ? "bg-emerald-500 text-white shadow-emerald-500/40 cursor-pointer"
+                     : "bg-primary hover:bg-purple-700 active:scale-[0.98] text-white shadow-primary/40 cursor-pointer"
                }`}
                aria-live="polite"
                id="sticky-add-to-cart-btn"
             >
-               <ShoppingCart size={19} strokeWidth={2.5} />
-               <span>
-                  {isAdded
-                     ? t("catalog.addedToCart")
-                     : isLoggedIn
-                     ? t("productDetail.addToCart")
-                     : t("catalog.loginToOrder")}
-               </span>
-               {totalItemsCount > 0 && isLoggedIn && !isAdded && (
-                  <span className="ml-1 min-w-[20px] h-5 bg-white/20 text-white text-[11px] font-black rounded-full flex items-center justify-center px-1.5">
-                     {totalItemsCount}
-                  </span>
+               {isOffline ? (
+                  <span>{t("network.cartOfflineBadge")}</span>
+               ) : (
+                  <>
+                     <ShoppingCart size={19} strokeWidth={2.5} />
+                     <span>
+                        {isAdded
+                           ? t("catalog.addedToCart")
+                           : isLoggedIn
+                           ? t("productDetail.addToCart")
+                           : t("catalog.loginToOrder")}
+                     </span>
+                     {totalItemsCount > 0 && isLoggedIn && !isAdded && (
+                        <span className="ml-1 min-w-[20px] h-5 bg-white/20 text-white text-[11px] font-black rounded-full flex items-center justify-center px-1.5">
+                           {totalItemsCount}
+                        </span>
+                     )}
+                  </>
                )}
             </button>
          </div>

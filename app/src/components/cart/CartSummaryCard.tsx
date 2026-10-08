@@ -8,9 +8,10 @@ interface CartSummaryCardProps {
    totalAmount: number;
    deliveryFee: number;
    grandTotal: number;
+   disabled?: boolean;
 }
 
-export function CartSummaryCard({ totalAmount, deliveryFee, grandTotal }: CartSummaryCardProps) {
+export function CartSummaryCard({ totalAmount, deliveryFee, grandTotal, disabled = false }: CartSummaryCardProps) {
    const { t } = useLanguage();
 
    return (
@@ -54,13 +55,22 @@ export function CartSummaryCard({ totalAmount, deliveryFee, grandTotal }: CartSu
             </div>
          </div>
 
-         <Link
-            href="/checkout"
-            className="w-full py-4 bg-primary hover:bg-purple-700 text-white font-bold rounded-2xl shadow-lg shadow-primary/25 transition-all text-center flex items-center justify-center gap-2 text-base cursor-pointer active:scale-[0.99]"
-         >
-            <span>{t("cart.checkout")}</span>
-            <ArrowRight size={18} />
-         </Link>
+         {disabled ? (
+            <button
+               disabled
+               className="w-full py-4 bg-gray-200 text-gray-500 font-bold rounded-2xl transition-all text-center flex items-center justify-center gap-2 text-base cursor-not-allowed opacity-80"
+            >
+               <span>{t("network.cartOfflineBadge")}</span>
+            </button>
+         ) : (
+            <Link
+               href="/checkout"
+               className="w-full py-4 bg-primary hover:bg-purple-700 text-white font-bold rounded-2xl shadow-lg shadow-primary/25 transition-all text-center flex items-center justify-center gap-2 text-base cursor-pointer active:scale-[0.99]"
+            >
+               <span>{t("cart.checkout")}</span>
+               <ArrowRight size={18} />
+            </Link>
+         )}
 
          {/* Quality & Freshness Guarantee Badge */}
          <div className="flex items-center gap-3 p-3.5 bg-purple-50/60 rounded-2xl text-primary text-xs font-medium border border-purple-100/50">

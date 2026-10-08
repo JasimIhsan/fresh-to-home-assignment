@@ -9,6 +9,7 @@ interface PdpAddToCartProps {
    calculatedPrice: string;
    onAddToCart: () => void;
    weight: number;
+   isOffline?: boolean;
 }
 
 export function PdpAddToCart({
@@ -17,6 +18,7 @@ export function PdpAddToCart({
    calculatedPrice,
    onAddToCart,
    weight,
+   isOffline = false,
 }: PdpAddToCartProps) {
    const { t } = useLanguage();
 
@@ -26,14 +28,19 @@ export function PdpAddToCart({
          <button
             id="add-to-cart-btn"
             onClick={onAddToCart}
-            className={`w-full py-4 px-6 rounded-2xl font-bold text-base flex items-center justify-center gap-3 transition-all duration-200 cursor-pointer select-none shadow-xl ${
-               isAdded
-                  ? "bg-emerald-500 text-white shadow-emerald-500/30 scale-[0.99]"
-                  : "bg-primary hover:bg-purple-700 active:scale-[0.98] text-white shadow-primary/30 hover:shadow-primary/50"
+            disabled={isOffline}
+            className={`w-full py-4 px-6 rounded-2xl font-bold text-base flex items-center justify-center gap-3 transition-all duration-200 select-none shadow-xl ${
+               isOffline
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed shadow-none"
+                  : isAdded
+                  ? "bg-emerald-500 text-white shadow-emerald-500/30 scale-[0.99] cursor-pointer"
+                  : "bg-primary hover:bg-purple-700 active:scale-[0.98] text-white shadow-primary/30 hover:shadow-primary/50 cursor-pointer"
             }`}
             aria-live="polite"
          >
-            {isAdded ? (
+            {isOffline ? (
+               <span>{t("network.cartOfflineBadge")}</span>
+            ) : isAdded ? (
                <>
                   <Check size={20} strokeWidth={3} />
                   <span>{t("catalog.addedToCart")}</span>
