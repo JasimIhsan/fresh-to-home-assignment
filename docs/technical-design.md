@@ -198,6 +198,8 @@ The database utilizes PostgreSQL via Supabase. We heavily rely on relational con
 
 The tables below provide a technical overview of these core API endpoints, which dictate the boundaries between the Next.js client and server.
 
+> **Implementation Note on Direct Database Access:** While all core endpoints are detailed here, our Next.js architecture (using Server Components and Server Actions) allows us to query the database directly. We will prioritize direct database querying wherever possible to reduce API overhead, provided all security, validation, and business logic conditions are fully satisfied.
+
 #### Authentication Endpoints
 
 | Field             | What to specify                                                                                                                                                     |
