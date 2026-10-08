@@ -1,5 +1,57 @@
 {
    "de": {
+      "header": {
+         "fresh_cuts": "Sortiment",
+         "specialty": "Spezialitäten",
+         "quality_promise": "Qualität",
+         "delivery_areas": "Lieferung",
+         "track_order": "Status",
+         "order_button": "Jetzt bestellen"
+      },
+      "hero": {
+         "badge": "100% Frisch • Vom Bauernhof • Ohne Chemie",
+         "title_1": "Premium Frischfleisch, geliefert",
+         "title_2": "bis an Ihre Haustür in Deutschland.",
+         "description": "Nachhaltig bezogen, fachmännische Metzgerei und Express-Kühllieferung direkt an Ihre Haustür. Niemals eingefroren, keine Konservierungsstoffe.",
+         "order_now": "Jetzt bestellen",
+         "view_products": "Produkte ansehen"
+      },
+      "trending": {
+         "title": "Beliebte Auswahl",
+         "subtitle": "Handverlesen und diese Woche im Trend",
+         "view_all": "Alle ansehen",
+         "categories": {
+            "beef": "Premium Rindfleisch",
+            "chicken": "Frisches Hähnchen",
+            "lamb": "Lammfleisch"
+         },
+         "shop_now": "Jetzt einkaufen",
+         "view_catalog": "Gesamten Katalog ansehen"
+      },
+      "footer": {
+         "description": "Wir liefern frisches Fleisch direkt in Ihre Küche mit kompromissloser Hygiene und Qualität.",
+         "delivery_slots": "Express-Liefertermine verfügbar",
+         "product_title": "Produkt",
+         "sourcing": "Beschaffungsstandards",
+         "cut_guide": "Fleisch-Ratgeber",
+         "storage": "Lagerung & Kochen",
+         "halal": "Halal-Zertifizierung",
+         "company_title": "Unternehmen",
+         "qs": "QS-Prüfzeichen (Qualität)",
+         "delivery_zones": "Lieferzonen",
+         "support": "Support",
+         "contact": "Kontakt",
+         "legal_title": "Rechtliches",
+         "privacy": "Datenschutzerklärung",
+         "terms": "Nutzungsbedingungen",
+         "cookie": "Cookie-Richtlinie",
+         "rights": "© {year} Frisch nach Hause. Alle Rechte vorbehalten.",
+         "social": {
+            "twitter": "Twitter",
+            "instagram": "Instagram",
+            "facebook": "Facebook"
+         }
+      },
       "app": {
          "title": "Frisch nach Hause",
          "subtitle": "Ihre frische Fleischbestellung direkt nach Hause geliefert. Top Qualität, einfache Bestellung."
@@ -396,6 +448,58 @@
       }
    },
    "en": {
+      "header": {
+         "fresh_cuts": "Fresh Meat",
+         "specialty": "Specialties",
+         "quality_promise": "Quality",
+         "delivery_areas": "Delivery",
+         "track_order": "Tracking",
+         "order_button": "Order Now"
+      },
+      "hero": {
+         "badge": "100% Fresh • Farm-Sourced • Chemical-Free",
+         "title_1": "Premium Fresh Meat, Delivered",
+         "title_2": "to Your Doorstep in Germany.",
+         "description": "Sustainably sourced, expert custom butchery, and express chilled delivery right to your doorstep. Never frozen, no preservatives.",
+         "order_now": "Order Now",
+         "view_products": "View Products"
+      },
+      "trending": {
+         "title": "Popular Selections",
+         "subtitle": "Handpicked and trending this week",
+         "view_all": "View all",
+         "categories": {
+            "beef": "Premium Beef",
+            "chicken": "Fresh Chicken",
+            "lamb": "Premium Lamb"
+         },
+         "shop_now": "Shop now",
+         "view_catalog": "View complete catalog"
+      },
+      "footer": {
+         "description": "Delivering farm-fresh, artisanal meats directly to your kitchen with uncompromising hygiene and quality.",
+         "delivery_slots": "Express delivery slots available",
+         "product_title": "Product",
+         "sourcing": "Sourcing Standards",
+         "cut_guide": "Meat Guide",
+         "storage": "Storage & Cooking",
+         "halal": "Halal Certification",
+         "company_title": "Company",
+         "qs": "QS-Prüfzeichen (Quality)",
+         "delivery_zones": "Delivery Zones",
+         "support": "Support",
+         "contact": "Contact",
+         "legal_title": "Legal",
+         "privacy": "Privacy Policy",
+         "terms": "Terms of Service",
+         "cookie": "Cookie Policy",
+         "rights": "© {year} Frisch nach Hause. All rights reserved.",
+         "social": {
+            "twitter": "Twitter",
+            "instagram": "Instagram",
+            "facebook": "Facebook"
+         }
+      },
       "app": {
          "title": "Fresh to Home",
          "subtitle": "Your fresh meat order delivered directly to your home. Top quality, easy ordering."
@@ -406,7 +510,7 @@
          "login": "Login",
          "featuresTitle": "Why Fresh to Home?",
          "feature1Title": "100% Freshness Guarantee",
-         "feature1Desc": "Fresh cuts every day from certified regional farms.",
+         "feature1Desc": "Fresh selections every day from certified regional farms.",
          "feature2Title": "Chilled Express Delivery",
          "feature2Desc": "Strict cold chain directly to your doorstep.",
          "feature3Title": "Flexible Delivery Slots",
@@ -416,7 +520,7 @@
       },
       "splash": {
          "welcome": "Welcome to Fresh to Home",
-         "tagline": "Premium meats and fresh cuts delivered right to your door.",
+         "tagline": "Premium meats and fresh selections delivered right to your door.",
          "getStarted": "Get Started",
          "skipToCatalog": "Browse Catalog",
          "alreadyMember": "Already a member? Log in",
@@ -542,7 +646,7 @@
       "cart": {
          "title": "Shopping Cart",
          "empty": "Your cart is empty",
-         "emptyDesc": "Add fresh meat and specialty cuts to your cart.",
+         "emptyDesc": "Add fresh meat and specialty selections to your cart.",
          "browseProducts": "Browse Products",
          "notLoggedInTitle": "Not Logged In",
          "notLoggedInDesc": "Please log in to add items to your cart and place orders.",

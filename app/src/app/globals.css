@@ -5,12 +5,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-   --color-primary: #8e24aa;
-   --color-primary-light: #f0e5f5;
-   --color-secondary: #e53935;
-   --color-background: #f7f7f7;
-   --color-foreground: #171717;
-   --font-sans: var(--font-sans);
+   --color-primary: #a315b9;
+   --color-primary-light: #f9eef6;
+   --color-secondary: #fc152b;
+   --color-background: #fdfdfd;
+   --color-foreground: #111111;
+   --font-sans: var(--font-inter);
    --font-mono: var(--font-geist-mono);
 
    --animate-slide-in-right: slide-in-right 0.3s ease-out;
