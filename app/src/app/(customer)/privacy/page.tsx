@@ -1,27 +1,30 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft, Shield } from "lucide-react";
-import { useLanguage } from "@/context/LanguageContext";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { useLanguage } from "@/context/LanguageContext";
+import { ArrowLeft, Shield } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function PrivacyPage() {
-  const { t } = useLanguage();
+   const { t } = useLanguage();
+   const router = useRouter();
 
-  return (
-    <div className="min-h-screen bg-background flex flex-col px-6 py-12 relative max-w-3xl mx-auto">
-      <div className="absolute top-4 right-4 z-50">
-        <div className="bg-primary rounded-full shadow-lg">
-          <LanguageSwitcher />
-        </div>
-      </div>
+   return (
+      <div className="min-h-screen bg-gradient-to-b from-purple-50/40 via-background to-background flex flex-col px-4 sm:px-6 py-8 sm:py-12 relative max-w-3xl mx-auto selection:bg-primary/20">
+         <div className="flex items-center justify-between mb-8 w-full">
+            <button
+               onClick={() => router.back()}
+               className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-primary transition-all duration-150 group active:scale-95 cursor-pointer"
+               aria-label={t("productDetail.back")}
+            >
+               <span className="w-9 h-9 rounded-xl bg-white border border-gray-100 shadow-xs flex items-center justify-center group-hover:border-primary/30 group-hover:text-primary transition-all">
+                  <ArrowLeft size={16} strokeWidth={2.5} />
+               </span>
+               <span className="font-bold">{t("productDetail.back")}</span>
+            </button>
 
-      <Link
-        href="/catalog"
-        className="inline-flex items-center text-gray-500 hover:text-primary mb-8 self-start transition-colors"
-      >
-        <ArrowLeft size={20} className="mr-2" /> {t("notFound.backHome")}
-      </Link>
+            <LanguageSwitcher variant="light" className="shadow-xs rounded-xl" />
+         </div>
 
       <div className="bg-white p-8 rounded-3xl shadow-xs border border-gray-100 space-y-6">
         <div className="flex items-center space-x-3 text-primary">

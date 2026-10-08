@@ -295,6 +295,7 @@
       },
       "orders": {
          "title": "Meine Bestellungen",
+         "noOrders": "Noch keine Bestellungen",
          "empty": "Keine Bestellungen vorhanden.",
          "emptyDesc": "Sie haben aktuell keine Bestellungen in dieser Kategorie.",
          "status": "Status",
@@ -333,9 +334,9 @@
          "orderNotFound": "Bestellung nicht gefunden"
       },
       "profile": {
-         "title": "Profil",
-         "overviewTitle": "Übersicht",
-         "overviewDesc": "Verwalten Sie Ihre Bestellungen und Kontoeinstellungen.",
+         "title": "Mein Profil",
+         "overviewTitle": "Mein Konto",
+         "overviewDesc": "Verwalten Sie Ihre Bestellungen, Favoriten und Kontoeinstellungen.",
          "customer": "Kunde",
          "role": "Rolle",
          "switchRole": "Rolle wechseln",
@@ -343,10 +344,15 @@
          "cart": "Warenkorb",
          "toCheckout": "Zur Kasse",
          "myOrders": "Meine Bestellungen",
-         "products": "Produkte",
-         "privacy": "Datenschutzbestimmungen",
+         "products": "Produkte entdecken",
+         "privacy": "Datenschutz & AGB",
          "adminDashboard": "Admin Dashboard",
-         "logout": "Abmelden"
+         "logout": "Abmelden",
+         "memberSince": "Kunde bei Frisch nach Hause",
+         "accountDetails": "Kontodetails",
+         "quickActions": "Schnellzugriff",
+         "support": "Hilfe & Kundenservice",
+         "security": "Sicherheit & Datenschutz"
       },
       "privacy": {
          "title": "Datenschutzbestimmungen",
@@ -785,6 +791,7 @@
       },
       "orders": {
          "title": "My Orders",
+         "noOrders": "No orders yet",
          "empty": "No orders found.",
          "emptyDesc": "You currently have no orders in this category.",
          "status": "Status",
@@ -823,9 +830,9 @@
          "orderNotFound": "Order not found"
       },
       "profile": {
-         "title": "Profile",
-         "overviewTitle": "Overview",
-         "overviewDesc": "Manage your orders and account settings.",
+         "title": "My Profile",
+         "overviewTitle": "My Account",
+         "overviewDesc": "Manage your orders, favorites, and account preferences.",
          "customer": "Customer",
          "role": "Role",
          "switchRole": "Switch role",
@@ -833,10 +840,15 @@
          "cart": "Shopping Cart",
          "toCheckout": "To Checkout",
          "myOrders": "My Orders",
-         "products": "Products",
-         "privacy": "Privacy Policy",
+         "products": "Explore Products",
+         "privacy": "Privacy & Terms",
          "adminDashboard": "Admin Dashboard",
-         "logout": "Logout"
+         "logout": "Log Out",
+         "memberSince": "Member at Frisch nach Hause",
+         "accountDetails": "Account Details",
+         "quickActions": "Quick Access",
+         "support": "Help & Support",
+         "security": "Security & Data Protection"
       },
       "privacy": {
          "title": "Privacy Policy",
