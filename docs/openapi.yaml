@@ -1,0 +1,382 @@
+openapi: 3.0.3
+info:
+  title: Frisch nach Hause (Fresh to Home) API
+  description: E-commerce REST API specification for the Fresh to Home butcher shop.
+  version: 1.0.0
+servers:
+  - url: /api/v1
+    description: Next.js API Routes (Server)
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sb-access-token # Example Supabase session cookie name
+security:
+  - cookieAuth: []
+paths:
+  /auth/register:
+    post:
+      summary: Registers a new customer account
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, name, gdprConsent]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+                gdprConsent:
+                  type: boolean
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Validation error
+        '409':
+          description: Email exists
+  /auth/login:
+    post:
+      summary: Authenticates a user and establishes a session
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Invalid credentials
+  /auth/logout:
+    post:
+      summary: Terminates the active session
+      responses:
+        '200':
+          description: OK
+  /profile:
+    get:
+      summary: Fetches the authenticated user's profile data
+      responses:
+        '200':
+          description: Profile object
+        '401':
+          description: Unauthorized
+    put:
+      summary: Updates the authenticated user's profile details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Profile object updated
+  /addresses:
+    get:
+      summary: Fetches the user's saved delivery addresses
+      responses:
+        '200':
+          description: Array of addresses
+    post:
+      summary: Adds a new delivery address
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                addressLine1:
+                  type: string
+                city:
+                  type: string
+                postalCode:
+                  type: string
+                isPrimary:
+                  type: boolean
+      responses:
+        '201':
+          description: Address created
+  /addresses/{addressId}:
+    put:
+      summary: Updates an existing delivery address
+      parameters:
+        - in: path
+          name: addressId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Address updated
+    delete:
+      summary: Deletes an address
+      parameters:
+        - in: path
+          name: addressId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Address deleted
+  /categories:
+    get:
+      summary: Fetches all active product categories
+      security: []
+      responses:
+        '200':
+          description: Array of categories
+  /products:
+    get:
+      summary: Fetches the active product catalog
+      security: []
+      parameters:
+        - in: query
+          name: categoryId
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: q
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Array of products
+  /products/{productId}:
+    get:
+      summary: Fetches dynamic details for a single product
+      security: []
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Product object
+  /cart:
+    get:
+      summary: Fetches the current user's active cart items
+      responses:
+        '200':
+          description: Array of cart items
+    post:
+      summary: Adds an item to the cart or updates its quantity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: string
+                  format: uuid
+                quantityKg:
+                  type: number
+      responses:
+        '200':
+          description: OK
+  /cart/{itemId}:
+    delete:
+      summary: Removes an item from the cart
+      parameters:
+        - in: path
+          name: itemId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /cart/verify:
+    post:
+      summary: Verifies cart products are still in stock
+      responses:
+        '200':
+          description: Verification result
+  /orders:
+    get:
+      summary: Fetches the user's order history
+      responses:
+        '200':
+          description: Array of orders
+    post:
+      summary: Securely places a new order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deliveryAddressId:
+                  type: string
+                  format: uuid
+      responses:
+        '201':
+          description: Order placed
+  /orders/{orderId}/cancel:
+    post:
+      summary: Cancels a PLACED order and restocks items
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Order cancelled
+  /admin/categories:
+    post:
+      summary: Creates a new category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                sortOrder:
+                  type: integer
+      responses:
+        '201':
+          description: Category created
+  /admin/categories/{categoryId}:
+    put:
+      summary: Updates an existing category
+      parameters:
+        - in: path
+          name: categoryId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: Deletes a category
+      parameters:
+        - in: path
+          name: categoryId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /admin/products:
+    post:
+      summary: Creates a new product in the catalog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                categoryId:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+                pricePerKg:
+                  type: number
+                stockQty:
+                  type: number
+                isAvailable:
+                  type: boolean
+      responses:
+        '201':
+          description: Product created
+  /admin/products/{productId}:
+    put:
+      summary: Updates an existing product
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: Deletes a product from the database
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+  /admin/orders:
+    get:
+      summary: Fetches all incoming customer orders for fulfillment
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+  /admin/orders/{orderId}/status:
+    put:
+      summary: Updates the fulfillment status of an order
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+      responses:
+        '200':
+          description: OK
