@@ -1,3 +1,4 @@
+import { NetworkStatusWatcher } from "@/components/ui/NetworkStatusWatcher";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { LanguageProvider } from "@/context/LanguageContext";
@@ -53,7 +54,10 @@ export default function RootLayout({
          <body className={`${inter.variable} font-sans antialiased`}>
             <LanguageProvider>
                <AuthProvider>
-                  <CartProvider>{children}</CartProvider>
+                  <CartProvider>
+                     {children}
+                     <NetworkStatusWatcher />
+                  </CartProvider>
                </AuthProvider>
             </LanguageProvider>
          </body>

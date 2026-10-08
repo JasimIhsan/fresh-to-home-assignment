@@ -496,6 +496,17 @@
          "priceRequired": "Bitte geben Sie einen gültigen Preis größer als 0 ein.",
          "stockRequired": "Bitte geben Sie einen gültigen Lagerbestand ein.",
          "originRequired": "Bitte geben Sie das Herkunftsland an."
+      },
+      "network": {
+         "offlineTitle": "Keine Internetverbindung",
+         "offlineDesc": "Bitte überprüfen Sie Ihr WLAN oder Ihre mobile Datenverbindung, um weiterhin frische Produkte zu bestellen.",
+         "slowTitle": "Sehr langsame Verbindung",
+         "slowDesc": "Ihre Verbindung ist derzeit instabil oder langsam. Daten werden möglicherweise verzögert geladen.",
+         "retry": "Erneut verbinden",
+         "checking": "Verbindung prüfen...",
+         "onlineRestored": "Verbindung wiederhergestellt!",
+         "dismiss": "Ausblenden",
+         "cachedNotice": "Sie surfen offline mit gespeicherten Daten."
       }
    },
    "en": {
@@ -995,6 +1006,17 @@
          "priceRequired": "Please enter a valid price greater than 0.",
          "stockRequired": "Please enter a valid stock quantity.",
          "originRequired": "Please enter product origin."
+      },
+      "network": {
+         "offlineTitle": "No Internet Connection",
+         "offlineDesc": "Please check your Wi-Fi or mobile network to continue browsing and ordering fresh products.",
+         "slowTitle": "Slow Internet Connection",
+         "slowDesc": "Your connection is currently slow or unstable. Content may take longer to load.",
+         "retry": "Try Reconnecting",
+         "checking": "Checking connection...",
+         "onlineRestored": "Back online!",
+         "dismiss": "Dismiss",
+         "cachedNotice": "You are viewing cached offline content."
       }
    }
 }
