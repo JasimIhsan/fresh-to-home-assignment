@@ -35,43 +35,75 @@ export const HomeHeader = () => {
   return (
     <header
       className={cn(
-        "fixed top-0 inset-x-0 z-50 transition-all duration-300 border-b",
+        "fixed inset-x-0 top-0 z-50 border-b transition-all duration-300",
         isScrolled || isMobileMenuOpen
-          ? "bg-black/50 backdrop-blur-xl border-white/10 shadow-lg text-white"
-          : "bg-transparent border-transparent text-white"
+          ? "border-white/10 bg-black/50 text-white shadow-lg backdrop-blur-xl"
+          : "border-transparent bg-transparent text-white"
       )}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
-          <img src="/icons/icon-192x192.png" alt="Frisch nach Hause Logo" className="w-8 h-8 rounded-lg object-contain" />
-          <span className="font-bold text-xl tracking-tight text-white">Frisch nach Hause</span>
+          <img
+            src="/icons/icon-192x192.png"
+            alt="Frisch nach Hause Logo"
+            className="h-8 w-8 rounded-lg object-contain"
+          />
+          <span className="text-xl font-bold tracking-tight text-white">
+            Frisch nach Hause
+          </span>
         </div>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-white/80">
-          <Link href="#fresh-cuts" className="hover:text-white transition-colors">{t("header.fresh_cuts")}</Link>
-          <Link href="#specialty" className="hover:text-white transition-colors">{t("header.specialty")}</Link>
-          <Link href="#quality" className="hover:text-white transition-colors">{t("header.quality_promise")}</Link>
-          <Link href="#delivery" className="hover:text-white transition-colors">{t("header.delivery_areas")}</Link>
+        <nav className="hidden items-center gap-8 text-sm font-medium text-white/80 md:flex">
+          <Link
+            href="#fresh-cuts"
+            className="transition-colors hover:text-white"
+          >
+            {t("header.fresh_cuts")}
+          </Link>
+          <Link
+            href="#specialty"
+            className="transition-colors hover:text-white"
+          >
+            {t("header.specialty")}
+          </Link>
+          <Link href="#quality" className="transition-colors hover:text-white">
+            {t("header.quality_promise")}
+          </Link>
+          <Link href="#delivery" className="transition-colors hover:text-white">
+            {t("header.delivery_areas")}
+          </Link>
         </nav>
 
-        <div className="hidden md:flex items-center gap-4">
-          <button onClick={toggleLanguage} className="flex items-center gap-1.5 text-sm font-medium hover:text-white transition-colors text-white/80 mr-2">
+        <div className="hidden items-center gap-4 md:flex">
+          <button
+            onClick={toggleLanguage}
+            className="mr-2 flex items-center gap-1.5 text-sm font-medium text-white/80 transition-colors hover:text-white"
+          >
             <Globe size={16} /> {language.toUpperCase()}
           </button>
           {!user && (
-            <Link href="/login" className="text-sm font-medium hover:text-white transition-colors text-white/80">
+            <Link
+              href="/login"
+              className="text-sm font-medium text-white/80 transition-colors hover:text-white"
+            >
               {t("home.login")}
             </Link>
           )}
-          <Link href="/catalog" className="bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium hover:bg-primary/90 transition-all shadow-md shadow-primary/20 hover:shadow-primary/40 active:scale-95 inline-flex items-center justify-center">
+          <Link
+            href="/catalog"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/20 hover:shadow-primary/40 inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium shadow-md transition-all active:scale-95"
+          >
             {t("header.order_button")}
           </Link>
         </div>
 
         {/* Mobile Toggle */}
         <div className="flex items-center gap-2 md:hidden">
-          <button onClick={toggleLanguage} className="p-2 text-white font-medium text-sm flex items-center gap-1">
+          <button
+            onClick={toggleLanguage}
+            className="flex items-center gap-1 p-2 text-sm font-medium text-white"
+          >
             <Globe size={16} /> {language.toUpperCase()}
           </button>
           <button
@@ -86,29 +118,49 @@ export const HomeHeader = () => {
       {/* Mobile Nav Overlay */}
       <div
         className={cn(
-          "md:hidden fixed inset-x-0 top-16 bottom-0 bg-black/75 backdrop-blur-2xl transition-transform duration-300 ease-in-out z-40 overflow-y-auto border-t border-white/10",
+          "fixed inset-x-0 top-16 bottom-0 z-40 overflow-y-auto border-t border-white/10 bg-black/75 backdrop-blur-2xl transition-transform duration-300 ease-in-out md:hidden",
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
-        <div className="flex flex-col h-full px-6 py-8">
+        <div className="flex h-full flex-col px-6 py-8">
           <nav className="flex flex-col gap-6 text-[17px] font-medium text-white/70">
-            <Link href="#fresh-cuts" className="hover:text-white transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+            <Link
+              href="#fresh-cuts"
+              className="transition-colors hover:text-white"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               {t("header.fresh_cuts")}
             </Link>
-            <Link href="#specialty" className="hover:text-white transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+            <Link
+              href="#specialty"
+              className="transition-colors hover:text-white"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               {t("header.specialty")}
             </Link>
-            <Link href="#quality" className="hover:text-white transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+            <Link
+              href="#quality"
+              className="transition-colors hover:text-white"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               {t("header.quality_promise")}
             </Link>
-            <Link href="#delivery" className="hover:text-white transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+            <Link
+              href="#delivery"
+              className="transition-colors hover:text-white"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               {t("header.delivery_areas")}
             </Link>
-            
+
             {!user && (
               <>
-                <div className="h-px w-full bg-white/10 my-2" />
-                <Link href="/login" className="hover:text-white transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+                <div className="my-2 h-px w-full bg-white/10" />
+                <Link
+                  href="/login"
+                  className="transition-colors hover:text-white"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
                   {t("home.login")}
                 </Link>
               </>
@@ -116,7 +168,11 @@ export const HomeHeader = () => {
           </nav>
 
           <div className="mt-8">
-            <Link href="/catalog" onClick={() => setIsMobileMenuOpen(false)} className="w-full bg-primary text-primary-foreground px-4 py-3.5 rounded-full text-base font-medium active:scale-95 transition-all flex items-center justify-center">
+            <Link
+              href="/catalog"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="bg-primary text-primary-foreground flex w-full items-center justify-center rounded-full px-4 py-3.5 text-base font-medium transition-all active:scale-95"
+            >
               {t("header.order_button")}
             </Link>
           </div>

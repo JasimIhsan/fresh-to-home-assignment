@@ -6,12 +6,14 @@ import { CartDrawer } from "@/components/ui/CartDrawer";
 import { ReactNode } from "react";
 
 export default function CustomerLayout({ children }: { children: ReactNode }) {
-   return (
-      <div className="min-h-screen bg-background flex flex-col relative">
-         <Navbar />
-         <main className="flex-1 w-full max-w-7xl mx-auto px-0 md:px-6 lg:px-8 pb-20 md:pb-8">{children}</main>
-         <MobileBottomNav />
-         <CartDrawer />
-      </div>
-   );
+  return (
+    <div className="bg-background relative flex min-h-screen flex-col">
+      <Navbar />
+      <main className="mx-auto w-full max-w-7xl flex-1 px-0 pb-20 md:px-6 md:pb-8 lg:px-8">
+        {children}
+      </main>
+      <MobileBottomNav />
+      <CartDrawer />
+    </div>
+  );
 }

@@ -7,69 +7,121 @@ import { Check, Globe, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 
 interface ProductCardProps {
-   product: Product;
-   currentWeight: number;
-   isAdded: boolean;
-   isLoggedIn: boolean;
-   onWeightChange: (id: string, weight: number) => void;
-   onAddToCart: (product: Product) => void;
-   isOffline?: boolean;
+  product: Product;
+  currentWeight: number;
+  isAdded: boolean;
+  isLoggedIn: boolean;
+  onWeightChange: (id: string, weight: number) => void;
+  onAddToCart: (product: Product) => void;
+  isOffline?: boolean;
 }
 
-export const ProductCard = ({ product, currentWeight, isAdded, isLoggedIn, onWeightChange, onAddToCart, isOffline = false }: ProductCardProps) => {
-   const { t } = useLanguage();
+export const ProductCard = ({
+  product,
+  currentWeight,
+  isAdded,
+  isLoggedIn,
+  onWeightChange,
+  onAddToCart,
+  isOffline = false,
+}: ProductCardProps) => {
+  const { t } = useLanguage();
 
-   return (
-      <div className="bg-card text-card-foreground rounded-2xl p-3 shadow-sm hover:shadow-lg transition-all duration-300 border border-border flex flex-col h-full group">
-         <div className="relative w-full aspect-4/3 rounded-xl overflow-hidden mb-3">
-            <Link href={`/catalog/${product.id}`} className="block w-full h-full cursor-pointer">
-               <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
-            </Link>
-            <div className="absolute top-2 left-2">
-               <span className="bg-background/90 backdrop-blur-sm text-foreground text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded shadow-sm border border-border/50">{product.category ? (t(`categories.${product.category}`) !== `categories.${product.category}` ? t(`categories.${product.category}`) : product.category) : ""}</span>
-            </div>
-         </div>
-
-         <div className="flex-1 flex flex-col px-1">
-            {product.origin && (
-               <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
-                  <Globe size={10} /> {product.origin}
-               </p>
-            )}
-
-            <Link href={`/catalog/${product.id}`} className="hover:text-primary transition-colors block mb-1">
-               <h3 className="font-bold text-[15px] text-foreground leading-tight line-clamp-2">{product.name}</h3>
-            </Link>
-
-            <p className="text-[12px] text-muted-foreground line-clamp-2 mb-3">{product.description}</p>
-
-            <div className="mt-auto flex flex-col gap-2">
-               <div className="flex items-baseline gap-1">
-                  <span className="font-black text-lg text-foreground">{product.pricePerKg.toFixed(2).replace(".", ",")} €</span>
-                  <span className="text-xs text-muted-foreground font-medium">/ {t("catalog.perKg").replace("/ ", "")}</span>
-               </div>
-
-               <div className="flex items-center justify-between gap-2 mt-1">
-                  <WeightStepper weight={currentWeight} onChange={(w) => onWeightChange(product.id, w)} />
-
-                  <button
-                     onClick={() => !isOffline && onAddToCart(product)}
-                     disabled={isOffline}
-                     className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-95 shrink-0 shadow-sm ${
-                        isOffline
-                           ? "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"
-                           : isAdded
-                           ? "bg-emerald-500 text-white cursor-pointer"
-                           : "bg-primary text-white hover:bg-primary/90 cursor-pointer"
-                     }`}
-                     title={isOffline ? t("network.cartOfflineBadge") : isLoggedIn ? t("catalog.addToCart") : t("catalog.loginToOrder")}
-                     aria-label={isOffline ? t("network.cartOfflineBadge") : isLoggedIn ? t("catalog.addToCart") : t("catalog.loginToOrder")}
-                  >
-                     {isAdded ? <Check size={18} className="stroke-3" /> : <ShoppingCart size={18} className="stroke-[2.5]" />}
-                  </button>
-               </div>
-            </div>
-         </div>
+  return (
+    <div className="bg-card text-card-foreground border-border group flex h-full flex-col rounded-2xl border p-3 shadow-sm transition-all duration-300 hover:shadow-lg">
+      <div className="relative mb-3 aspect-4/3 w-full overflow-hidden rounded-xl">
+        <Link
+          href={`/catalog/${product.id}`}
+          className="block h-full w-full cursor-pointer"
+        >
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+          />
+        </Link>
+        <div className="absolute top-2 left-2">
+          <span className="bg-background/90 text-foreground border-border/50 rounded border px-2 py-1 text-[10px] font-bold tracking-wider uppercase shadow-sm backdrop-blur-sm">
+            {product.category
+              ? t(`categories.${product.category}`) !==
+                `categories.${product.category}`
+                ? t(`categories.${product.category}`)
+                : product.category
+              : ""}
+          </span>
+        </div>
       </div>
-   );
+
+      <div className="flex flex-1 flex-col px-1">
+        {product.origin && (
+          <p className="text-muted-foreground mb-1 flex items-center gap-1 text-[10px] font-bold tracking-wider uppercase">
+            <Globe size={10} /> {product.origin}
+          </p>
+        )}
+
+        <Link
+          href={`/catalog/${product.id}`}
+          className="hover:text-primary mb-1 block transition-colors"
+        >
+          <h3 className="text-foreground line-clamp-2 text-[15px] leading-tight font-bold">
+            {product.name}
+          </h3>
+        </Link>
+
+        <p className="text-muted-foreground mb-3 line-clamp-2 text-[12px]">
+          {product.description}
+        </p>
+
+        <div className="mt-auto flex flex-col gap-2">
+          <div className="flex items-baseline gap-1">
+            <span className="text-foreground text-lg font-black">
+              {product.pricePerKg.toFixed(2).replace(".", ",")} €
+            </span>
+            <span className="text-muted-foreground text-xs font-medium">
+              / {t("catalog.perKg").replace("/ ", "")}
+            </span>
+          </div>
+
+          <div className="mt-1 flex items-center justify-between gap-2">
+            <WeightStepper
+              weight={currentWeight}
+              onChange={(w) => onWeightChange(product.id, w)}
+            />
+
+            <button
+              onClick={() => !isOffline && onAddToCart(product)}
+              disabled={isOffline}
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-sm transition-all duration-200 active:scale-95 ${
+                isOffline
+                  ? "cursor-not-allowed bg-gray-200 text-gray-400 shadow-none"
+                  : isAdded
+                    ? "cursor-pointer bg-emerald-500 text-white"
+                    : "bg-primary hover:bg-primary/90 cursor-pointer text-white"
+              }`}
+              title={
+                isOffline
+                  ? t("network.cartOfflineBadge")
+                  : isLoggedIn
+                    ? t("catalog.addToCart")
+                    : t("catalog.loginToOrder")
+              }
+              aria-label={
+                isOffline
+                  ? t("network.cartOfflineBadge")
+                  : isLoggedIn
+                    ? t("catalog.addToCart")
+                    : t("catalog.loginToOrder")
+              }
+            >
+              {isAdded ? (
+                <Check size={18} className="stroke-3" />
+              ) : (
+                <ShoppingCart size={18} className="stroke-[2.5]" />
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };

@@ -1,6 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import { CartItem, Product } from "@/types";
 import { useAuth } from "./AuthContext";
 
@@ -95,12 +102,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
 
       setItems((prev) => {
-        const existingIndex = prev.findIndex((item) => item.product.id === product.id);
+        const existingIndex = prev.findIndex(
+          (item) => item.product.id === product.id
+        );
         if (existingIndex > -1) {
           const updated = [...prev];
           updated[existingIndex] = {
             ...updated[existingIndex],
-            weightKg: Math.round((updated[existingIndex].weightKg + weightKg) * 10) / 10,
+            weightKg:
+              Math.round((updated[existingIndex].weightKg + weightKg) * 10) /
+              10,
           };
           return updated;
         }
@@ -160,7 +171,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const closeCart = useCallback(() => setIsCartOpen(false), []);
 
   const totalAmount = useMemo(() => {
-    return items.reduce((sum, item) => sum + item.product.pricePerKg * item.weightKg, 0);
+    return items.reduce(
+      (sum, item) => sum + item.product.pricePerKg * item.weightKg,
+      0
+    );
   }, [items]);
 
   const totalItemsCount = useMemo(() => {
@@ -196,4 +210,3 @@ export function useCart() {
   }
   return context;
 }
-

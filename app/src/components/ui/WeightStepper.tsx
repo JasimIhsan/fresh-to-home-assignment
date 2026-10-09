@@ -19,14 +19,21 @@ export function WeightStepper({ weight, onChange }: WeightStepperProps) {
   };
 
   return (
-    <div className="flex items-center space-x-4 bg-primary-light rounded-full px-4 py-2">
-      <button onClick={handleDecrease} className="text-primary hover:opacity-80 disabled:opacity-50" disabled={weight <= step}>
+    <div className="bg-primary-light flex items-center space-x-4 rounded-full px-4 py-2">
+      <button
+        onClick={handleDecrease}
+        className="text-primary hover:opacity-80 disabled:opacity-50"
+        disabled={weight <= step}
+      >
         <Minus size={20} />
       </button>
-      <span className="font-semibold text-primary min-w-16 text-center">
-        {weight.toFixed(1).replace('.', ',')} kg
+      <span className="text-primary min-w-16 text-center font-semibold">
+        {weight.toFixed(1).replace(".", ",")} kg
       </span>
-      <button onClick={handleIncrease} className="text-primary hover:opacity-80">
+      <button
+        onClick={handleIncrease}
+        className="text-primary hover:opacity-80"
+      >
         <Plus size={20} />
       </button>
     </div>

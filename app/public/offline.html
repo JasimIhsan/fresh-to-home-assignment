@@ -1,140 +1,168 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Offline • Frisch nach Hause</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-    body {
-      background-color: #f8fafc;
-      color: #0f172a;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .modal-card {
-      background: #ffffff;
-      border: 1px solid #f1f5f9;
-      border-radius: 24px;
-      max-width: 420px;
-      width: 100%;
-      padding: 28px 24px;
-      text-align: center;
-      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08), 0 0 1px 1px rgba(0,0,0,0.02);
-    }
-    .icon-box {
-      width: 64px;
-      height: 64px;
-      margin: 0 auto 16px;
-      background: #fef2f2;
-      color: #dc2626;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-      outline: 4px solid #fee2e2;
-    }
-    .icon-box svg {
-      width: 28px;
-      height: 28px;
-    }
-    .brand-badge {
-      display: inline-block;
-      padding: 4px 12px;
-      background: rgba(163, 21, 185, 0.1);
-      color: #a315b9;
-      border-radius: 9999px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-    h1 {
-      font-size: 20px;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      color: #111827;
-      margin-bottom: 8px;
-    }
-    p {
-      color: #6b7280;
-      font-size: 14px;
-      line-height: 1.5;
-      margin-bottom: 24px;
-    }
-    .primary-btn {
-      width: 100%;
-      padding: 14px 20px;
-      background: #a315b9;
-      color: #ffffff;
-      font-size: 14px;
-      font-weight: 700;
-      border: none;
-      border-radius: 16px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 0 8px 16px rgba(163, 21, 185, 0.25);
-      transition: all 0.15s ease;
-    }
-    .primary-btn:hover {
-      background: #8b119d;
-    }
-    .primary-btn:active {
-      transform: scale(0.98);
-    }
-    .notice {
-      margin-top: 16px;
-      font-size: 11px;
-      color: #9ca3af;
-      font-weight: 500;
-    }
-  </style>
-</head>
-<body>
-  <div class="modal-card">
-    <div class="icon-box">
-      <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="1" y1="1" x2="23" y2="23"></line>
-        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
-        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
-        <path d="M10.71 5.05A16 16 0 0 1 22.56 9"></path>
-        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
-        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
-        <line x1="12" y1="20" x2="12.01" y2="20"></line>
-      </svg>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Offline • Frisch nach Hause</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+      }
+      body {
+        background-color: #f8fafc;
+        color: #0f172a;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .modal-card {
+        background: #ffffff;
+        border: 1px solid #f1f5f9;
+        border-radius: 24px;
+        max-width: 420px;
+        width: 100%;
+        padding: 28px 24px;
+        text-align: center;
+        box-shadow:
+          0 20px 40px -15px rgba(0, 0, 0, 0.08),
+          0 0 1px 1px rgba(0, 0, 0, 0.02);
+      }
+      .icon-box {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 16px;
+        background: #fef2f2;
+        color: #dc2626;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        outline: 4px solid #fee2e2;
+      }
+      .icon-box svg {
+        width: 28px;
+        height: 28px;
+      }
+      .brand-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        background: rgba(163, 21, 185, 0.1);
+        color: #a315b9;
+        border-radius: 9999px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+      h1 {
+        font-size: 20px;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        color: #111827;
+        margin-bottom: 8px;
+      }
+      p {
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 24px;
+      }
+      .primary-btn {
+        width: 100%;
+        padding: 14px 20px;
+        background: #a315b9;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 700;
+        border: none;
+        border-radius: 16px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 8px 16px rgba(163, 21, 185, 0.25);
+        transition: all 0.15s ease;
+      }
+      .primary-btn:hover {
+        background: #8b119d;
+      }
+      .primary-btn:active {
+        transform: scale(0.98);
+      }
+      .notice {
+        margin-top: 16px;
+        font-size: 11px;
+        color: #9ca3af;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="modal-card">
+      <div class="icon-box">
+        <svg
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          viewBox="0 0 24 24"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+          <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+          <path d="M10.71 5.05A16 16 0 0 1 22.56 9"></path>
+          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+          <line x1="12" y1="20" x2="12.01" y2="20"></line>
+        </svg>
+      </div>
+
+      <span class="brand-badge">Frisch nach Hause</span>
+      <h1>Keine Internetverbindung</h1>
+      <p>
+        Bitte überprüfen Sie Ihr WLAN oder mobile Daten. Sobald Sie wieder
+        online sind, können Sie Ihre frische Bestellung fortsetzen.
+      </p>
+
+      <button class="primary-btn" onclick="window.location.reload()">
+        <svg
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          viewBox="0 0 24 24"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+        </svg>
+        Erneut verbinden
+      </button>
+
+      <div class="notice">
+        Automatischer Verbindungsversuch bei Netzwerkerkennung...
+      </div>
     </div>
 
-    <span class="brand-badge">Frisch nach Hause</span>
-    <h1>Keine Internetverbindung</h1>
-    <p>Bitte überprüfen Sie Ihr WLAN oder mobile Daten. Sobald Sie wieder online sind, können Sie Ihre frische Bestellung fortsetzen.</p>
-
-    <button class="primary-btn" onclick="window.location.reload()">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-      </svg>
-      Erneut verbinden
-    </button>
-
-    <div class="notice">Automatischer Verbindungsversuch bei Netzwerkerkennung...</div>
-  </div>
-
-  <script>
-    window.addEventListener('online', function() {
-      window.location.reload();
-    });
-  </script>
-</body>
+    <script>
+      window.addEventListener("online", function () {
+        window.location.reload();
+      });
+    </script>
+  </body>
 </html>

@@ -7,80 +7,86 @@ import Link from "next/link";
 import { useMemo } from "react";
 
 interface PdpRelatedProductsProps {
-   currentProductId: string;
-   currentCategory: string;
+  currentProductId: string;
+  currentCategory: string;
 }
 
-export function PdpRelatedProducts({ currentProductId, currentCategory }: PdpRelatedProductsProps) {
-   const { t } = useLanguage();
+export function PdpRelatedProducts({
+  currentProductId,
+  currentCategory,
+}: PdpRelatedProductsProps) {
+  const { t } = useLanguage();
 
-   const related = useMemo(() => {
-      const all = getStoredProducts();
-      return all
-         .filter(
-            (p) => p.id !== currentProductId && p.category === currentCategory && p.isAvailable
-         )
-         .slice(0, 4);
-   }, [currentProductId, currentCategory]);
+  const related = useMemo(() => {
+    const all = getStoredProducts();
+    return all
+      .filter(
+        (p) =>
+          p.id !== currentProductId &&
+          p.category === currentCategory &&
+          p.isAvailable
+      )
+      .slice(0, 4);
+  }, [currentProductId, currentCategory]);
 
-   if (related.length === 0) return null;
+  if (related.length === 0) return null;
 
-   return (
-      <section aria-label={t("productDetail.relatedTitle")} className="space-y-4">
-         <div className="flex items-center justify-between">
-            <h3 className="text-base font-extrabold text-gray-900 tracking-tight">
-               {t("productDetail.relatedTitle")}
-            </h3>
-            <Link
-               href="/catalog"
-               className="text-xs font-semibold text-primary hover:text-purple-700 transition-colors"
-            >
-               {t("productDetail.relatedViewAll")}
-            </Link>
-         </div>
+  return (
+    <section aria-label={t("productDetail.relatedTitle")} className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-base font-extrabold tracking-tight text-gray-900">
+          {t("productDetail.relatedTitle")}
+        </h3>
+        <Link
+          href="/catalog"
+          className="text-primary text-xs font-semibold transition-colors hover:text-purple-700"
+        >
+          {t("productDetail.relatedViewAll")}
+        </Link>
+      </div>
 
-         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3">
-            {related.map((product) => (
-               <RelatedProductCard key={product.id} product={product} />
-            ))}
-         </div>
-      </section>
-   );
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-2 lg:grid-cols-4">
+        {related.map((product) => (
+          <RelatedProductCard key={product.id} product={product} />
+        ))}
+      </div>
+    </section>
+  );
 }
 
 function RelatedProductCard({ product }: { product: Product }) {
-   const { t } = useLanguage();
+  const { t } = useLanguage();
 
-   return (
-      <Link
-         href={`/catalog/${product.id}`}
-         className="group bg-white rounded-2xl border border-gray-100 shadow-xs hover:shadow-md hover:border-gray-200 transition-all duration-200 overflow-hidden flex flex-col"
-      >
-         <div className="aspect-4/3 overflow-hidden bg-gray-50 relative">
-            <img
-               src={product.imageUrl}
-               alt={product.name}
-               className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
-            />
-            {!product.isAvailable && (
-               <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <span className="text-white text-[11px] font-bold bg-black/60 px-2 py-1 rounded-full">
-                     {t("productDetail.outOfStockOverlay")}
-                  </span>
-               </div>
-            )}
-         </div>
-         <div className="p-3 flex-1 flex flex-col gap-1">
-            <p className="text-xs font-bold text-gray-800 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
-               {product.name}
-            </p>
-            <span className="mt-auto text-sm font-black text-primary tabular-nums">
-               {product.pricePerKg.toFixed(2).replace(".", ",")} €{" "}
-               <span className="text-[10px] text-gray-400 font-medium">
-                  {t("catalog.perKg")}
-               </span>
+  return (
+    <Link
+      href={`/catalog/${product.id}`}
+      className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xs transition-all duration-200 hover:border-gray-200 hover:shadow-md"
+    >
+      <div className="relative aspect-4/3 overflow-hidden bg-gray-50">
+        <img
+          src={product.imageUrl}
+          alt={product.name}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+        />
+        {!product.isAvailable && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+            <span className="rounded-full bg-black/60 px-2 py-1 text-[11px] font-bold text-white">
+              {t("productDetail.outOfStockOverlay")}
             </span>
-         </div>
-      </Link>
-   );
+          </div>
+        )}
+      </div>
+      <div className="flex flex-1 flex-col gap-1 p-3">
+        <p className="group-hover:text-primary line-clamp-2 text-xs leading-tight font-bold text-gray-800 transition-colors">
+          {product.name}
+        </p>
+        <span className="text-primary mt-auto text-sm font-black tabular-nums">
+          {product.pricePerKg.toFixed(2).replace(".", ",")} €{" "}
+          <span className="text-[10px] font-medium text-gray-400">
+            {t("catalog.perKg")}
+          </span>
+        </span>
+      </div>
+    </Link>
+  );
 }

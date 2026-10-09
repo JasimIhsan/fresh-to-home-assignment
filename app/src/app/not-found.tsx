@@ -5,23 +5,30 @@ import { AlertCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function NotFound() {
-   const { t } = useLanguage();
+  const { t } = useLanguage();
 
-   return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background">
-         <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-6">
-            <AlertCircle size={48} className="text-secondary" />
-         </div>
-
-         <h1 className="text-4xl font-bold text-primary mb-2">404</h1>
-         <h2 className="text-xl font-semibold text-gray-800 mb-4">{t("notFound.title")}</h2>
-
-         <p className="text-gray-500 text-center max-w-sm mb-8">{t("notFound.description")}</p>
-
-         <Link href="/" className="flex items-center bg-background text-white py-3 px-6 rounded-xl font-bold hover:opacity-90 transition-opacity shadow-md">
-            <ArrowLeft className="mr-2" size={20} />
-            {t("notFound.backHome")}
-         </Link>
+  return (
+    <div className="bg-background flex min-h-screen flex-col items-center justify-center p-6">
+      <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-red-100">
+        <AlertCircle size={48} className="text-secondary" />
       </div>
-   );
+
+      <h1 className="text-primary mb-2 text-4xl font-bold">404</h1>
+      <h2 className="mb-4 text-xl font-semibold text-gray-800">
+        {t("notFound.title")}
+      </h2>
+
+      <p className="mb-8 max-w-sm text-center text-gray-500">
+        {t("notFound.description")}
+      </p>
+
+      <Link
+        href="/"
+        className="bg-background flex items-center rounded-xl px-6 py-3 font-bold text-white shadow-md transition-opacity hover:opacity-90"
+      >
+        <ArrowLeft className="mr-2" size={20} />
+        {t("notFound.backHome")}
+      </Link>
+    </div>
+  );
 }

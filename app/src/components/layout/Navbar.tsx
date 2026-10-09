@@ -10,101 +10,136 @@ import { useState } from "react";
 import { LogoutConfirmModal } from "@/components/ui/LogoutConfirmModal";
 
 export function Navbar() {
-   const { t } = useLanguage();
-   const { user, role, signOut } = useAuth();
-   const { totalItemsCount, openCart } = useCart();
-   const router = useRouter();
-   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-   const [showLogoutModal, setShowLogoutModal] = useState(false);
-   const [loggingOut, setLoggingOut] = useState(false);
+  const { t } = useLanguage();
+  const { user, role, signOut } = useAuth();
+  const { totalItemsCount, openCart } = useCart();
+  const router = useRouter();
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
-   const handleLogout = async () => {
-      setLoggingOut(true);
-      try {
-         await signOut();
-         setShowLogoutModal(false);
-         setIsProfileMenuOpen(false);
-         router.push("/");
-      } finally {
-         setLoggingOut(false);
-      }
-   };
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await signOut();
+      setShowLogoutModal(false);
+      setIsProfileMenuOpen(false);
+      router.push("/");
+    } finally {
+      setLoggingOut(false);
+    }
+  };
 
-   return (
-      <>
-         <nav className="hidden md:block bg-primary text-white shadow-lg sticky top-0 z-50">
-            <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-               {/* Brand */}
-               <Link href="/" className="font-extrabold text-xl tracking-tight flex items-center gap-2.5">
-                  <img src="/images/logo-mark.png" alt="Frisch nach Hause Logo" className="w-9 h-9 object-contain drop-shadow-sm" />
-                  <span>{t("app.title")}</span>
-               </Link>
+  return (
+    <>
+      <nav className="bg-primary sticky top-0 z-50 hidden text-white shadow-lg md:block">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+          {/* Brand */}
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 text-xl font-extrabold tracking-tight"
+          >
+            <img
+              src="/images/logo-mark.png"
+              alt="Frisch nach Hause Logo"
+              className="h-9 w-9 object-contain drop-shadow-sm"
+            />
+            <span>{t("app.title")}</span>
+          </Link>
 
-               {/* Links */}
-               <div className="flex items-center space-x-6 flex-1 justify-center">
-                  <Link href="/catalog" className="text-sm font-semibold hover:text-white/80 transition-colors">
-                     {t("catalog.products")}
-                  </Link>
-                  <Link href="/orders" className="text-sm font-semibold hover:text-white/80 transition-colors">
-                     {t("catalog.myOrders")}
-                  </Link>
-               </div>
+          {/* Links */}
+          <div className="flex flex-1 items-center justify-center space-x-6">
+            <Link
+              href="/catalog"
+              className="text-sm font-semibold transition-colors hover:text-white/80"
+            >
+              {t("catalog.products")}
+            </Link>
+            <Link
+              href="/orders"
+              className="text-sm font-semibold transition-colors hover:text-white/80"
+            >
+              {t("catalog.myOrders")}
+            </Link>
+          </div>
 
-               {/* Actions */}
-               <div className="flex items-center space-x-4 relative">
-                  {user && (
-                     <button onClick={openCart} className="relative p-2 hover:bg-white/10 rounded-full transition-colors cursor-pointer">
-                        <ShoppingCart size={20} />
-                        {totalItemsCount > 0 && <span className="absolute -top-1 -right-1 bg-secondary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">{totalItemsCount}</span>}
-                     </button>
-                  )}
+          {/* Actions */}
+          <div className="relative flex items-center space-x-4">
+            {user && (
+              <button
+                onClick={openCart}
+                className="relative cursor-pointer rounded-full p-2 transition-colors hover:bg-white/10"
+              >
+                <ShoppingCart size={20} />
+                {totalItemsCount > 0 && (
+                  <span className="bg-secondary absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white">
+                    {totalItemsCount}
+                  </span>
+                )}
+              </button>
+            )}
 
-                  {user ? (
-                     <div className="relative">
-                        <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)} className="w-8 h-8 bg-white text-primary rounded-full flex items-center justify-center font-bold text-xs shadow-xs hover:scale-105 transition-transform cursor-pointer">
-                           {user.email?.charAt(0).toUpperCase()}
-                        </button>
-                        {isProfileMenuOpen && (
-                           <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-1 text-gray-800 z-50">
-                              <div className="px-4 py-2 border-b border-gray-100 mb-1">
-                                 <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                              </div>
-                              <Link href="/profile" className="block px-4 py-2 text-sm hover:bg-gray-50" onClick={() => setIsProfileMenuOpen(false)}>
-                                 {t("catalog.profile")}
-                              </Link>
-                              {role === "admin" && (
-                                 <Link href="/admin" className="block px-4 py-2 text-sm hover:bg-gray-50 text-primary font-medium" onClick={() => setIsProfileMenuOpen(false)}>
-                                    {t("catalog.adminDashboard")}
-                                 </Link>
-                              )}
-                              <button
-                                 onClick={() => {
-                                    setIsProfileMenuOpen(false);
-                                    setShowLogoutModal(true);
-                                 }}
-                                 className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 mt-1 border-t border-gray-100 cursor-pointer"
-                              >
-                                 {t("catalog.logout")}
-                              </button>
-                           </div>
-                        )}
-                     </div>
-                  ) : (
-                     <Link href="/login" className="bg-white/20 hover:bg-white/30 px-4 py-1.5 rounded-full text-sm font-semibold transition-colors">
-                        {t("catalog.login")}
-                     </Link>
-                  )}
-               </div>
-            </div>
-         </nav>
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                  className="text-primary flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-white text-xs font-bold shadow-xs transition-transform hover:scale-105"
+                >
+                  {user.email?.charAt(0).toUpperCase()}
+                </button>
+                {isProfileMenuOpen && (
+                  <div className="absolute right-0 z-50 mt-2 w-48 rounded-xl border border-gray-100 bg-white py-1 text-gray-800 shadow-xl">
+                    <div className="mb-1 border-b border-gray-100 px-4 py-2">
+                      <p className="truncate text-xs text-gray-500">
+                        {user.email}
+                      </p>
+                    </div>
+                    <Link
+                      href="/profile"
+                      className="block px-4 py-2 text-sm hover:bg-gray-50"
+                      onClick={() => setIsProfileMenuOpen(false)}
+                    >
+                      {t("catalog.profile")}
+                    </Link>
+                    {role === "admin" && (
+                      <Link
+                        href="/admin"
+                        className="text-primary block px-4 py-2 text-sm font-medium hover:bg-gray-50"
+                        onClick={() => setIsProfileMenuOpen(false)}
+                      >
+                        {t("catalog.adminDashboard")}
+                      </Link>
+                    )}
+                    <button
+                      onClick={() => {
+                        setIsProfileMenuOpen(false);
+                        setShowLogoutModal(true);
+                      }}
+                      className="mt-1 w-full cursor-pointer border-t border-gray-100 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                    >
+                      {t("catalog.logout")}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="rounded-full bg-white/20 px-4 py-1.5 text-sm font-semibold transition-colors hover:bg-white/30"
+              >
+                {t("catalog.login")}
+              </Link>
+            )}
+          </div>
+        </div>
+      </nav>
 
-         <LogoutConfirmModal
-            isOpen={showLogoutModal}
-            onClose={() => setShowLogoutModal(false)}
-            onConfirm={handleLogout}
-            loading={loggingOut}
-         />
-      </>
-   );
+      <LogoutConfirmModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleLogout}
+        loading={loggingOut}
+      />
+    </>
+  );
 }
-

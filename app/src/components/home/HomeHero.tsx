@@ -4,37 +4,47 @@ import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 
 export const HomeHero = () => {
-   const { t } = useLanguage();
-   return (
-      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden text-white">
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            {/* Social Proof Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-xs font-medium mb-8 text-white/90 shadow-xl animate-fade-in-up">
-               <span className="flex text-green-400">
-                  <ShieldCheck size={16} />
-               </span>
-               {t("hero.badge")}
-            </div>
+  const { t } = useLanguage();
+  return (
+    <section className="relative overflow-hidden pt-32 pb-20 text-white md:pt-48 md:pb-32">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+        {/* Social Proof Badge */}
+        <div className="animate-fade-in-up mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/30 px-4 py-2 text-xs font-medium text-white/90 shadow-xl backdrop-blur-md">
+          <span className="flex text-green-400">
+            <ShieldCheck size={16} />
+          </span>
+          {t("hero.badge")}
+        </div>
 
-            {/* Hero Copy */}
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-[1.1] mb-6 animate-fade-in-up animation-delay-100 drop-shadow-lg">
-               {t("hero.title_1")} <br className="hidden md:block" />
-               <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-rose-400 drop-shadow-none">{t("hero.title_2")}</span>
-            </h1>
+        {/* Hero Copy */}
+        <h1 className="animate-fade-in-up animation-delay-100 mx-auto mb-6 max-w-4xl text-4xl leading-[1.1] font-extrabold tracking-tight text-white drop-shadow-lg md:text-6xl lg:text-7xl">
+          {t("hero.title_1")} <br className="hidden md:block" />
+          <span className="from-primary bg-linear-to-r to-rose-400 bg-clip-text text-transparent drop-shadow-none">
+            {t("hero.title_2")}
+          </span>
+        </h1>
 
-            <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10 animate-fade-in-up animation-delay-200 drop-shadow-md">{t("hero.description")}</p>
+        <p className="animate-fade-in-up animation-delay-200 mx-auto mb-10 max-w-2xl text-lg text-white/80 drop-shadow-md md:text-xl">
+          {t("hero.description")}
+        </p>
 
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up animation-delay-300">
-               <Link href="/catalog" className="w-full sm:w-auto px-8 py-4 bg-primary text-primary-foreground rounded-full font-medium text-lg shadow-[0_0_30px_rgba(225,29,72,0.4)] hover:shadow-[0_0_40px_rgba(225,29,72,0.6)] hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2">
-                  {t("hero.order_now")}
-                  <ChevronRight size={20} />
-               </Link>
-               <Link href="/catalog" className="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full font-medium text-lg hover:bg-white/20 transition-all hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 shadow-xl">
-                  {t("hero.view_products")}
-               </Link>
-            </div>
-         </div>
-      </section>
-   );
+        {/* CTAs */}
+        <div className="animate-fade-in-up animation-delay-300 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <Link
+            href="/catalog"
+            className="bg-primary text-primary-foreground flex w-full items-center justify-center gap-2 rounded-full px-8 py-4 text-lg font-medium shadow-[0_0_30px_rgba(225,29,72,0.4)] transition-all hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(225,29,72,0.6)] active:scale-95 sm:w-auto"
+          >
+            {t("hero.order_now")}
+            <ChevronRight size={20} />
+          </Link>
+          <Link
+            href="/catalog"
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-8 py-4 text-lg font-medium text-white shadow-xl backdrop-blur-md transition-all hover:-translate-y-0.5 hover:bg-white/20 active:scale-95 sm:w-auto"
+          >
+            {t("hero.view_products")}
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
 };

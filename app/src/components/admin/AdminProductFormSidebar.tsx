@@ -4,71 +4,83 @@ import { useLanguage } from "@/context/LanguageContext";
 import { Image as ImageIcon, Save } from "lucide-react";
 
 export interface AdminProductFormSidebarProps {
-   name: string;
-   category: string;
-   pricePerKg: string;
-   imageUrl: string;
-   saving: boolean;
-   isEditMode?: boolean;
+  name: string;
+  category: string;
+  pricePerKg: string;
+  imageUrl: string;
+  saving: boolean;
+  isEditMode?: boolean;
 }
 
 export function AdminProductFormSidebar({
-   name,
-   category,
-   pricePerKg,
-   imageUrl,
-   saving,
-   isEditMode = false,
+  name,
+  category,
+  pricePerKg,
+  imageUrl,
+  saving,
+  isEditMode = false,
 }: AdminProductFormSidebarProps) {
-   const { t } = useLanguage();
+  const { t } = useLanguage();
 
-   return (
-      <div className="lg:col-span-1 space-y-6">
-         {/* Live Preview Card */}
-         <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-xs space-y-4 sticky top-24">
-            <h3 className="font-bold text-base text-gray-900 flex items-center space-x-2">
-               <ImageIcon size={18} className="text-primary" />
-               <span>{t("admin.liveStorePreview")}</span>
-            </h3>
+  return (
+    <div className="space-y-6 lg:col-span-1">
+      {/* Live Preview Card */}
+      <div className="sticky top-24 space-y-4 rounded-3xl border border-gray-100 bg-white p-6 shadow-xs">
+        <h3 className="flex items-center space-x-2 text-base font-bold text-gray-900">
+          <ImageIcon size={18} className="text-primary" />
+          <span>{t("admin.liveStorePreview")}</span>
+        </h3>
 
-            <div className="border border-gray-100 rounded-2xl overflow-hidden bg-gray-50">
-               <div className="aspect-4/3 w-full bg-gray-200 relative overflow-hidden">
-                  {imageUrl ? (
-                     <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                  ) : (
-                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                        No Image Selected
-                     </div>
-                  )}
-                  <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-xs text-[10px] font-bold px-2 py-0.5 rounded-full text-gray-700">
-                     {category}
-                  </span>
-               </div>
+        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-gray-50">
+          <div className="relative aspect-4/3 w-full overflow-hidden bg-gray-200">
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt="Preview"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
+                No Image Selected
+              </div>
+            )}
+            <span className="absolute top-2 left-2 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold text-gray-700 backdrop-blur-xs">
+              {category}
+            </span>
+          </div>
 
-               <div className="p-4 space-y-2">
-                  <h4 className="font-bold text-sm text-gray-900 truncate">{name || "Neuer Produktname"}</h4>
-                  <div className="flex justify-between items-baseline">
-                     <span className="text-xs text-gray-400 font-medium">1 kg</span>
-                     <span className="text-base font-black text-primary">
-                        {parseFloat(pricePerKg || "0")
-                           .toFixed(2)
-                           .replace(".", ",")}{" "}
-                        €
-                     </span>
-                  </div>
-               </div>
+          <div className="space-y-2 p-4">
+            <h4 className="truncate text-sm font-bold text-gray-900">
+              {name || "Neuer Produktname"}
+            </h4>
+            <div className="flex items-baseline justify-between">
+              <span className="text-xs font-medium text-gray-400">1 kg</span>
+              <span className="text-primary text-base font-black">
+                {parseFloat(pricePerKg || "0")
+                  .toFixed(2)
+                  .replace(".", ",")}{" "}
+                €
+              </span>
             </div>
+          </div>
+        </div>
 
-            <button
-               type="submit"
-               form="product-form"
-               disabled={saving}
-               className="w-full py-4 bg-primary hover:bg-purple-700 text-white rounded-2xl font-bold text-base shadow-lg shadow-primary/25 transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50"
-            >
-               <Save size={18} />
-               <span>{saving ? t("admin.saving") : isEditMode ? t("admin.saveChanges") : t("admin.createProduct")}</span>
-            </button>
-         </div>
+        <button
+          type="submit"
+          form="product-form"
+          disabled={saving}
+          className="bg-primary shadow-primary/25 flex w-full cursor-pointer items-center justify-center space-x-2 rounded-2xl py-4 text-base font-bold text-white shadow-lg transition-all hover:bg-purple-700 disabled:opacity-50"
+        >
+          <Save size={18} />
+          <span>
+            {saving
+              ? t("admin.saving")
+              : isEditMode
+                ? t("admin.saveChanges")
+                : t("admin.createProduct")}
+          </span>
+        </button>
       </div>
-   );
+    </div>
+  );
 }

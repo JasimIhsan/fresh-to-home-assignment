@@ -9,131 +9,144 @@ import Link from "next/link";
 import { useState } from "react";
 
 export default function ForgotPasswordPage() {
-   const { t } = useLanguage();
-   const [email, setEmail] = useState("");
-   const [touched, setTouched] = useState(false);
-   const [loading, setLoading] = useState(false);
-   const [error, setError] = useState<string | null>(null);
-   const [success, setSuccess] = useState(false);
+  const { t } = useLanguage();
+  const [email, setEmail] = useState("");
+  const [touched, setTouched] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
-   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-   const getEmailError = () => {
-      if (!email.trim()) return t("validation.emailRequired");
-      if (!emailRegex.test(email.trim())) return t("validation.emailInvalid");
-      return "";
-   };
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const getEmailError = () => {
+    if (!email.trim()) return t("validation.emailRequired");
+    if (!emailRegex.test(email.trim())) return t("validation.emailInvalid");
+    return "";
+  };
 
-   const emailError = touched ? getEmailError() : "";
+  const emailError = touched ? getEmailError() : "";
 
-   const handleReset = async (e: React.FormEvent) => {
-      e.preventDefault();
-      setTouched(true);
+  const handleReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setTouched(true);
 
-      const err = getEmailError();
-      if (err) return;
+    const err = getEmailError();
+    if (err) return;
 
-      setLoading(true);
-      setError(null);
-      try {
-         if (auth) {
-            await sendPasswordResetEmail(auth, email.trim());
-         }
-         setSuccess(true);
-      } catch (err: unknown) {
-         console.error("Password reset error:", err);
-         if (!auth) {
-            setSuccess(true);
-         } else {
-            const errMessage = err instanceof Error ? err.message : t("forgotPassword.error");
-            setError(errMessage || t("forgotPassword.error"));
-         }
-      } finally {
-         setLoading(false);
+    setLoading(true);
+    setError(null);
+    try {
+      if (auth) {
+        await sendPasswordResetEmail(auth, email.trim());
       }
-   };
+      setSuccess(true);
+    } catch (err: unknown) {
+      console.error("Password reset error:", err);
+      if (!auth) {
+        setSuccess(true);
+      } else {
+        const errMessage =
+          err instanceof Error ? err.message : t("forgotPassword.error");
+        setError(errMessage || t("forgotPassword.error"));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
-   return (
-      <AuthCardWrapper
-         title={t("forgotPassword.title")}
-         subtitle={t("forgotPassword.subtitle")}
-         backHref="/login"
-         backLabel={t("forgotPassword.backToLogin")}
-         badgeIcon={<KeyRound size={24} />}
-         footer={
-            <p className="text-sm text-gray-600">
-               <Link href="/login" className="font-bold text-primary hover:underline">
-                  {t("forgotPassword.backToLogin")}
-               </Link>
+  return (
+    <AuthCardWrapper
+      title={t("forgotPassword.title")}
+      subtitle={t("forgotPassword.subtitle")}
+      backHref="/login"
+      backLabel={t("forgotPassword.backToLogin")}
+      badgeIcon={<KeyRound size={24} />}
+      footer={
+        <p className="text-sm text-gray-600">
+          <Link
+            href="/login"
+            className="text-primary font-bold hover:underline"
+          >
+            {t("forgotPassword.backToLogin")}
+          </Link>
+        </p>
+      }
+    >
+      {success ? (
+        <div className="animate-fadeIn space-y-4 rounded-3xl border border-emerald-200 bg-emerald-50 p-6 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600">
+            <CheckCircle2 size={32} />
+          </div>
+          <div>
+            <h3 className="text-base font-extrabold text-emerald-950">
+              {t("forgotPassword.successTitle")}
+            </h3>
+            <p className="mt-1 text-xs leading-relaxed text-emerald-800">
+              {t("forgotPassword.successDesc")}
             </p>
-         }
-      >
-         {success ? (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-6 text-center space-y-4 animate-fadeIn">
-               <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto text-emerald-600">
-                  <CheckCircle2 size={32} />
-               </div>
-               <div>
-                  <h3 className="font-extrabold text-emerald-950 text-base">{t("forgotPassword.successTitle")}</h3>
-                  <p className="text-xs text-emerald-800 mt-1 leading-relaxed">{t("forgotPassword.successDesc")}</p>
-               </div>
-               <Link
-                  href="/login"
-                  className="inline-block w-full py-3.5 bg-primary text-white font-bold rounded-2xl shadow-md text-sm hover:opacity-95 transition-all"
-               >
-                  {t("forgotPassword.backToLogin")}
-               </Link>
+          </div>
+          <Link
+            href="/login"
+            className="bg-primary inline-block w-full rounded-2xl py-3.5 text-sm font-bold text-white shadow-md transition-all hover:opacity-95"
+          >
+            {t("forgotPassword.backToLogin")}
+          </Link>
+        </div>
+      ) : (
+        <form onSubmit={handleReset} noValidate className="space-y-5">
+          {error && (
+            <div className="text-secondary animate-fadeIn rounded-2xl border border-red-200 bg-red-50 p-4 text-sm">
+              {error}
             </div>
-         ) : (
-            <form onSubmit={handleReset} noValidate className="space-y-5">
-               {error && (
-                  <div className="bg-red-50 text-secondary p-4 rounded-2xl text-sm border border-red-200 animate-fadeIn">
-                     {error}
-                  </div>
-               )}
+          )}
 
-               <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
-                     {t("login.email")}
-                  </label>
-                  <div className="relative">
-                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <Mail size={18} className={emailError ? "text-red-400" : "text-gray-400"} />
-                     </div>
-                     <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => {
-                           setEmail(e.target.value);
-                           if (!touched) setTouched(true);
-                        }}
-                        onBlur={() => setTouched(true)}
-                        className={`block w-full pl-11 pr-4 py-3.5 bg-gray-50/70 border-2 rounded-2xl text-gray-900 text-sm focus:outline-hidden transition-all ${
-                           emailError
-                              ? "border-red-400 focus:border-red-500 bg-red-50/20"
-                              : "border-gray-100 focus:border-primary focus:bg-white"
-                        }`}
-                        placeholder={t("login.email")}
-                        aria-invalid={!!emailError}
-                     />
-                  </div>
-                  {emailError && (
-                     <p className="mt-1.5 ml-1 text-xs text-red-600 font-medium animate-fadeIn">{emailError}</p>
-                  )}
-               </div>
+          <div>
+            <label className="mb-2 block text-xs font-bold tracking-wider text-gray-700 uppercase">
+              {t("login.email")}
+            </label>
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                <Mail
+                  size={18}
+                  className={emailError ? "text-red-400" : "text-gray-400"}
+                />
+              </div>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (!touched) setTouched(true);
+                }}
+                onBlur={() => setTouched(true)}
+                className={`block w-full rounded-2xl border-2 bg-gray-50/70 py-3.5 pr-4 pl-11 text-sm text-gray-900 transition-all focus:outline-hidden ${
+                  emailError
+                    ? "border-red-400 bg-red-50/20 focus:border-red-500"
+                    : "focus:border-primary border-gray-100 focus:bg-white"
+                }`}
+                placeholder={t("login.email")}
+                aria-invalid={!!emailError}
+              />
+            </div>
+            {emailError && (
+              <p className="animate-fadeIn mt-1.5 ml-1 text-xs font-medium text-red-600">
+                {emailError}
+              </p>
+            )}
+          </div>
 
-               <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-primary text-white py-4 rounded-2xl font-bold text-base hover:opacity-95 active:scale-[0.99] transition-all shadow-lg shadow-primary/25 disabled:opacity-50 flex justify-center items-center cursor-pointer"
-               >
-                  {loading ? (
-                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                     t("forgotPassword.sendResetLink")
-                  )}
-               </button>
-            </form>
-         )}
-      </AuthCardWrapper>
-   );
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-primary shadow-primary/25 flex w-full cursor-pointer items-center justify-center rounded-2xl py-4 text-base font-bold text-white shadow-lg transition-all hover:opacity-95 active:scale-[0.99] disabled:opacity-50"
+          >
+            {loading ? (
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+            ) : (
+              t("forgotPassword.sendResetLink")
+            )}
+          </button>
+        </form>
+      )}
+    </AuthCardWrapper>
+  );
 }

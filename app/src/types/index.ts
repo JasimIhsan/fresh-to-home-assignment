@@ -1,4 +1,4 @@
-export type ProductStatus = 'draft' | 'active' | 'archived';
+export type ProductStatus = "draft" | "active" | "archived";
 
 export interface Product {
   id: string;
@@ -18,7 +18,7 @@ export interface Product {
   reorderPointKg?: number;
   wholesaleCostPerKg?: number;
   status?: ProductStatus;
-  visibility?: 'public' | 'hidden';
+  visibility?: "public" | "hidden";
   createdAt?: string;
   updatedAt?: string;
   createdBy?: string;
@@ -31,7 +31,8 @@ export interface CartItem {
   weightKg: number;
 }
 
-export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+export type OrderStatus =
+  "pending" | "processing" | "shipped" | "delivered" | "cancelled";
 
 export interface Order {
   id: string;
@@ -51,7 +52,7 @@ export interface Order {
 
 // Network Information API interfaces for browser typing
 export interface NetworkInformation extends EventTarget {
-  effectiveType?: 'slow-2g' | '2g' | '3g' | '4g';
+  effectiveType?: "slow-2g" | "2g" | "3g" | "4g";
   rtt?: number;
   downlink?: number;
   saveData?: boolean;
@@ -69,7 +70,7 @@ export interface NavigatorWithNetwork extends Navigator {
 export interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
   readonly userChoice: Promise<{
-    outcome: 'accepted' | 'dismissed';
+    outcome: "accepted" | "dismissed";
     platform: string;
   }>;
   prompt(): Promise<void>;

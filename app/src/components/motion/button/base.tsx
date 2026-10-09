@@ -73,7 +73,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       onPointerDown,
       ...rest
     },
-    ref,
+    ref
   ) {
     const reduce = useReducedMotion();
     const canHover = useHoverCapable();
@@ -98,7 +98,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         }
         onPointerDown?.(event);
       },
-      [ripple, reduce, onPointerDown],
+      [ripple, reduce, onPointerDown]
     );
 
     return (
@@ -116,7 +116,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           ripple && "relative overflow-hidden",
           VARIANT_CLASS[variant],
           SIZE_CLASS[size],
-          className,
+          className
         )}
         {...rest}
       >
@@ -150,7 +150,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {children}
       </motion.button>
     );
-  },
+  }
 );
 
 export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
@@ -163,7 +163,7 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
       children,
       ...rest
     },
-    ref,
+    ref
   ) {
     const reduce = useReducedMotion();
     const canHover = useHoverCapable();
@@ -179,12 +179,12 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
           "transition-colors",
           VARIANT_CLASS[variant],
           SIZE_CLASS[size],
-          className,
+          className
         )}
         {...rest}
       >
         {children}
       </motion.a>
     );
-  },
+  }
 );

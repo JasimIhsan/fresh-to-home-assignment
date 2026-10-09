@@ -1,100 +1,115 @@
 "use client";
 
 import translations from "@/i18n/translations.json";
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 type Language = "de" | "en";
 
 interface LanguageContextType {
-   language: Language;
-   setLanguage: (lang: Language) => void;
-   t: (key: string) => string;
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: string) => string;
 }
 
 type TranslationTree = {
-   [key: string]: string | TranslationTree;
+  [key: string]: string | TranslationTree;
 };
 
-const translationData = translations as unknown as Record<Language, TranslationTree>;
+const translationData = translations as unknown as Record<
+  Language,
+  TranslationTree
+>;
 
 function resolveTranslation(path: string, lang: Language): string {
-   const keys = path.split(".");
+  const keys = path.split(".");
 
-   // Try selected language
-   let current: TranslationTree | string | undefined = translationData[lang];
-   let found = true;
-   for (const key of keys) {
-      if (current && typeof current === "object" && key in current) {
-         current = current[key];
+  // Try selected language
+  let current: TranslationTree | string | undefined = translationData[lang];
+  let found = true;
+  for (const key of keys) {
+    if (current && typeof current === "object" && key in current) {
+      current = current[key];
+    } else {
+      found = false;
+      break;
+    }
+  }
+  if (found && typeof current === "string") {
+    return current;
+  }
+
+  // Fallback to German if not found
+  if (lang !== "de") {
+    let fallback: TranslationTree | string | undefined = translationData["de"];
+    let fallbackFound = true;
+    for (const key of keys) {
+      if (fallback && typeof fallback === "object" && key in fallback) {
+        fallback = fallback[key];
       } else {
-         found = false;
-         break;
+        fallbackFound = false;
+        break;
       }
-   }
-   if (found && typeof current === "string") {
-      return current;
-   }
+    }
+    if (fallbackFound && typeof fallback === "string") {
+      return fallback;
+    }
+  }
 
-   // Fallback to German if not found
-   if (lang !== "de") {
-      let fallback: TranslationTree | string | undefined = translationData["de"];
-      let fallbackFound = true;
-      for (const key of keys) {
-         if (fallback && typeof fallback === "object" && key in fallback) {
-            fallback = fallback[key];
-         } else {
-            fallbackFound = false;
-            break;
-         }
-      }
-      if (fallbackFound && typeof fallback === "string") {
-         return fallback;
-      }
-   }
-
-   return path;
+  return path;
 }
 
 const LanguageContext = createContext<LanguageContextType>({
-   language: "de",
-   setLanguage: () => {},
-   t: (key: string) => resolveTranslation(key, "de"),
+  language: "de",
+  setLanguage: () => {},
+  t: (key: string) => resolveTranslation(key, "de"),
 });
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-   const [language, setLanguage] = useState<Language>("de");
+  const [language, setLanguage] = useState<Language>("de");
 
-   useEffect(() => {
-      // Load saved language on mount
-      try {
-         const saved = localStorage.getItem("app_language") as Language;
-         if (saved && (saved === "de" || saved === "en")) {
-            setLanguage(saved);
-         }
-      } catch {
-         // Ignore localStorage errors (e.g. private browsing or disabled storage)
+  useEffect(() => {
+    // Load saved language on mount
+    try {
+      const saved = localStorage.getItem("app_language") as Language;
+      if (saved && (saved === "de" || saved === "en")) {
+        setLanguage(saved);
       }
-   }, []);
+    } catch {
+      // Ignore localStorage errors (e.g. private browsing or disabled storage)
+    }
+  }, []);
 
-   const handleSetLanguage = useCallback((lang: Language) => {
-      setLanguage(lang);
-      try {
-         localStorage.setItem("app_language", lang);
-      } catch {
-         // Ignore localStorage errors
-      }
-   }, []);
+  const handleSetLanguage = useCallback((lang: Language) => {
+    setLanguage(lang);
+    try {
+      localStorage.setItem("app_language", lang);
+    } catch {
+      // Ignore localStorage errors
+    }
+  }, []);
 
-   const t = useCallback(
-      (path: string): string => {
-         return resolveTranslation(path, language);
-      },
-      [language]
-   );
+  const t = useCallback(
+    (path: string): string => {
+      return resolveTranslation(path, language);
+    },
+    [language]
+  );
 
-   return <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>{children}</LanguageContext.Provider>;
+  return (
+    <LanguageContext.Provider
+      value={{ language, setLanguage: handleSetLanguage, t }}
+    >
+      {children}
+    </LanguageContext.Provider>
+  );
 }
 
 export function useLanguage() {
-   return useContext(LanguageContext);
+  return useContext(LanguageContext);
 }

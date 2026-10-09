@@ -20,7 +20,8 @@ export async function GET(
     product: {
       ...product,
       _adminAccess: true,
-      internalNotes: "Verified for temperature-controlled cold chain logistics.",
+      internalNotes:
+        "Verified for temperature-controlled cold chain logistics.",
     },
   });
 }

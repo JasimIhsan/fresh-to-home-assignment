@@ -4,47 +4,69 @@ import { useLanguage } from "@/context/LanguageContext";
 import { OrderStatus } from "@/types";
 
 export interface AdminOrderStatusActionsProps {
-   currentStatus: OrderStatus;
-   updating: boolean;
-   onUpdateStatus: (newStatus: OrderStatus) => void;
+  currentStatus: OrderStatus;
+  updating: boolean;
+  onUpdateStatus: (newStatus: OrderStatus) => void;
 }
 
 export function AdminOrderStatusActions({
-   currentStatus,
-   updating,
-   onUpdateStatus,
+  currentStatus,
+  updating,
+  onUpdateStatus,
 }: AdminOrderStatusActionsProps) {
-   const { t } = useLanguage();
+  const { t } = useLanguage();
 
-   const statusOptions: { status: OrderStatus; label: string; bg: string }[] = [
-      { status: "pending", label: t("orders.statusPending"), bg: "hover:border-purple-300" },
-      { status: "processing", label: t("orders.statusProcessing"), bg: "hover:border-amber-300" },
-      { status: "shipped", label: t("orders.statusShipped"), bg: "hover:border-blue-300" },
-      { status: "delivered", label: t("orders.statusDelivered"), bg: "hover:border-emerald-300" },
-      { status: "cancelled", label: t("orders.statusCancelled"), bg: "hover:border-red-300" },
-   ];
+  const statusOptions: { status: OrderStatus; label: string; bg: string }[] = [
+    {
+      status: "pending",
+      label: t("orders.statusPending"),
+      bg: "hover:border-purple-300",
+    },
+    {
+      status: "processing",
+      label: t("orders.statusProcessing"),
+      bg: "hover:border-amber-300",
+    },
+    {
+      status: "shipped",
+      label: t("orders.statusShipped"),
+      bg: "hover:border-blue-300",
+    },
+    {
+      status: "delivered",
+      label: t("orders.statusDelivered"),
+      bg: "hover:border-emerald-300",
+    },
+    {
+      status: "cancelled",
+      label: t("orders.statusCancelled"),
+      bg: "hover:border-red-300",
+    },
+  ];
 
-   return (
-      <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-xs space-y-3">
-         <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">{t("admin.updateStatus")}</span>
+  return (
+    <div className="space-y-3 rounded-3xl border border-gray-100 bg-white p-6 shadow-xs">
+      <span className="block text-xs font-bold tracking-wider text-gray-400 uppercase">
+        {t("admin.updateStatus")}
+      </span>
 
-         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-            {statusOptions.map((item) => (
-               <button
-                  key={item.status}
-                  type="button"
-                  disabled={updating}
-                  onClick={() => onUpdateStatus(item.status)}
-                  className={`p-3 rounded-2xl font-bold text-xs border-2 transition-all cursor-pointer ${
-                     currentStatus === item.status
-                        ? "bg-primary text-white border-primary shadow-md shadow-primary/20 scale-[1.02]"
-                        : `bg-gray-50 text-gray-700 border-gray-200 ${item.bg}`
-                  }`}
-               >
-                  {item.label}
-               </button>
-            ))}
-         </div>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+        {statusOptions.map((item) => (
+          <button
+            key={item.status}
+            type="button"
+            disabled={updating}
+            onClick={() => onUpdateStatus(item.status)}
+            className={`cursor-pointer rounded-2xl border-2 p-3 text-xs font-bold transition-all ${
+              currentStatus === item.status
+                ? "bg-primary border-primary shadow-primary/20 scale-[1.02] text-white shadow-md"
+                : `border-gray-200 bg-gray-50 text-gray-700 ${item.bg}`
+            }`}
+          >
+            {item.label}
+          </button>
+        ))}
       </div>
-   );
+    </div>
+  );
 }
