@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { NavigatorWithNetwork } from "@/types";
 import { CheckCircle2, RefreshCw, SignalLow, WifiOff, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -22,10 +23,11 @@ export function NetworkStatusWatcher() {
          return;
       }
 
+      const navWithNetwork = navigator as NavigatorWithNetwork;
       const connection =
-         (navigator as any).connection ||
-         (navigator as any).mozConnection ||
-         (navigator as any).webkitConnection;
+         navWithNetwork.connection ||
+         navWithNetwork.mozConnection ||
+         navWithNetwork.webkitConnection;
 
       if (connection) {
          const effectiveType = connection.effectiveType; // 'slow-2g', '2g', '3g', '4g'
@@ -106,10 +108,11 @@ export function NetworkStatusWatcher() {
       window.addEventListener("online", handleOnline);
       window.addEventListener("offline", handleOffline);
 
+      const navWithNetwork = navigator as NavigatorWithNetwork;
       const connection =
-         (navigator as any).connection ||
-         (navigator as any).mozConnection ||
-         (navigator as any).webkitConnection;
+         navWithNetwork.connection ||
+         navWithNetwork.mozConnection ||
+         navWithNetwork.webkitConnection;
 
       if (connection) {
          connection.addEventListener("change", checkConnectionQuality);
@@ -136,7 +139,7 @@ export function NetworkStatusWatcher() {
       <>
          {/* Toast when back online */}
          {showRestored && (
-            <div className="fixed top-5 left-1/2 -translate-x-1/2 z-[100] px-4 py-2.5 rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-600/20 border border-emerald-500/40 flex items-center gap-2.5 text-sm font-bold transition-all duration-300 animate-in fade-in slide-in-from-top-4">
+            <div className="fixed top-5 left-1/2 -translate-x-1/2 z-100 px-4 py-2.5 rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-600/20 border border-emerald-500/40 flex items-center gap-2.5 text-sm font-bold transition-all duration-300 animate-in fade-in slide-in-from-top-4">
                <CheckCircle2 className="w-4 h-4 text-emerald-100 shrink-0" />
                <span>{t("network.onlineRestored")}</span>
             </div>

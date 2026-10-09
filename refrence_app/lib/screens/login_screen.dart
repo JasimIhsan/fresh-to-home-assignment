@@ -50,6 +50,9 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final auth = context.read<AuthService>();
+    final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     final success = await auth.login(
       _emailController.text,
       _passwortController.text,
@@ -58,11 +61,11 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
 
     if (success) {
-      Navigator.of(context).pushReplacement(
+      navigator.pushReplacement(
         MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
+      scaffoldMessenger.showSnackBar(
         const SnackBar(content: Text('Anmeldung fehlgeschlagen. Bitte prüfe deine Daten.')),
       );
     }

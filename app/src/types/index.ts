@@ -49,3 +49,28 @@ export interface Order {
   notes?: string;
 }
 
+// Network Information API interfaces for browser typing
+export interface NetworkInformation extends EventTarget {
+  effectiveType?: 'slow-2g' | '2g' | '3g' | '4g';
+  rtt?: number;
+  downlink?: number;
+  saveData?: boolean;
+  onchange?: EventListener;
+}
+
+export interface NavigatorWithNetwork extends Navigator {
+  connection?: NetworkInformation;
+  mozConnection?: NetworkInformation;
+  webkitConnection?: NetworkInformation;
+  standalone?: boolean;
+}
+
+// PWA BeforeInstallPromptEvent interface
+export interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: string[];
+  readonly userChoice: Promise<{
+    outcome: 'accepted' | 'dismissed';
+    platform: string;
+  }>;
+  prompt(): Promise<void>;
+}

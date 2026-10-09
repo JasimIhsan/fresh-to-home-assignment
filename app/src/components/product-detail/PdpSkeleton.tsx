@@ -32,7 +32,7 @@ export function PdpSkeleton() {
             <div className="md:grid md:grid-cols-[60%_40%] md:gap-12 lg:gap-16">
                {/* Left – Image skeleton */}
                <div className="space-y-3">
-                  <div className="w-full aspect-[4/3] md:aspect-[3/4] lg:aspect-square bg-gray-100 rounded-3xl" />
+                  <div className="w-full aspect-4/3 md:aspect-3/4 lg:aspect-square bg-gray-100 rounded-3xl" />
                   <div className="hidden md:flex gap-2">
                      {[1, 2].map((i) => (
                         <div key={i} className="w-16 h-16 bg-gray-100 rounded-xl" />

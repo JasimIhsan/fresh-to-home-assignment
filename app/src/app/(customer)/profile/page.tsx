@@ -45,7 +45,7 @@ export default function ProfilePage() {
 
    return (
       <AuthGuard requireAuth>
-         <div className="min-h-screen bg-gradient-to-b from-purple-50/40 via-background to-background pb-20">
+         <div className="min-h-screen bg-linear-to-b from-purple-50/40 via-background to-background pb-20">
             {/* Header with mobile & desktop navigation */}
             <ProfileHeader />
 

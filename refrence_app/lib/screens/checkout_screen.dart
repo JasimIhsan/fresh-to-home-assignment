@@ -21,6 +21,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     if (!mounted) return;
 
+    final navigator = Navigator.of(context);
     context.read<CartProvider>().clearCart();
 
     showDialog(
@@ -33,7 +34,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop(); // Dialog schließen
-              Navigator.of(context).popUntil((route) => route.isFirst); // Zurück zum Home
+              navigator.popUntil((route) => route.isFirst); // Zurück zum Home
             },
             child: const Text('OK'),
           ),

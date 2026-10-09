@@ -4,9 +4,9 @@ import { AuthCardWrapper } from "@/components/auth/AuthCardWrapper";
 import { useLanguage } from "@/context/LanguageContext";
 import { auth } from "@/lib/firebase";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { CheckCircle2, KeyRound, Mail, Smartphone } from "lucide-react";
+import { CheckCircle2, KeyRound, Mail } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useState } from "react";
 
 export default function ForgotPasswordPage() {
    const { t } = useLanguage();
@@ -39,12 +39,13 @@ export default function ForgotPasswordPage() {
             await sendPasswordResetEmail(auth, email.trim());
          }
          setSuccess(true);
-      } catch (err: any) {
+      } catch (err: unknown) {
          console.error("Password reset error:", err);
          if (!auth) {
             setSuccess(true);
          } else {
-            setError(err.message || t("forgotPassword.error"));
+            const errMessage = err instanceof Error ? err.message : t("forgotPassword.error");
+            setError(errMessage || t("forgotPassword.error"));
          }
       } finally {
          setLoading(false);
@@ -59,39 +60,33 @@ export default function ForgotPasswordPage() {
          backLabel={t("forgotPassword.backToLogin")}
          badgeIcon={<KeyRound size={24} />}
          footer={
-            <div className="text-center">
-               <Link
-                  href="/otp"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline group"
-               >
-                  <Smartphone size={15} />
-                  <span>{t("forgotPassword.otpLink")}</span>
+            <p className="text-sm text-gray-600">
+               <Link href="/login" className="font-bold text-primary hover:underline">
+                  {t("forgotPassword.backToLogin")}
                </Link>
-            </div>
+            </p>
          }
       >
          {success ? (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-6 text-center space-y-3 animate-fadeIn">
-               <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto text-emerald-600">
-                  <CheckCircle2 size={28} />
+            <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-6 text-center space-y-4 animate-fadeIn">
+               <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto text-emerald-600">
+                  <CheckCircle2 size={32} />
                </div>
-               <h3 className="font-extrabold text-emerald-950 text-base">
-                  {t("forgotPassword.successTitle")}
-               </h3>
-               <p className="text-xs text-emerald-700 leading-relaxed">
-                  {t("forgotPassword.successDesc")}
-               </p>
+               <div>
+                  <h3 className="font-extrabold text-emerald-950 text-base">{t("forgotPassword.successTitle")}</h3>
+                  <p className="text-xs text-emerald-800 mt-1 leading-relaxed">{t("forgotPassword.successDesc")}</p>
+               </div>
                <Link
                   href="/login"
-                  className="block w-full py-3.5 bg-primary text-white rounded-2xl font-bold text-sm hover:opacity-95 active:scale-[0.99] transition-all shadow-md mt-4"
+                  className="inline-block w-full py-3.5 bg-primary text-white font-bold rounded-2xl shadow-md text-sm hover:opacity-95 transition-all"
                >
                   {t("forgotPassword.backToLogin")}
                </Link>
             </div>
          ) : (
-            <form onSubmit={handleReset} noValidate className="space-y-4">
+            <form onSubmit={handleReset} noValidate className="space-y-5">
                {error && (
-                  <div className="p-4 bg-red-50 border border-red-200 text-red-700 text-xs rounded-2xl font-medium animate-fadeIn">
+                  <div className="bg-red-50 text-secondary p-4 rounded-2xl text-sm border border-red-200 animate-fadeIn">
                      {error}
                   </div>
                )}
@@ -102,10 +97,7 @@ export default function ForgotPasswordPage() {
                   </label>
                   <div className="relative">
                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <Mail
-                           size={18}
-                           className={emailError ? "text-red-400" : "text-gray-400"}
-                        />
+                        <Mail size={18} className={emailError ? "text-red-400" : "text-gray-400"} />
                      </div>
                      <input
                         type="email"
@@ -115,31 +107,29 @@ export default function ForgotPasswordPage() {
                            if (!touched) setTouched(true);
                         }}
                         onBlur={() => setTouched(true)}
-                        placeholder="ihre-email@beispiel.de"
                         className={`block w-full pl-11 pr-4 py-3.5 bg-gray-50/70 border-2 rounded-2xl text-gray-900 text-sm focus:outline-hidden transition-all ${
                            emailError
                               ? "border-red-400 focus:border-red-500 bg-red-50/20"
                               : "border-gray-100 focus:border-primary focus:bg-white"
                         }`}
+                        placeholder={t("login.email")}
                         aria-invalid={!!emailError}
                      />
                   </div>
                   {emailError && (
-                     <p className="mt-1.5 ml-1 text-xs text-red-600 font-medium animate-fadeIn">
-                        {emailError}
-                     </p>
+                     <p className="mt-1.5 ml-1 text-xs text-red-600 font-medium animate-fadeIn">{emailError}</p>
                   )}
                </div>
 
                <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/25 hover:opacity-95 active:scale-[0.99] transition-all text-base flex items-center justify-center disabled:opacity-50 mt-3 cursor-pointer"
+                  className="w-full bg-primary text-white py-4 rounded-2xl font-bold text-base hover:opacity-95 active:scale-[0.99] transition-all shadow-lg shadow-primary/25 disabled:opacity-50 flex justify-center items-center cursor-pointer"
                >
                   {loading ? (
                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   ) : (
-                     t("forgotPassword.sendLink")
+                     t("forgotPassword.sendResetLink")
                   )}
                </button>
             </form>

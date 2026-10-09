@@ -32,7 +32,7 @@ export function PdpStickyBar({
       >
          <div className="flex items-center gap-3 max-w-lg mx-auto">
             {/* Price Chip */}
-            <div className="flex-shrink-0 text-right">
+            <div className="shrink-0 text-right">
                <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider block leading-none mb-0.5">
                   {t("productDetail.total")}
                </span>
@@ -68,7 +68,7 @@ export function PdpStickyBar({
                            : t("catalog.loginToOrder")}
                      </span>
                      {totalItemsCount > 0 && isLoggedIn && !isAdded && (
-                        <span className="ml-1 min-w-[20px] h-5 bg-white/20 text-white text-[11px] font-black rounded-full flex items-center justify-center px-1.5">
+                        <span className="ml-1 min-w-5 h-5 bg-white/20 text-white text-[11px] font-black rounded-full flex items-center justify-center px-1.5">
                            {totalItemsCount}
                         </span>
                      )}

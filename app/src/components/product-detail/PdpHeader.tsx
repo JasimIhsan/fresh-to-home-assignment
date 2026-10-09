@@ -48,7 +48,7 @@ export function PdpHeader({ productName, category, isLoggedIn }: PdpHeaderProps)
                   >
                      <ShoppingCart size={19} strokeWidth={2.5} />
                      {totalItemsCount > 0 && (
-                        <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-secondary text-white text-[10px] font-black rounded-full flex items-center justify-center px-1 shadow-md animate-bounce-once">
+                        <span className="absolute -top-0.5 -right-0.5 min-w-4.5 h-4.5 bg-secondary text-white text-[10px] font-black rounded-full flex items-center justify-center px-1 shadow-md animate-bounce-once">
                            {totalItemsCount}
                         </span>
                      )}

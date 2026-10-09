@@ -74,6 +74,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     final auth = context.read<AuthService>();
+    final navigator = Navigator.of(context);
+
     final success = await auth.register(
       name: _nameController.text,
       email: _emailController.text,
@@ -84,7 +86,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (!mounted) return;
 
     if (success) {
-      Navigator.of(context).pushAndRemoveUntil(
+      navigator.pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const HomeScreen()),
         (route) => false,
       );

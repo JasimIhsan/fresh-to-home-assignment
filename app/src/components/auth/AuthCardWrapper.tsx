@@ -25,7 +25,7 @@ export function AuthCardWrapper({
    footer,
 }: AuthCardWrapperProps) {
    return (
-      <div className="min-h-screen bg-gradient-to-b from-purple-50/40 via-background to-background flex flex-col justify-between px-4 py-6 sm:py-10 selection:bg-primary/20">
+      <div className="min-h-screen bg-linear-to-b from-purple-50/40 via-background to-background flex flex-col justify-between px-4 py-6 sm:py-10 selection:bg-primary/20">
          {/* Top Navigation Bar: Back link & Language Switcher */}
          <div className="w-full max-w-md mx-auto flex items-center justify-between">
             <Link

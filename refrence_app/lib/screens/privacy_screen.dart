@@ -13,11 +13,11 @@ class PrivacyScreen extends StatelessWidget {
         foregroundColor: Colors.black87,
         elevation: 1,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+      body: const SingleChildScrollView(
+        padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
               'Datenschutzerklärung – Frisch nach Hause',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),

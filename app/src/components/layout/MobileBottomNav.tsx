@@ -85,7 +85,7 @@ export function MobileBottomNav() {
 
                         {/* Cart count badge */}
                         {item.badge !== null && item.badge !== undefined && (
-                           <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-secondary text-white text-[10px] font-black rounded-full flex items-center justify-center px-1 shadow-sm animate-bounce-once">
+                           <span className="absolute -top-1 -right-1 min-w-4.5 h-4.5 bg-secondary text-white text-[10px] font-black rounded-full flex items-center justify-center px-1 shadow-sm animate-bounce-once">
                               {item.badge}
                            </span>
                         )}

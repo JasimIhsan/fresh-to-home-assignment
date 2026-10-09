@@ -56,7 +56,7 @@ function RelatedProductCard({ product }: { product: Product }) {
          href={`/catalog/${product.id}`}
          className="group bg-white rounded-2xl border border-gray-100 shadow-xs hover:shadow-md hover:border-gray-200 transition-all duration-200 overflow-hidden flex flex-col"
       >
-         <div className="aspect-[4/3] overflow-hidden bg-gray-50 relative">
+         <div className="aspect-4/3 overflow-hidden bg-gray-50 relative">
             <img
                src={product.imageUrl}
                alt={product.name}

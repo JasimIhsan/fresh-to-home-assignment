@@ -79,7 +79,7 @@ export function PdpWeightSelector({ weight, onWeightChange, pricePerKg }: PdpWei
                >
                   <Minus size={16} strokeWidth={2.5} />
                </button>
-               <span className="font-extrabold text-gray-900 min-w-[64px] text-center text-sm tabular-nums">
+               <span className="font-extrabold text-gray-900 min-w-16 text-center text-sm tabular-nums">
                   {weight.toFixed(1).replace(".", ",")} kg
                </span>
                <button
@@ -94,7 +94,7 @@ export function PdpWeightSelector({ weight, onWeightChange, pricePerKg }: PdpWei
          </div>
 
          {/* Live Price Breakdown */}
-         <div className="flex items-center justify-between px-4 py-3.5 bg-gradient-to-r from-purple-50 to-violet-50 rounded-2xl border border-purple-100">
+         <div className="flex items-center justify-between px-4 py-3.5 bg-linear-to-r from-purple-50 to-violet-50 rounded-2xl border border-purple-100">
             <div>
                <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest block">
                   {t("productDetail.totalPrice")}

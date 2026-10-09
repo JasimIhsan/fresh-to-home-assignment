@@ -20,7 +20,7 @@ export default function CartPage() {
    const grandTotal = totalAmount + deliveryFee;
 
    return (
-      <div className="min-h-screen bg-gradient-to-b from-purple-50/40 via-background to-background pb-28">
+      <div className="min-h-screen bg-linear-to-b from-purple-50/40 via-background to-background pb-28">
          {/* Responsive Navigation Header */}
          <CartHeader
             totalItemsCount={totalItemsCount}

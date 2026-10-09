@@ -3,11 +3,13 @@ import { Menu, X, Globe } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 
 export const HomeHeader = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,9 +59,11 @@ export const HomeHeader = () => {
           <button onClick={toggleLanguage} className="flex items-center gap-1.5 text-sm font-medium hover:text-white transition-colors text-white/80 mr-2">
             <Globe size={16} /> {language.toUpperCase()}
           </button>
-          <Link href="/login" className="text-sm font-medium hover:text-white transition-colors text-white/80">
-            {t("home.login")}
-          </Link>
+          {!user && (
+            <Link href="/login" className="text-sm font-medium hover:text-white transition-colors text-white/80">
+              {t("home.login")}
+            </Link>
+          )}
           <Link href="/catalog" className="bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium hover:bg-primary/90 transition-all shadow-md shadow-primary/20 hover:shadow-primary/40 active:scale-95 inline-flex items-center justify-center">
             {t("header.order_button")}
           </Link>
@@ -101,11 +105,14 @@ export const HomeHeader = () => {
               {t("header.delivery_areas")}
             </Link>
             
-            <div className="h-px w-full bg-white/10 my-2" />
-            
-            <Link href="/login" className="hover:text-white transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
-              {t("home.login")}
-            </Link>
+            {!user && (
+              <>
+                <div className="h-px w-full bg-white/10 my-2" />
+                <Link href="/login" className="hover:text-white transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+                  {t("home.login")}
+                </Link>
+              </>
+            )}
           </nav>
 
           <div className="mt-8">

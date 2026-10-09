@@ -88,7 +88,7 @@ export function PdpImageGallery({ product }: PdpImageGalleryProps) {
    return (
       <>
          {/* Hero Image */}
-         <div className="relative w-full aspect-[4/3] md:aspect-[3/4] lg:aspect-square rounded-3xl overflow-hidden bg-gray-50 border border-gray-100 shadow-sm group select-none touch-pan-y" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} onTouchCancel={onTouchEnd}>
+         <div className="relative w-full aspect-4/3 md:aspect-3/4 lg:aspect-square rounded-3xl overflow-hidden bg-gray-50 border border-gray-100 shadow-sm group select-none touch-pan-y" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} onTouchCancel={onTouchEnd}>
             {/* Carousel Slider Track */}
             <div
                className={`flex w-full h-full ${isDragging ? "transition-none" : "transition-transform duration-300 ease-out"}`}
@@ -104,7 +104,7 @@ export function PdpImageGallery({ product }: PdpImageGalleryProps) {
                   return (
                      <div
                         key={i}
-                        className={`w-full h-full flex-shrink-0 relative ${isDragging ? "transition-none" : "transition-transform duration-300 ease-out"}`}
+                        className={`w-full h-full shrink-0 relative ${isDragging ? "transition-none" : "transition-transform duration-300 ease-out"}`}
                         style={{
                            transform: `scaleX(${slideScaleX})`,
                            transformOrigin: slideOrigin,
@@ -167,7 +167,7 @@ export function PdpImageGallery({ product }: PdpImageGalleryProps) {
                   <button
                      key={i}
                      onClick={() => setActiveIndex(i)}
-                     className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-200 cursor-pointer flex-shrink-0 ${i === activeIndex ? "border-primary shadow-md shadow-primary/20 scale-[1.05]" : "border-gray-200 hover:border-gray-300 opacity-70 hover:opacity-100"}`}
+                     className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all duration-200 cursor-pointer shrink-0 ${i === activeIndex ? "border-primary shadow-md shadow-primary/20 scale-[1.05]" : "border-gray-200 hover:border-gray-300 opacity-70 hover:opacity-100"}`}
                      aria-label={t("productDetail.viewImage").replace("{n}", String(i + 1))}
                   >
                      <img src={src} alt="" className="w-full h-full object-cover" />
@@ -178,7 +178,7 @@ export function PdpImageGallery({ product }: PdpImageGalleryProps) {
 
          {/* Fullscreen Modal */}
          {isZoomed && (
-            <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4" onClick={() => setIsZoomed(false)} role="dialog" aria-modal="true" aria-label={t("productDetail.zoomOpen")}>
+            <div className="fixed inset-0 z-100 bg-black/90 flex items-center justify-center p-4" onClick={() => setIsZoomed(false)} role="dialog" aria-modal="true" aria-label={t("productDetail.zoomOpen")}>
                <button className="absolute top-5 right-5 w-11 h-11 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors cursor-pointer" onClick={() => setIsZoomed(false)} aria-label={t("productDetail.zoomClose")}>
                   ✕
                </button>

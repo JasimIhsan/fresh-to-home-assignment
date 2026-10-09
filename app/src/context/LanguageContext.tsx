@@ -11,11 +11,17 @@ interface LanguageContextType {
    t: (key: string) => string;
 }
 
+type TranslationTree = {
+   [key: string]: string | TranslationTree;
+};
+
+const translationData = translations as unknown as Record<Language, TranslationTree>;
+
 function resolveTranslation(path: string, lang: Language): string {
    const keys = path.split(".");
 
    // Try selected language
-   let current: any = (translations as any)[lang];
+   let current: TranslationTree | string | undefined = translationData[lang];
    let found = true;
    for (const key of keys) {
       if (current && typeof current === "object" && key in current) {
@@ -31,7 +37,7 @@ function resolveTranslation(path: string, lang: Language): string {
 
    // Fallback to German if not found
    if (lang !== "de") {
-      let fallback: any = (translations as any)["de"];
+      let fallback: TranslationTree | string | undefined = translationData["de"];
       let fallbackFound = true;
       for (const key of keys) {
          if (fallback && typeof fallback === "object" && key in fallback) {

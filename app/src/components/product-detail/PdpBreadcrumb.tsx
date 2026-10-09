@@ -32,7 +32,7 @@ export function PdpBreadcrumb({ category, productName }: PdpBreadcrumbProps) {
             {category}
          </Link>
          <ChevronRight size={13} className="text-gray-300" />
-         <span className="text-gray-700 font-semibold truncate max-w-[200px]">{productName}</span>
+         <span className="text-gray-700 font-semibold truncate max-w-50">{productName}</span>
       </nav>
    );
 }

@@ -9,7 +9,7 @@ export default function PrivacyPage() {
    const router = useRouter();
 
    return (
-      <div className="min-h-screen bg-gradient-to-b from-purple-50/40 via-background to-background flex flex-col px-4 sm:px-6 py-8 sm:py-12 relative max-w-3xl mx-auto selection:bg-primary/20">
+      <div className="min-h-screen bg-linear-to-b from-purple-50/40 via-background to-background flex flex-col px-4 sm:px-6 py-8 sm:py-12 relative max-w-3xl mx-auto selection:bg-primary/20">
          <div className="flex items-center justify-between mb-8 w-full">
             <button
                onClick={() => router.back()}

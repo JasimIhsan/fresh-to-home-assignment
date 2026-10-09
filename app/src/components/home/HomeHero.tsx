@@ -19,7 +19,7 @@ export const HomeHero = () => {
             {/* Hero Copy */}
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-[1.1] mb-6 animate-fade-in-up animation-delay-100 drop-shadow-lg">
                {t("hero.title_1")} <br className="hidden md:block" />
-               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-rose-400 drop-shadow-none">{t("hero.title_2")}</span>
+               <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-rose-400 drop-shadow-none">{t("hero.title_2")}</span>
             </h1>
 
             <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10 animate-fade-in-up animation-delay-200 drop-shadow-md">{t("hero.description")}</p>

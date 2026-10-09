@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { BeforeInstallPromptEvent, NavigatorWithNetwork } from "@/types";
 import { Download, PlusSquare, Share, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -8,7 +9,7 @@ export function PwaInstallPrompt() {
    const { t } = useLanguage();
    const [isIOS, setIsIOS] = useState(false);
    const [isStandalone, setIsStandalone] = useState(false);
-   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
    const [showPrompt, setShowPrompt] = useState(false);
 
    useEffect(() => {
@@ -36,7 +37,8 @@ export function PwaInstallPrompt() {
       console.log("[PWA] isIOS calculated as:", isIosDevice);
 
       // Check if app is already installed
-      const isStandaloneMode = window.matchMedia("(display-mode: standalone)").matches || ("standalone" in window.navigator && (window.navigator as any).standalone);
+      const navWithNetwork = window.navigator as NavigatorWithNetwork;
+      const isStandaloneMode = window.matchMedia("(display-mode: standalone)").matches || Boolean(navWithNetwork.standalone);
       setIsStandalone(isStandaloneMode);
       console.log("[PWA] isStandaloneMode calculated as:", isStandaloneMode);
 
@@ -51,10 +53,10 @@ export function PwaInstallPrompt() {
 
       // Capture standard install prompt for Android/Chrome
       console.log("[PWA] Registering 'beforeinstallprompt' event listener.");
-      const handleBeforeInstallPrompt = (e: any) => {
+      const handleBeforeInstallPrompt = (e: Event) => {
          console.log("[PWA] ✅ 'beforeinstallprompt' EVENT FIRED!");
          e.preventDefault();
-         setDeferredPrompt(e);
+         setDeferredPrompt(e as BeforeInstallPromptEvent);
       };
 
       window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
@@ -85,7 +87,7 @@ export function PwaInstallPrompt() {
    }
 
    return (
-      <div className="fixed z-50 bottom-0 left-0 right-0 sm:bottom-6 sm:right-6 sm:left-auto w-full sm:w-[400px] transition-all duration-500 animate-slide-in-right">
+      <div className="fixed z-50 bottom-0 left-0 right-0 sm:bottom-6 sm:right-6 sm:left-auto w-full sm:w-100 transition-all duration-500 animate-slide-in-right">
          {/* Mobile: bottom sheet style. Desktop: floating card style */}
          <div className="bg-black/50 backdrop-blur-2xl sm:rounded-3xl rounded-t-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] border-t sm:border border-white/10 p-6 sm:p-8 flex flex-col gap-4 relative overflow-hidden">
             {/* Ambient glow */}

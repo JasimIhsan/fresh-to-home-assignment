@@ -1,9 +1,12 @@
 "use client";
 
+import { AdminOrderCustomerDetails } from "@/components/admin/AdminOrderCustomerDetails";
+import { AdminOrderItemsView } from "@/components/admin/AdminOrderItemsView";
+import { AdminOrderStatusActions } from "@/components/admin/AdminOrderStatusActions";
 import { useLanguage } from "@/context/LanguageContext";
 import { getOrderById, updateOrderStatus } from "@/lib/store";
 import { Order, OrderStatus } from "@/types";
-import { AlertCircle, ArrowLeft, CheckCircle2, Package, Truck, User } from "lucide-react";
+import { AlertCircle, ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 
@@ -87,116 +90,17 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
          )}
 
          {/* Status Management Bar */}
-         <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-xs space-y-3">
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">{t("admin.updateStatus")}</span>
-
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-               {(
-                  [
-                     { status: "pending", label: t("orders.statusPending"), bg: "hover:border-purple-300" },
-                     { status: "processing", label: t("orders.statusProcessing"), bg: "hover:border-amber-300" },
-                     { status: "shipped", label: t("orders.statusShipped"), bg: "hover:border-blue-300" },
-                     { status: "delivered", label: t("orders.statusDelivered"), bg: "hover:border-emerald-300" },
-                     { status: "cancelled", label: t("orders.statusCancelled"), bg: "hover:border-red-300" },
-                  ] as const
-               ).map((item) => (
-                  <button
-                     key={item.status}
-                     type="button"
-                     disabled={updating}
-                     onClick={() => handleUpdateStatus(item.status)}
-                     className={`p-3 rounded-2xl font-bold text-xs border-2 transition-all cursor-pointer ${order.status === item.status ? "bg-primary text-white border-primary shadow-md shadow-primary/20 scale-[1.02]" : `bg-gray-50 text-gray-700 border-gray-200 ${item.bg}`}`}
-                  >
-                     {item.label}
-                  </button>
-               ))}
-            </div>
-         </div>
+         <AdminOrderStatusActions
+            currentStatus={order.status}
+            updating={updating}
+            onUpdateStatus={handleUpdateStatus}
+         />
 
          {/* Customer and Delivery Details */}
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Customer Box */}
-            <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-xs space-y-3">
-               <h3 className="font-bold text-base text-gray-900 flex items-center space-x-2">
-                  <User size={18} className="text-primary" />
-                  <span>{t("admin.customerData")}</span>
-               </h3>
-
-               <div className="space-y-2 text-xs text-gray-600">
-                  <div className="flex justify-between py-1 border-b border-gray-50">
-                     <span className="text-gray-400">{t("signup.fullName")}:</span>
-                     <span className="font-bold text-gray-900">{order.customerName || "Max Mustermann"}</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-gray-50">
-                     <span className="text-gray-400">{t("login.email")}:</span>
-                     <span className="font-medium text-gray-900">{order.userEmail}</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-gray-50">
-                     <span className="text-gray-400">{t("checkout.phone")}:</span>
-                     <span className="font-medium text-gray-900">{order.phone || "-"}</span>
-                  </div>
-                  <div className="flex justify-between py-1">
-                     <span className="text-gray-400">User ID:</span>
-                     <span className="font-mono text-[10px] text-gray-500">{order.userId}</span>
-                  </div>
-               </div>
-            </div>
-
-            {/* Delivery Box */}
-            <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-xs space-y-3">
-               <h3 className="font-bold text-base text-gray-900 flex items-center space-x-2">
-                  <Truck size={18} className="text-primary" />
-                  <span>{t("admin.deliveryAndPayment")}</span>
-               </h3>
-
-               <div className="space-y-2 text-xs text-gray-600">
-                  <div className="flex justify-between py-1 border-b border-gray-50">
-                     <span className="text-gray-400">{t("orderDetail.address")}:</span>
-                     <span className="font-bold text-gray-900 text-right max-w-50">{order.address}</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-gray-50">
-                     <span className="text-gray-400">{t("orderDetail.timeSlot")}:</span>
-                     <span className="font-medium text-gray-900">{order.deliverySlot || t("checkout.slotTagStandard")}</span>
-                  </div>
-                  <div className="flex justify-between py-1">
-                     <span className="text-gray-400">{t("orderDetail.payment")}:</span>
-                     <span className="font-medium text-gray-900">{order.paymentMethod || t("checkout.paymentCreditCard")}</span>
-                  </div>
-               </div>
-            </div>
-         </div>
+         <AdminOrderCustomerDetails order={order} />
 
          {/* Ordered Items Table */}
-         <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-xs space-y-4">
-            <h3 className="font-bold text-base text-gray-900 flex items-center space-x-2">
-               <Package size={18} className="text-primary" />
-               <span>
-                  {t("orderDetail.itemsTitle")} ({order.items.length})
-               </span>
-            </h3>
-
-            <div className="divide-y divide-gray-100">
-               {order.items.map((item, idx) => (
-                  <div key={idx} className="py-3 flex justify-between items-center text-sm">
-                     <Link href={`/admin/products/${item.product.id}`} className="flex items-center space-x-3 group cursor-pointer">
-                        <img src={item.product.imageUrl} alt={item.product.name} className="w-12 h-12 rounded-xl object-cover group-hover:ring-2 group-hover:ring-primary/20 transition-all" />
-                        <div>
-                           <p className="font-bold text-gray-900 group-hover:text-primary transition-colors">{item.product.name}</p>
-                           <p className="text-xs text-gray-500">
-                              {item.weightKg.toFixed(1).replace(".", ",")} kg × {item.product.pricePerKg.toFixed(2).replace(".", ",")} € / kg
-                           </p>
-                        </div>
-                     </Link>
-                     <span className="font-black text-gray-900">{(item.weightKg * item.product.pricePerKg).toFixed(2).replace(".", ",")} €</span>
-                  </div>
-               ))}
-            </div>
-
-            <div className="border-t border-gray-200 pt-4 flex justify-between items-center text-lg font-black text-primary">
-               <span>{t("admin.orderTotal")}</span>
-               <span>{order.totalAmount.toFixed(2).replace(".", ",")} €</span>
-            </div>
-         </div>
+         <AdminOrderItemsView items={order.items} totalAmount={order.totalAmount} />
 
          {order.notes && (
             <div className="p-4 bg-purple-50 rounded-2xl text-xs text-primary">

@@ -39,19 +39,19 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const FreshToHomeLogo(fontSize: 40),
-            const SizedBox(height: 24),
-            const Text(
+            FreshToHomeLogo(fontSize: 40),
+            SizedBox(height: 24),
+            Text(
               'Frisches Fleisch. Direkt zu dir nach Hause.',
               style: TextStyle(fontSize: 14, color: Colors.black54),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 32),
-            const CircularProgressIndicator(color: Color(0xFF8E24AA)),
+            SizedBox(height: 32),
+            CircularProgressIndicator(color: Color(0xFF8E24AA)),
           ],
         ),
       ),

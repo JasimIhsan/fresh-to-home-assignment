@@ -1,5 +1,5 @@
 import { getApps, initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { Auth, getAuth } from "firebase/auth";
 
 const firebaseConfig = {
    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -13,4 +13,5 @@ const firebaseConfig = {
 // Initialize Firebase only if API key exists
 const app = getApps().length === 0 && process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? initializeApp(firebaseConfig) : getApps().length > 0 ? getApps()[0] : null;
 
-export const auth = app ? getAuth(app) : (null as any);
+export const auth: Auth | null = app ? getAuth(app) : null;
+

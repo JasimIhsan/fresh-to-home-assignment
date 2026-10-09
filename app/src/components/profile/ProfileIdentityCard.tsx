@@ -17,7 +17,7 @@ export function ProfileIdentityCard({ displayName, email }: ProfileIdentityCardP
          <div className="relative z-10 flex flex-col items-center text-center">
             {/* Monogram Avatar with gradient frame & verification badge */}
             <div className="relative mb-4">
-               <div className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-primary to-purple-500 p-1 shadow-lg shadow-primary/20">
+               <div className="w-24 h-24 rounded-3xl bg-linear-to-tr from-primary to-purple-500 p-1 shadow-lg shadow-primary/20">
                   <div className="w-full h-full rounded-[22px] bg-white flex items-center justify-center">
                      <span className="text-3xl font-black text-primary">
                         {displayName.charAt(0).toUpperCase()}
@@ -35,7 +35,7 @@ export function ProfileIdentityCard({ displayName, email }: ProfileIdentityCardP
             </h2>
             {email && (
                <p className="text-xs sm:text-sm text-gray-500 flex items-center gap-1.5 mt-1 font-medium truncate max-w-full">
-                  <Mail size={13} className="text-gray-400 flex-shrink-0" />
+                  <Mail size={13} className="text-gray-400 shrink-0" />
                   <span className="truncate">{email}</span>
                </p>
             )}

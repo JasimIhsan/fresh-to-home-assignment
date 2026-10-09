@@ -1,11 +1,15 @@
 "use client";
 
 import { AuthGuard } from "@/components/auth/AuthGuard";
+import { CheckoutAddressForm } from "@/components/checkout/CheckoutAddressForm";
+import { CheckoutPaymentForm } from "@/components/checkout/CheckoutPaymentForm";
+import { CheckoutSlotSelector } from "@/components/checkout/CheckoutSlotSelector";
+import { CheckoutSummary } from "@/components/checkout/CheckoutSummary";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { createOrder } from "@/lib/store";
-import { ArrowLeft, Banknote, Clock, CreditCard, FileText, MapPin, Phone, ShieldCheck, ShoppingBag, User } from "lucide-react";
+import { ArrowLeft, Check, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -25,6 +29,7 @@ export default function CheckoutPage() {
    const [paymentMethod, setPaymentMethod] = useState("card");
    const [notes, setNotes] = useState("");
    const [submitting, setSubmitting] = useState(false);
+   const [isSuccessOverlay, setIsSuccessOverlay] = useState(false);
    const [touched, setTouched] = useState<{
       fullName?: boolean;
       street?: boolean;
@@ -125,7 +130,11 @@ export default function CheckoutPage() {
          });
 
          clearCart();
-         router.push(`/checkout/success?orderId=${newOrder.id}`);
+         setIsSuccessOverlay(true);
+
+         setTimeout(() => {
+            router.push(`/checkout/success?orderId=${newOrder.id}`);
+         }, 3000);
       } finally {
          setSubmitting(false);
       }
@@ -161,212 +170,57 @@ export default function CheckoutPage() {
                      {/* Left Column: Delivery & Payment Details */}
                      <div className="md:col-span-2 space-y-6">
                         <form id="checkout-form" onSubmit={handlePlaceOrder} noValidate className="space-y-6">
-                           {/* Address Section */}
-                           <div className="bg-white p-6 rounded-3xl shadow-xs border border-gray-100 space-y-4">
-                              <h2 className="font-bold text-lg text-gray-900 flex items-center gap-2">
-                                 <MapPin size={20} className="text-primary" />
-                                 {t("checkout.deliveryAddress")}
-                              </h2>
+                           <CheckoutAddressForm
+                              fullName={fullName}
+                              setFullName={setFullName}
+                              street={street}
+                              setStreet={setStreet}
+                              zip={zip}
+                              setZip={setZip}
+                              city={city}
+                              setCity={setCity}
+                              phone={phone}
+                              setPhone={setPhone}
+                              touched={touched}
+                              setTouched={setTouched}
+                              fullNameError={fullNameError}
+                              streetError={streetError}
+                              zipError={zipError}
+                              cityError={cityError}
+                              phoneError={phoneError}
+                           />
 
-                              <div>
-                                 <label className="block text-xs font-semibold text-gray-700 mb-1">{t("checkout.fullName")}</label>
-                                 <div className="relative">
-                                    <User size={16} className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${fullNameError ? "text-red-400" : "text-gray-400"}`} />
-                                    <input
-                                       type="text"
-                                       value={fullName}
-                                       onChange={(e) => {
-                                          setFullName(e.target.value);
-                                          if (!touched.fullName) setTouched((prev) => ({ ...prev, fullName: true }));
-                                       }}
-                                       onBlur={() => setTouched((prev) => ({ ...prev, fullName: true }))}
-                                       placeholder="Max Mustermann"
-                                       className={`w-full pl-10 pr-4 py-3 bg-gray-50 border rounded-xl focus:bg-white focus:outline-hidden text-sm transition-all ${fullNameError ? "border-red-400 focus:border-red-500 bg-red-50/20" : "border-gray-200 focus:border-primary"}`}
-                                       aria-invalid={!!fullNameError}
-                                    />
-                                 </div>
-                                 {fullNameError && <p className="mt-1 ml-1 text-xs text-red-600 font-medium animate-fadeIn">{fullNameError}</p>}
-                              </div>
+                           <CheckoutSlotSelector deliverySlot={deliverySlot} setDeliverySlot={setDeliverySlot} />
 
-                              <div>
-                                 <label className="block text-xs font-semibold text-gray-700 mb-1">{t("checkout.street")}</label>
-                                 <input
-                                    type="text"
-                                    value={street}
-                                    onChange={(e) => {
-                                       setStreet(e.target.value);
-                                       if (!touched.street) setTouched((prev) => ({ ...prev, street: true }));
-                                    }}
-                                    onBlur={() => setTouched((prev) => ({ ...prev, street: true }))}
-                                    placeholder="Musterstraße 123"
-                                    className={`w-full px-4 py-3 bg-gray-50 border rounded-xl focus:bg-white focus:outline-hidden text-sm transition-all ${streetError ? "border-red-400 focus:border-red-500 bg-red-50/20" : "border-gray-200 focus:border-primary"}`}
-                                    aria-invalid={!!streetError}
-                                 />
-                                 {streetError && <p className="mt-1 ml-1 text-xs text-red-600 font-medium animate-fadeIn">{streetError}</p>}
-                              </div>
-
-                              <div className="grid grid-cols-2 gap-3">
-                                 <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-1">{t("checkout.zip")}</label>
-                                    <input
-                                       type="text"
-                                       value={zip}
-                                       onChange={(e) => {
-                                          setZip(e.target.value);
-                                          if (!touched.zip) setTouched((prev) => ({ ...prev, zip: true }));
-                                       }}
-                                       onBlur={() => setTouched((prev) => ({ ...prev, zip: true }))}
-                                       placeholder="10115"
-                                       className={`w-full px-4 py-3 bg-gray-50 border rounded-xl focus:bg-white focus:outline-hidden text-sm transition-all ${zipError ? "border-red-400 focus:border-red-500 bg-red-50/20" : "border-gray-200 focus:border-primary"}`}
-                                       aria-invalid={!!zipError}
-                                    />
-                                    {zipError && <p className="mt-1 ml-1 text-xs text-red-600 font-medium animate-fadeIn">{zipError}</p>}
-                                 </div>
-                                 <div>
-                                    <label className="block text-xs font-semibold text-gray-700 mb-1">{t("checkout.city")}</label>
-                                    <input
-                                       type="text"
-                                       value={city}
-                                       onChange={(e) => {
-                                          setCity(e.target.value);
-                                          if (!touched.city) setTouched((prev) => ({ ...prev, city: true }));
-                                       }}
-                                       onBlur={() => setTouched((prev) => ({ ...prev, city: true }))}
-                                       placeholder="Berlin"
-                                       className={`w-full px-4 py-3 bg-gray-50 border rounded-xl focus:bg-white focus:outline-hidden text-sm transition-all ${cityError ? "border-red-400 focus:border-red-500 bg-red-50/20" : "border-gray-200 focus:border-primary"}`}
-                                       aria-invalid={!!cityError}
-                                    />
-                                    {cityError && <p className="mt-1 ml-1 text-xs text-red-600 font-medium animate-fadeIn">{cityError}</p>}
-                                 </div>
-                              </div>
-
-                              <div>
-                                 <label className="block text-xs font-semibold text-gray-700 mb-1">{t("checkout.phone")}</label>
-                                 <div className="relative">
-                                    <Phone size={16} className={`absolute left-3.5 top-1/2 -translate-y-1/2 ${phoneError ? "text-red-400" : "text-gray-400"}`} />
-                                    <input
-                                       type="tel"
-                                       value={phone}
-                                       onChange={(e) => {
-                                          setPhone(e.target.value);
-                                          if (!touched.phone) setTouched((prev) => ({ ...prev, phone: true }));
-                                       }}
-                                       onBlur={() => setTouched((prev) => ({ ...prev, phone: true }))}
-                                       placeholder="+49 170 1234567"
-                                       className={`w-full pl-10 pr-4 py-3 bg-gray-50 border rounded-xl focus:bg-white focus:outline-hidden text-sm transition-all ${phoneError ? "border-red-400 focus:border-red-500 bg-red-50/20" : "border-gray-200 focus:border-primary"}`}
-                                       aria-invalid={!!phoneError}
-                                    />
-                                 </div>
-                                 {phoneError && <p className="mt-1 ml-1 text-xs text-red-600 font-medium animate-fadeIn">{phoneError}</p>}
-                              </div>
-                           </div>
-
-                           {/* Delivery Slot Selection */}
-                           <div className="bg-white p-6 rounded-3xl shadow-xs border border-gray-100 space-y-4">
-                              <h2 className="font-bold text-lg text-gray-900 flex items-center gap-2">
-                                 <Clock size={20} className="text-primary" />
-                                 {t("checkout.deliverySlot")}
-                              </h2>
-
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                 {[
-                                    { id: "morning", label: t("checkout.slotMorning"), tag: "Standard" },
-                                    { id: "afternoon", label: t("checkout.slotAfternoon"), tag: "Beliebt" },
-                                    { id: "evening", label: t("checkout.slotEvening"), tag: "Standard" },
-                                    { id: "express", label: t("checkout.slotExpress"), tag: "+2.00 €" },
-                                 ].map((slot) => (
-                                    <label key={slot.id} className={`p-3.5 rounded-2xl border-2 cursor-pointer flex items-center justify-between transition-all ${deliverySlot === slot.id ? "border-primary bg-primary-light/40 text-primary font-bold shadow-xs" : "border-gray-100 bg-gray-50 text-gray-700 hover:bg-gray-100 font-medium"}`}>
-                                       <div className="flex items-center space-x-2.5">
-                                          <input type="radio" name="deliverySlot" checked={deliverySlot === slot.id} onChange={() => setDeliverySlot(slot.id)} className="text-primary focus:ring-primary h-4 w-4" />
-                                          <span className="text-xs sm:text-sm">{slot.label}</span>
-                                       </div>
-                                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-white border border-gray-200 text-gray-600 font-semibold">{slot.tag}</span>
-                                    </label>
-                                 ))}
-                              </div>
-                           </div>
-
-                           {/* Payment Method Placeholder Selection */}
-                           <div className="bg-white p-6 rounded-3xl shadow-xs border border-gray-100 space-y-4">
-                              <h2 className="font-bold text-lg text-gray-900 flex items-center gap-2">
-                                 <CreditCard size={20} className="text-primary" />
-                                 {t("checkout.paymentMethod")}
-                              </h2>
-
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                 {[
-                                    { id: "card", label: t("checkout.paymentCreditCard"), icon: <CreditCard size={18} /> },
-                                    { id: "paypal", label: t("checkout.paymentPaypal"), icon: <span className="font-black text-xs">PP</span> },
-                                    { id: "applepay", label: t("checkout.paymentApplePay"), icon: <span className="font-black text-xs">Pay</span> },
-                                    { id: "cod", label: t("checkout.paymentCod"), icon: <Banknote size={18} /> },
-                                 ].map((pay) => (
-                                    <label key={pay.id} className={`p-3.5 rounded-2xl border-2 cursor-pointer flex items-center space-x-3 transition-all ${paymentMethod === pay.id ? "border-primary bg-primary-light/40 text-primary font-bold shadow-xs" : "border-gray-100 bg-gray-50 text-gray-700 hover:bg-gray-100 font-medium"}`}>
-                                       <input type="radio" name="paymentMethod" checked={paymentMethod === pay.id} onChange={() => setPaymentMethod(pay.id)} className="text-primary focus:ring-primary h-4 w-4 shrink-0" />
-                                       <span className="p-1.5 rounded-md bg-white text-gray-700 shadow-2xs shrink-0">{pay.icon}</span>
-                                       <span className="text-xs sm:text-sm font-semibold truncate">{pay.label}</span>
-                                    </label>
-                                 ))}
-                              </div>
-
-                              <div>
-                                 <label className="block text-xs font-semibold text-gray-700 mb-1">{t("checkout.notes")}</label>
-                                 <div className="relative">
-                                    <FileText size={16} className="absolute left-3.5 top-3.5 text-gray-400" />
-                                    <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t("checkout.notesPlaceholder")} className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-hidden focus:border-primary text-sm transition-all" />
-                                 </div>
-                              </div>
-                           </div>
+                           <CheckoutPaymentForm paymentMethod={paymentMethod} setPaymentMethod={setPaymentMethod} notes={notes} setNotes={setNotes} />
                         </form>
                      </div>
 
                      {/* Right Column: Order Summary & Place Order CTA */}
                      <div className="md:col-span-1 space-y-4">
-                        <div className="bg-white p-6 rounded-3xl shadow-xs border border-gray-100 space-y-4 sticky top-24">
-                           <h2 className="font-bold text-lg text-gray-900 border-b border-gray-100 pb-3">{t("checkout.orderSummary")}</h2>
-
-                           <div className="space-y-3 divide-y divide-gray-50 max-h-60 overflow-y-auto pr-1">
-                              {items.map((item) => (
-                                 <div key={item.product.id} className="pt-3 first:pt-0 flex justify-between items-center text-sm">
-                                    <div className="pr-2">
-                                       <p className="font-semibold text-gray-900 truncate max-w-45">{item.product.name}</p>
-                                       <p className="text-xs text-gray-500">
-                                          {item.weightKg.toFixed(1).replace(".", ",")} kg × {item.product.pricePerKg.toFixed(2).replace(".", ",")} €
-                                       </p>
-                                    </div>
-                                    <span className="font-bold text-gray-800 whitespace-nowrap">{(item.weightKg * item.product.pricePerKg).toFixed(2).replace(".", ",")} €</span>
-                                 </div>
-                              ))}
-                           </div>
-
-                           <div className="border-t border-gray-100 pt-3 space-y-2 text-sm text-gray-600">
-                              <div className="flex justify-between">
-                                 <span>{t("cart.subtotal")}</span>
-                                 <span>{totalAmount.toFixed(2).replace(".", ",")} €</span>
-                              </div>
-                              <div className="flex justify-between">
-                                 <span>{t("cart.deliveryFee")}</span>
-                                 <span>{deliveryFee === 0 ? <span className="text-emerald-600 font-bold">{t("cart.freeDelivery")}</span> : `${deliveryFee.toFixed(2).replace(".", ",")} €`}</span>
-                              </div>
-                           </div>
-
-                           <div className="border-t border-gray-200 pt-4 flex justify-between items-center text-lg font-black text-primary">
-                              <span>{t("checkout.total")}</span>
-                              <span>{grandTotal.toFixed(2).replace(".", ",")} €</span>
-                           </div>
-
-                           <button type="submit" form="checkout-form" disabled={submitting} className="w-full mt-4 bg-primary hover:bg-purple-700 text-white py-4 rounded-2xl font-bold text-base transition-all shadow-lg hover:shadow-xl disabled:opacity-50 flex items-center justify-center cursor-pointer">
-                              {submitting ? <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" /> : t("checkout.placeOrder")}
-                           </button>
-
-                           <div className="flex items-center space-x-2 text-[11px] text-gray-500 justify-center pt-2">
-                              <ShieldCheck size={14} className="text-emerald-600" />
-                              <span>{t("checkout.sslNotice")}</span>
-                           </div>
-                        </div>
+                        <CheckoutSummary items={items} totalAmount={totalAmount} deliveryFee={deliveryFee} grandTotal={grandTotal} submitting={submitting} />
                      </div>
                   </>
                )}
             </main>
+
+            {/* Fullscreen Success Overlay */}
+            {isSuccessOverlay && (
+               <div className="fixed inset-0 z-50 bg-primary flex flex-col items-center justify-center p-6 text-white text-center animate-in fade-in duration-300 select-none" role="status" aria-live="polite">
+                  {/* Success Badge */}
+                  <div className="relative mb-6">
+                     {/* Soft ambient ring */}
+                     <div className="absolute inset-0 rounded-full bg-white/20 animate-ping duration-1000" />
+                     <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white text-primary flex items-center justify-center shadow-2xl shadow-black/25 animate-in zoom-in-75 duration-300">
+                        <Check size={56} className="stroke-[3.5] text-primary" />
+                     </div>
+                  </div>
+
+                  {/* Order placed successfully text */}
+                  <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mb-2 animate-in slide-in-from-bottom-4 duration-300 delay-100">{t("checkout.orderPlacedSuccessfully") || "Order placed successfully"}</h2>
+                  <p className="text-white/80 text-sm sm:text-base font-medium max-w-sm animate-in slide-in-from-bottom-3 duration-300 delay-150">{t("checkout.orderSuccessDesc")}</p>
+               </div>
+            )}
          </div>
       </AuthGuard>
    );

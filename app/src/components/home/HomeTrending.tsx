@@ -24,7 +24,7 @@ export function HomeTrending() {
             {/* Bento Grid Layout */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 md:h-150 w-full">
                {/* Main Large Card - Beef */}
-               <Link href="/catalog" className="group relative col-span-1 md:col-span-2 rounded-[2rem] overflow-hidden shadow-2xl hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] transition-all duration-500 block h-[350px] md:h-full min-h-0 w-full border border-white/10">
+               <Link href="/catalog" className="group relative col-span-1 md:col-span-2 rounded-[2rem] overflow-hidden shadow-2xl hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] transition-all duration-500 block h-87.5 md:h-full min-h-0 w-full border border-white/10">
                   <img src="/images/products/raw_beef_steak.jpg" alt="Premium Beef" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
 
@@ -43,9 +43,9 @@ export function HomeTrending() {
                {/* Right Column Stack */}
                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 md:grid-rows-2 gap-4 md:gap-6 col-span-1 h-auto md:h-full min-h-0">
                   {/* Top Right - Chicken */}
-                  <Link href="/catalog" className="group relative rounded-[2rem] overflow-hidden shadow-2xl hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] transition-all duration-500 block h-[250px] md:h-full min-h-0 w-full border border-white/10">
+                  <Link href="/catalog" className="group relative rounded-[2rem] overflow-hidden shadow-2xl hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] transition-all duration-500 block h-62.5 md:h-full min-h-0 w-full border border-white/10">
                      <img src="/images/products/raw_chicken_breast.jpg" alt="Fresh Chicken" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
+                     <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
 
                      <div className="absolute bottom-6 left-6 right-6">
                         <div className="w-8 h-1 bg-orange-400 rounded-full mb-3 transform origin-left transition-transform duration-300 group-hover:scale-x-150"></div>
@@ -57,9 +57,9 @@ export function HomeTrending() {
                   </Link>
 
                   {/* Bottom Right - Lamb */}
-                  <Link href="/catalog" className="group relative rounded-[2rem] overflow-hidden shadow-2xl hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] transition-all duration-500 block h-[250px] md:h-full min-h-0 w-full border border-white/10">
+                  <Link href="/catalog" className="group relative rounded-[2rem] overflow-hidden shadow-2xl hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] transition-all duration-500 block h-62.5 md:h-full min-h-0 w-full border border-white/10">
                      <img src="/images/products/raw_lamb_chops.jpg" alt="Lamb Cuts" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
+                     <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
 
                      <div className="absolute bottom-6 left-6 right-6">
                         <div className="w-8 h-1 bg-amber-600 rounded-full mb-3 transform origin-left transition-transform duration-300 group-hover:scale-x-150"></div>
