@@ -5,7 +5,6 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:fresh_to_home/main.dart';
@@ -16,6 +15,7 @@ void main() {
     await tester.pumpWidget(const FreshToHomeApp());
 
     // Verify logo and elements render
-    expect(find.text('Frisches Fleisch. Direkt zu dir nach Hause.'), findsOneWidget);
+    expect(find.text('Frisches Fleisch. Direkt zu dir nach Hause.'),
+        findsOneWidget);
   });
 }
