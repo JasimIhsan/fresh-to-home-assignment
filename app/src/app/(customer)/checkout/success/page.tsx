@@ -40,8 +40,8 @@ function OrderConfirmationContent() {
 
   return (
     <div className="bg-background min-h-screen pb-20">
-      {/* Top Accent Hero Banner */}
-      <div className="from-primary/10 via-primary/5 relative bg-linear-to-b to-transparent px-4 pt-12 pb-16 text-center sm:px-6">
+      {/* Top Accent Hero Banner - Full Width on Web Screen */}
+      <div className="from-primary/10 via-primary/5 relative bg-linear-to-b to-transparent px-4 pt-12 pb-16 text-center sm:px-6 md:-mx-6 md:px-6 lg:-mx-8 lg:px-8">
         <div className="mx-auto max-w-2xl space-y-4">
           {/* Animated Icon Pill */}
           <div className="animate-in zoom-in-75 inline-flex items-center justify-center rounded-3xl bg-emerald-500/10 p-3 text-emerald-600 shadow-sm ring-8 ring-emerald-500/5 duration-300 sm:p-3.5">
