@@ -4,8 +4,8 @@
  */
 export type FieldErrors<F extends string> = Partial<Record<F, string>>;
 
-export const MIN_PASSWORD_LENGTH = 6;
-export const MIN_NAME_LENGTH = 2;
+const MIN_PASSWORD_LENGTH = 6;
+const MIN_NAME_LENGTH = 2;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_PATTERN = /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]{5,15}$/;

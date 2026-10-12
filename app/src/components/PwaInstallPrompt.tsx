@@ -14,33 +14,15 @@ export function PwaInstallPrompt() {
   const [showPrompt, setShowPrompt] = useState(false);
 
   useEffect(() => {
-    console.log("[PWA] Component mounted. Initializing checks...");
-
     if ("serviceWorker" in navigator) {
-      console.log(
-        "[PWA] Service Worker is supported. Attempting registration..."
-      );
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((registration) => {
-          console.log(
-            "[PWA] ServiceWorker registration successful with scope: ",
-            registration.scope
-          );
-        })
-        .catch((err) => {
-          console.error("[PWA] ServiceWorker registration failed: ", err);
-        });
-    } else {
-      console.log("[PWA] Service Worker is NOT supported in this browser.");
+      navigator.serviceWorker.register("/sw.js").catch((err) => {
+        console.error("[PWA] ServiceWorker registration failed: ", err);
+      });
     }
 
     // Check if device is iOS
     const userAgent = window.navigator.userAgent.toLowerCase();
-    const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
-    setIsIOS(isIosDevice);
-    console.log("[PWA] Detected userAgent:", userAgent);
-    console.log("[PWA] isIOS calculated as:", isIosDevice);
+    setIsIOS(/iphone|ipad|ipod/.test(userAgent));
 
     // Check if app is already installed
     const navWithNetwork = window.navigator as NavigatorWithNetwork;
@@ -48,25 +30,14 @@ export function PwaInstallPrompt() {
       window.matchMedia("(display-mode: standalone)").matches ||
       Boolean(navWithNetwork.standalone);
     setIsStandalone(isStandaloneMode);
-    console.log("[PWA] isStandaloneMode calculated as:", isStandaloneMode);
 
     // If not installed, show our custom prompt after a delay
     if (!isStandaloneMode) {
-      console.log(
-        "[PWA] App is not installed. Setting 3 second timer for prompt..."
-      );
-      setTimeout(() => {
-        console.log(
-          "[PWA] 3 second timer finished. Setting showPrompt to true."
-        );
-        setShowPrompt(true);
-      }, 3000);
+      setTimeout(() => setShowPrompt(true), 3000);
     }
 
     // Capture standard install prompt for Android/Chrome
-    console.log("[PWA] Registering 'beforeinstallprompt' event listener.");
     const handleBeforeInstallPrompt = (e: Event) => {
-      console.log("[PWA] ✅ 'beforeinstallprompt' EVENT FIRED!");
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
@@ -80,15 +51,9 @@ export function PwaInstallPrompt() {
   }, []);
 
   const handleInstallClick = async () => {
-    console.log(
-      "[PWA] Install button clicked. deferredPrompt exists:",
-      !!deferredPrompt
-    );
     if (deferredPrompt) {
-      console.log("[PWA] Triggering deferredPrompt.prompt()...");
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      console.log("[PWA] User choice outcome:", outcome);
       if (outcome === "accepted") {
         setShowPrompt(false);
       }
@@ -96,16 +61,7 @@ export function PwaInstallPrompt() {
     }
   };
 
-  console.log(
-    `[PWA] Render Evaluation -> isStandalone: ${isStandalone}, showPrompt: ${showPrompt}, isIOS: ${isIOS}, hasDeferredPrompt: ${!!deferredPrompt}`
-  );
-
   if (isStandalone || !showPrompt || (!isIOS && !deferredPrompt)) {
-    if (!isStandalone && showPrompt && !isIOS && !deferredPrompt) {
-      console.log(
-        "[PWA] ⚠️ Prompt is hidden because it's not iOS and 'beforeinstallprompt' hasn't fired yet."
-      );
-    }
     return null;
   }
 

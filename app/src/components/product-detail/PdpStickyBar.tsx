@@ -10,7 +10,6 @@ interface PdpStickyBarProps {
   isAdded: boolean;
   isLoggedIn: boolean;
   onAddToCart: () => void;
-  productName: string;
   isOffline?: boolean;
 }
 
@@ -19,7 +18,6 @@ export function PdpStickyBar({
   isAdded,
   isLoggedIn,
   onAddToCart,
-  productName,
   isOffline = false,
 }: PdpStickyBarProps) {
   const { t } = useLanguage();

@@ -91,15 +91,6 @@ export function PdpImageGallery({ product }: PdpImageGalleryProps) {
     ? 1 + Math.min(Math.abs(dragOffset) / 250, 0.25)
     : 1;
 
-  // For the track:
-  // When at first image (activeIndex === 0) pulling left-to-right (dragOffset > 0): pinned at left (0%), stretches to right -> transformOrigin: "0% center"
-  // When at last image (activeIndex === images.length - 1) pulling right-to-left (dragOffset < 0): pinned at right border (100%), stretches to left -> transformOrigin: "100% center"
-  const stretchOrigin = isOverPullingFirst
-    ? "0% center"
-    : isOverPullingLast
-      ? "100% center"
-      : "center";
-
   return (
     <>
       {/* Hero Image */}

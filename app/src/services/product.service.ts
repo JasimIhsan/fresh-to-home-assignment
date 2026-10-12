@@ -39,7 +39,7 @@ export interface ProductMetrics {
 
 export type StockAdjustMode = "set" | "add";
 
-export class ProductService {
+class ProductService {
   /** Distinct categories, prefixed with the "all" option. */
   getCategories(products: readonly Product[]): string[] {
     const categories = new Set(products.map((p) => p.category));

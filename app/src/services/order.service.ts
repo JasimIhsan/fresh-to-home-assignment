@@ -15,7 +15,7 @@ export interface DashboardStats {
   recentOrders: readonly Order[];
 }
 
-export class OrderService {
+class OrderService {
   /** Matches status exactly and the query against id, customer and address. */
   filter(orders: readonly Order[], { status, query }: OrderFilter): Order[] {
     const q = query?.trim().toLowerCase() ?? "";

@@ -20,7 +20,7 @@ export interface OrderStatusBadgeConfig {
   icon: React.ReactNode;
 }
 
-export function useOrderStatusBadge() {
+function useOrderStatusBadge() {
   const { t } = useLanguage();
 
   return (status: OrderStatus): OrderStatusBadgeConfig => {

@@ -51,8 +51,3 @@ export async function requireAdmin(
   }
   return user;
 }
-
-/** Non-redirecting admin check for Server Actions. */
-export async function isAdmin(): Promise<boolean> {
-  return (await getCurrentUser())?.role === "admin";
-}

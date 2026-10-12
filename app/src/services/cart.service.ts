@@ -1,7 +1,7 @@
 import { CartItem, Product } from "@/types";
 
 export const FREE_SHIPPING_THRESHOLD = 50;
-export const DELIVERY_FEE = 4.9;
+const DELIVERY_FEE = 4.9;
 
 export interface CartSummary {
   subtotal: number;
@@ -18,7 +18,7 @@ function roundWeight(weightKg: number): number {
  * Cart pricing rules and per-user cart persistence. Item operations are
  * pure — they return a new array and never mutate the input.
  */
-export class CartService {
+class CartService {
   private storageKey(userId: string): string {
     return `cart_${userId}`;
   }

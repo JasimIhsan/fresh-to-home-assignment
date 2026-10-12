@@ -123,7 +123,6 @@ export function PdpStickyBarSlot() {
       isAdded={s.isAdded}
       isLoggedIn={s.isLoggedIn}
       onAddToCart={s.addToCart}
-      productName={s.product.name}
       isOffline={s.isOffline}
     />
   );
