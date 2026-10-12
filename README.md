@@ -16,7 +16,7 @@
 - **🛒 Product Catalog & Smart Cart:** Real-time stock display ("Ausverkauft" indicator when out-of-stock), incremental weight management (0.5 kg units), and persistent carts.
 - **⚡ High Performance & Fluid UX:** Built with Next.js App Router, React 19, Motion (Framer Motion animations), Lucide icons, and Tailwind CSS v4 styling.
 - **📍 Multi-Address Delivery:** Support for customer address management with primary address selection.
-- **🛡️ Data Persistence & Auth:** Authenticated via Firebase Authentication (Email/Password & Google OAuth) with client-side state and data persisted via LocalStorage / Zustand.
+- **🛡️ Data Persistence & Auth:** Authenticated via Supabase Auth (Email/Password) with client-side state and data persisted via LocalStorage / Zustand.
 - **📋 Admin Management Capabilities:** Built-in flows to inspect orders, update order lifecycles (`PLACED` -> `OUT_FOR_DELIVERY` -> `DELIVERED`), toggle product availability, and manage inventory.
 
 ---
@@ -33,7 +33,7 @@ The live application is hosted and accessible at:
 | Layer | Technology / Service | Role & Justification |
 | :--- | :--- | :--- |
 | **Frontend Framework** | [Next.js](https://nextjs.org/) (App Router, React 19) | Server-side rendering, client components, and optimal PWA routing. |
-| **Authentication** | [Firebase Auth](https://firebase.google.com/docs/auth) | User authentication, account creation, and Google Sign-In support. |
+| **Authentication** | [Supabase Auth](https://supabase.com/docs/guides/auth) | User authentication, account creation, email confirmation, and password recovery. |
 | **Styling & UI** | [Tailwind CSS v4](https://tailwindcss.com/), Motion, Lucide Icons | Modern, mobile-first design system with smooth micro-interactions. |
 | **State Management & Storage** | [Zustand](https://github.com/pmndrs/zustand) + LocalStorage | Client-side state persistence for cart, orders, delivery addresses, and user profiles. |
 | **Hosting & Edge Delivery** | Vercel Edge CDN | Ultra-fast global static asset caching and deployment. |
@@ -79,15 +79,11 @@ fresh_to_home/
    ```
 
 3. **Configure Environment Variables:**
-   Create a `.env.local` file in the `app` directory with your Firebase configuration:
+   Create a `.env.local` file in the `app` directory with your Supabase project credentials (Project Settings → API Keys):
    ```env
    NEXT_PUBLIC_APP_URL=http://localhost:3000
-   NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-   NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_your_key
    ```
 
 4. **Run the development server:**

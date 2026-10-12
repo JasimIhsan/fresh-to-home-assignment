@@ -5,12 +5,7 @@ import { AdminProductMediaOverview } from "@/components/admin/AdminProductMediaO
 import { AdminProductModals } from "@/components/admin/AdminProductModals";
 import { AdminProductSidebar } from "@/components/admin/AdminProductSidebar";
 import { useLanguage } from "@/context/LanguageContext";
-import {
-  deleteProduct,
-  getProductById,
-  updateProductStatus,
-  updateProductStock,
-} from "@/lib/store";
+import { productService, type StockAdjustMode } from "@/services";
 import { Product, ProductStatus } from "@/types";
 import {
   AlertTriangle,
@@ -41,7 +36,8 @@ export default function AdminProductDetailPage({
   const [isStockModalOpen, setIsStockModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [stockInput, setStockInput] = useState<string>("0");
-  const [stockAdjustMode, setStockAdjustMode] = useState<"set" | "add">("set");
+  const [stockAdjustMode, setStockAdjustMode] =
+    useState<StockAdjustMode>("set");
   const [notification, setNotification] = useState<{
     message: string;
     type: "success" | "error";
@@ -59,7 +55,7 @@ export default function AdminProductDetailPage({
   };
 
   useEffect(() => {
-    const found = getProductById(id);
+    const found = productService.getById(id);
     if (found) {
       setProduct(found);
       setStockInput((found.stockKg ?? 0).toString());
@@ -103,22 +99,21 @@ export default function AdminProductDetailPage({
     );
   }
 
-  // Derive administrative and operational metrics
-  const retailPrice = product.pricePerKg || 0;
-  const wholesaleCost = product.wholesaleCostPerKg ?? retailPrice * 0.6;
-  const grossMargin = retailPrice - wholesaleCost;
-  const marginPercentage =
-    retailPrice > 0 ? (grossMargin / retailPrice) * 100 : 0;
-  const stockLevel = product.stockKg ?? 0;
-  const reservedStock = product.reservedStockKg ?? 0;
-  const availableStock = Math.max(0, stockLevel - reservedStock);
-  const reorderPoint = product.reorderPointKg ?? 15;
-  const isLowStock = stockLevel <= reorderPoint;
-  const currentStatus: ProductStatus =
-    product.status || (product.isAvailable ? "active" : "draft");
+  const {
+    retailPrice,
+    wholesaleCost,
+    grossMargin,
+    marginPercentage,
+    stockLevel,
+    reservedStock,
+    availableStock,
+    reorderPoint,
+    isLowStock,
+    status: currentStatus,
+  } = productService.getMetrics(product);
 
   const handleStatusChange = (newStatus: ProductStatus) => {
-    const updated = updateProductStatus(product.id, newStatus);
+    const updated = productService.setStatus(product.id, newStatus);
     if (updated) {
       setProduct({ ...updated });
       showNotification(
@@ -129,28 +124,27 @@ export default function AdminProductDetailPage({
 
   const handleStockAdjustmentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const parsed = parseFloat(stockInput);
-    if (isNaN(parsed) || parsed < 0) return;
-
-    const targetStock =
-      stockAdjustMode === "set" ? parsed : (product.stockKg ?? 0) + parsed;
-    const updated = updateProductStock(product.id, targetStock);
-    if (updated) {
-      setProduct({ ...updated });
+    const result = productService.adjustStock(
+      product,
+      parseFloat(stockInput),
+      stockAdjustMode
+    );
+    if (result) {
+      setProduct({ ...result.product });
       setIsStockModalOpen(false);
-      showNotification(`${t("admin.stockUpdatedSuccess")}: ${targetStock} kg`);
+      showNotification(
+        `${t("admin.stockUpdatedSuccess")}: ${result.stockKg} kg`
+      );
     }
   };
 
   const handleDeleteConfirm = () => {
-    deleteProduct(product.id);
+    productService.delete(product.id);
     setIsDeleteModalOpen(false);
     router.push("/admin/products");
   };
 
-  const gallery = [product.imageUrl, ...(product.galleryImages || [])].filter(
-    (url, idx, self) => url && self.indexOf(url) === idx
-  );
+  const gallery = productService.getGallery(product);
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 pb-12">

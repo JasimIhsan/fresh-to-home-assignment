@@ -4,8 +4,7 @@ import { AuthCardWrapper } from "@/components/auth/AuthCardWrapper";
 import { LoginFormFields } from "@/components/auth/LoginFormFields";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
-import { auth } from "@/lib/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { hasErrors, validateLoginForm } from "@/services";
 import { LogIn } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -13,7 +12,7 @@ import { Suspense, useState } from "react";
 
 function LoginForm() {
   const { t } = useLanguage();
-  const { role } = useAuth();
+  const { role, signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -28,52 +27,30 @@ function LoginForm() {
   const redirectUrl =
     searchParams.get("redirect") || (role === "admin" ? "/admin" : "/catalog");
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const getEmailError = () => {
-    if (!email.trim()) return t("validation.emailRequired");
-    if (!emailRegex.test(email.trim())) return t("validation.emailInvalid");
-    return "";
-  };
-
-  const getPasswordError = () => {
-    if (!password) return t("validation.passwordRequired");
-    if (password.length < 6) return t("validation.passwordMinLength");
-    return "";
-  };
-
-  const emailError = touched.email ? getEmailError() : "";
-  const passwordError = touched.password ? getPasswordError() : "";
+  const errors = validateLoginForm({ email, password });
+  const emailError = touched.email && errors.email ? t(errors.email) : "";
+  const passwordError =
+    touched.password && errors.password ? t(errors.password) : "";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched({ email: true, password: true });
-
-    const eError = getEmailError();
-    const pError = getPasswordError();
-    if (eError || pError) {
-      return;
-    }
-
-    if (!auth) {
-      setError("Firebase is not configured.");
-      return;
-    }
+    if (hasErrors(errors)) return;
 
     setLoading(true);
     setError("");
 
-    try {
-      // Mutual exclusivity: ensure any admin session is cleared when customer logs in
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("fth_admin_session");
-      }
-      await signInWithEmailAndPassword(auth, email.trim(), password);
-      router.push(redirectUrl);
-    } catch {
-      setError(t("login.error"));
-    } finally {
-      setLoading(false);
+    const result = await signIn(email, password);
+    setLoading(false);
+    if (result.error) {
+      setError(
+        result.error.code === "not_configured"
+          ? result.error.message
+          : t("login.error")
+      );
+      return;
     }
+    router.push(redirectUrl);
   };
 
   return (

@@ -6,8 +6,12 @@ import {
 } from "@/components/admin/AdminProductFormFields";
 import { AdminProductFormSidebar } from "@/components/admin/AdminProductFormSidebar";
 import { useLanguage } from "@/context/LanguageContext";
-import { saveProduct } from "@/lib/store";
-import { Product } from "@/types";
+import {
+  hasErrors,
+  productService,
+  validateProductForm,
+  type ProductFormInput,
+} from "@/services";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -43,36 +47,25 @@ export default function NewProductPage() {
     origin?: boolean;
   }>({});
 
-  const getNameError = () => {
-    if (!name.trim()) return t("validation.productNameRequired");
-    return "";
+  const formInput: ProductFormInput = {
+    name,
+    category,
+    pricePerKg,
+    stockKg,
+    isAvailable,
+    origin,
+    imageUrl,
+    description,
   };
-
-  const getPriceError = () => {
-    const val = parseFloat(pricePerKg);
-    if (!pricePerKg.trim() || isNaN(val) || val <= 0) {
-      return t("validation.priceRequired");
-    }
-    return "";
+  const errors = validateProductForm(formInput);
+  const fieldError = (field: keyof typeof touched) => {
+    const key = errors[field];
+    return touched[field] && key ? t(key) : "";
   };
-
-  const getStockError = () => {
-    const val = parseFloat(stockKg);
-    if (!stockKg.trim() || isNaN(val) || val < 0) {
-      return t("validation.stockRequired");
-    }
-    return "";
-  };
-
-  const getOriginError = () => {
-    if (!origin.trim()) return t("validation.originRequired");
-    return "";
-  };
-
-  const nameError = touched.name ? getNameError() : "";
-  const priceError = touched.pricePerKg ? getPriceError() : "";
-  const stockError = touched.stockKg ? getStockError() : "";
-  const originError = touched.origin ? getOriginError() : "";
+  const nameError = fieldError("name");
+  const priceError = fieldError("pricePerKg");
+  const stockError = fieldError("stockKg");
+  const originError = fieldError("origin");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,29 +76,10 @@ export default function NewProductPage() {
       origin: true,
     });
 
-    const nErr = getNameError();
-    const pErr = getPriceError();
-    const sErr = getStockError();
-    const oErr = getOriginError();
-
-    if (nErr || pErr || sErr || oErr) return;
+    if (hasErrors(errors)) return;
 
     setSaving(true);
-    const newProduct: Product = {
-      id: `prod_${Date.now()}`,
-      name: name.trim(),
-      description:
-        description.trim() ||
-        "Frisches Qualitätsprodukt aus sorgfältig kontrollierter Aufzucht.",
-      pricePerKg: parseFloat(pricePerKg) || 19.9,
-      stockKg: parseFloat(stockKg) || 50,
-      imageUrl: imageUrl || SAMPLE_IMAGES[0].url,
-      isAvailable,
-      category,
-      origin: origin.trim() || "Deutschland",
-    };
-
-    saveProduct(newProduct);
+    productService.create(formInput, SAMPLE_IMAGES[0].url);
     setTimeout(() => {
       setSaving(false);
       router.push("/admin/products");

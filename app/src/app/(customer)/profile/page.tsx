@@ -11,7 +11,7 @@ import { ProfileStats } from "@/components/profile/ProfileStats";
 import { LogoutConfirmModal } from "@/components/ui/LogoutConfirmModal";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
-import { getStoredOrders } from "@/lib/store";
+import { orderService } from "@/services";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -25,8 +25,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user) {
-      const orders = getStoredOrders(user.uid);
-      setOrderCount(orders.length);
+      setOrderCount(orderService.listForCustomer(user.id).length);
     }
   }, [user]);
 

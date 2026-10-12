@@ -3,7 +3,7 @@
 import { AdminOrdersFilter } from "@/components/admin/AdminOrdersFilter";
 import { AdminOrdersTable } from "@/components/admin/AdminOrdersTable";
 import { useLanguage } from "@/context/LanguageContext";
-import { getStoredOrders, updateOrderStatus } from "@/lib/store";
+import { ALL_STATUSES, orderService } from "@/services";
 import { Order, OrderStatus } from "@/types";
 import { useEffect, useMemo, useState } from "react";
 
@@ -11,35 +11,27 @@ export default function AdminOrdersPage() {
   const { t } = useLanguage();
   const [orders, setOrders] = useState<Order[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [selectedStatus, setSelectedStatus] = useState<string>(ALL_STATUSES);
 
   const refreshOrders = () => {
-    setOrders(getStoredOrders());
+    setOrders(orderService.list());
   };
 
   useEffect(() => {
     refreshOrders();
   }, []);
 
-  const filteredOrders = useMemo(() => {
-    return orders.filter((o) => {
-      const matchStatus =
-        selectedStatus === "all" || o.status === selectedStatus;
-      const matchQuery =
-        !searchQuery ||
-        o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (o.customerName &&
-          o.customerName.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (o.userEmail &&
-          o.userEmail.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (o.address &&
-          o.address.toLowerCase().includes(searchQuery.toLowerCase()));
-      return matchStatus && matchQuery;
-    });
-  }, [orders, selectedStatus, searchQuery]);
+  const filteredOrders = useMemo(
+    () =>
+      orderService.filter(orders, {
+        status: selectedStatus,
+        query: searchQuery,
+      }),
+    [orders, selectedStatus, searchQuery]
+  );
 
   const handleStatusChange = (orderId: string, status: OrderStatus) => {
-    updateOrderStatus(orderId, status);
+    orderService.updateStatus(orderId, status);
     refreshOrders();
   };
 

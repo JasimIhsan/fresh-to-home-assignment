@@ -116,7 +116,9 @@
       "alreadyHaveAccount": "Bereits ein Konto?",
       "login": "Anmelden",
       "errorMissingConsent": "Sie müssen den Datenschutzbestimmungen zustimmen.",
-      "errorFailed": "Registrierung fehlgeschlagen. Möglicherweise existiert diese E-Mail bereits."
+      "errorFailed": "Registrierung fehlgeschlagen. Möglicherweise existiert diese E-Mail bereits.",
+      "confirmTitle": "Bestätigen Sie Ihre E-Mail",
+      "confirmDesc": "Wir haben Ihnen einen Bestätigungslink gesendet. Bitte überprüfen Sie Ihren Posteingang, um Ihr Konto zu aktivieren."
     },
     "forgotPassword": {
       "title": "Passwort zurücksetzen",
@@ -129,6 +131,20 @@
       "successDesc": "Bitte überprüfen Sie Ihren Posteingang für weitere Anweisungen.",
       "sending": "Wird gesendet...",
       "error": "Fehler beim Zurücksetzen des Passworts."
+    },
+    "resetPassword": {
+      "title": "Neues Passwort festlegen",
+      "subtitle": "Wählen Sie ein neues Passwort für Ihr Konto.",
+      "newPassword": "Neues Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "submit": "Passwort speichern",
+      "mismatch": "Die Passwörter stimmen nicht überein.",
+      "invalidLink": "Dieser Link ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen an.",
+      "requestNew": "Neuen Link anfordern",
+      "successTitle": "Passwort aktualisiert!",
+      "successDesc": "Ihr Passwort wurde erfolgreich geändert.",
+      "continue": "Weiter zum Shop",
+      "error": "Passwort konnte nicht aktualisiert werden."
     },
     "otp": {
       "title": "Code bestätigen",
@@ -629,7 +645,9 @@
       "alreadyHaveAccount": "Already have an account?",
       "login": "Login",
       "errorMissingConsent": "You must agree to the privacy policy.",
-      "errorFailed": "Registration failed. This email might already exist."
+      "errorFailed": "Registration failed. This email might already exist.",
+      "confirmTitle": "Confirm your email",
+      "confirmDesc": "We sent you a confirmation link. Please check your inbox to activate your account."
     },
     "forgotPassword": {
       "title": "Reset Password",
@@ -642,6 +660,20 @@
       "successDesc": "Please check your inbox for instructions to reset your password.",
       "sending": "Sending...",
       "error": "Failed to reset password."
+    },
+    "resetPassword": {
+      "title": "Set a New Password",
+      "subtitle": "Choose a new password for your account.",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "submit": "Save Password",
+      "mismatch": "Passwords do not match.",
+      "invalidLink": "This link is invalid or has expired. Please request a new one.",
+      "requestNew": "Request a new link",
+      "successTitle": "Password updated!",
+      "successDesc": "Your password has been changed successfully.",
+      "continue": "Continue to shop",
+      "error": "Failed to update password."
     },
     "otp": {
       "title": "Enter Verification Code",

@@ -2,8 +2,11 @@
 
 import { AuthCardWrapper } from "@/components/auth/AuthCardWrapper";
 import { useLanguage } from "@/context/LanguageContext";
-import { auth } from "@/lib/firebase";
-import { sendPasswordResetEmail } from "firebase/auth";
+import {
+  authService,
+  hasErrors,
+  validatePasswordResetRequest,
+} from "@/services";
 import { CheckCircle2, KeyRound, Mail } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -16,41 +19,27 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const getEmailError = () => {
-    if (!email.trim()) return t("validation.emailRequired");
-    if (!emailRegex.test(email.trim())) return t("validation.emailInvalid");
-    return "";
-  };
-
-  const emailError = touched ? getEmailError() : "";
+  const errors = validatePasswordResetRequest({ email });
+  const emailError = touched && errors.email ? t(errors.email) : "";
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched(true);
-
-    const err = getEmailError();
-    if (err) return;
+    if (hasErrors(errors)) return;
 
     setLoading(true);
     setError(null);
-    try {
-      if (auth) {
-        await sendPasswordResetEmail(auth, email.trim());
-      }
-      setSuccess(true);
-    } catch (err: unknown) {
-      console.error("Password reset error:", err);
-      if (!auth) {
-        setSuccess(true);
-      } else {
-        const errMessage =
-          err instanceof Error ? err.message : t("forgotPassword.error");
-        setError(errMessage || t("forgotPassword.error"));
-      }
-    } finally {
-      setLoading(false);
+    const result = await authService.requestPasswordReset(
+      email,
+      `${window.location.origin}/reset-password`
+    );
+    setLoading(false);
+
+    if (result.error) {
+      setError(result.error.message || t("forgotPassword.error"));
+      return;
     }
+    setSuccess(true);
   };
 
   return (

@@ -2,7 +2,7 @@
 
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { useLanguage } from "@/context/LanguageContext";
-import { getOrderById } from "@/lib/store";
+import { orderService } from "@/services";
 import { Order } from "@/types";
 import {
   Calendar,
@@ -25,7 +25,7 @@ function OrderConfirmationContent() {
 
   useEffect(() => {
     if (orderId) {
-      const found = getOrderById(orderId);
+      const found = orderService.getById(orderId);
       if (found) setOrder(found);
     }
   }, [orderId]);

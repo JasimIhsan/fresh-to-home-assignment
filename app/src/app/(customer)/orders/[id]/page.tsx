@@ -5,7 +5,7 @@ import { OrderDeliveryInfoCard } from "@/components/orders/OrderDeliveryInfoCard
 import { OrderItemList } from "@/components/orders/OrderItemList";
 import { OrderTrackingProgress } from "@/components/orders/OrderTrackingProgress";
 import { useLanguage } from "@/context/LanguageContext";
-import { getOrderById } from "@/lib/store";
+import { orderService } from "@/services";
 import { Order } from "@/types";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -23,7 +23,7 @@ export default function OrderTrackingPage({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const found = getOrderById(id);
+    const found = orderService.getById(id);
     if (found) {
       setOrder(found);
     }

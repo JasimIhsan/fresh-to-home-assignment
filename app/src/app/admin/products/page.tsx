@@ -3,7 +3,7 @@
 import { AdminProductsFilter } from "@/components/admin/AdminProductsFilter";
 import { AdminProductsTable } from "@/components/admin/AdminProductsTable";
 import { useLanguage } from "@/context/LanguageContext";
-import { deleteProduct, getStoredProducts, saveProduct } from "@/lib/store";
+import { ALL_CATEGORIES, productService } from "@/services";
 import { Product } from "@/types";
 import { Plus } from "lucide-react";
 import Link from "next/link";
@@ -13,45 +13,38 @@ export default function AdminProductsPage() {
   const { t } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState(ALL_CATEGORIES);
 
   const refreshProducts = () => {
-    setProducts(getStoredProducts());
+    setProducts(productService.list());
   };
 
   useEffect(() => {
     refreshProducts();
   }, []);
 
-  const categories = useMemo(() => {
-    const cats = Array.from(new Set(products.map((p) => p.category))).filter(
-      Boolean
-    );
-    return ["all", ...cats];
-  }, [products]);
+  const categories = useMemo(
+    () => productService.getCategories(products),
+    [products]
+  );
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((p) => {
-      const matchCat =
-        selectedCategory === "all" ||
-        p.category?.toLowerCase() === selectedCategory.toLowerCase();
-      const matchQuery =
-        !searchQuery ||
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchCat && matchQuery;
-    });
-  }, [products, selectedCategory, searchQuery]);
+  const filteredProducts = useMemo(
+    () =>
+      productService.filter(products, {
+        category: selectedCategory,
+        query: searchQuery,
+      }),
+    [products, selectedCategory, searchQuery]
+  );
 
   const handleToggleAvailability = (product: Product) => {
-    const updated = { ...product, isAvailable: !product.isAvailable };
-    saveProduct(updated);
+    productService.toggleAvailability(product);
     refreshProducts();
   };
 
   const handleDelete = (id: string) => {
     if (confirm(t("admin.deleteConfirm"))) {
-      deleteProduct(id);
+      productService.delete(id);
       refreshProducts();
     }
   };

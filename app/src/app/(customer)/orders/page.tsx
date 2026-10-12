@@ -5,7 +5,7 @@ import { CustomerOrderCard } from "@/components/orders/CustomerOrderCard";
 import { CustomerOrdersEmpty } from "@/components/orders/CustomerOrdersEmpty";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
-import { getStoredOrders } from "@/lib/store";
+import { ALL_STATUSES, orderService } from "@/services";
 import { Order } from "@/types";
 import { useEffect, useMemo, useState } from "react";
 
@@ -13,18 +13,18 @@ export default function OrdersPage() {
   const { t } = useLanguage();
   const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [selectedStatus, setSelectedStatus] = useState<string>(ALL_STATUSES);
 
   useEffect(() => {
     if (user) {
-      setOrders(getStoredOrders(user.uid));
+      setOrders(orderService.listForCustomer(user.id));
     }
   }, [user]);
 
-  const filteredOrders = useMemo(() => {
-    if (selectedStatus === "all") return orders;
-    return orders.filter((o) => o.status === selectedStatus);
-  }, [orders, selectedStatus]);
+  const filteredOrders = useMemo(
+    () => orderService.filter(orders, { status: selectedStatus }),
+    [orders, selectedStatus]
+  );
 
   return (
     <AuthGuard requireAuth>

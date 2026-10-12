@@ -8,7 +8,7 @@ import { CheckoutSummary } from "@/components/checkout/CheckoutSummary";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
-import { createOrder } from "@/lib/store";
+import { hasErrors, orderService, validateCheckoutForm } from "@/services";
 import { ArrowLeft, Check, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -17,7 +17,7 @@ import { useState } from "react";
 export default function CheckoutPage() {
   const { t } = useLanguage();
   const { user } = useAuth();
-  const { items, totalAmount, clearCart } = useCart();
+  const { items, totalAmount, deliveryFee, grandTotal, clearCart } = useCart();
   const router = useRouter();
 
   const [fullName, setFullName] = useState("");
@@ -38,44 +38,11 @@ export default function CheckoutPage() {
     phone?: boolean;
   }>({});
 
-  const deliveryFee = totalAmount > 50 || totalAmount === 0 ? 0 : 4.9;
-  const grandTotal = totalAmount + deliveryFee;
-
-  const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]{5,15}$/;
-
-  const getFullNameError = () => {
-    if (!fullName.trim()) return t("validation.nameRequired");
-    if (fullName.trim().length < 2) return t("validation.nameMinLength");
-    return "";
+  const errors = validateCheckoutForm({ fullName, street, zip, city, phone });
+  const fieldError = (field: keyof typeof touched) => {
+    const key = errors[field];
+    return touched[field] && key ? t(key) : "";
   };
-
-  const getStreetError = () => {
-    if (!street.trim()) return t("validation.streetRequired");
-    return "";
-  };
-
-  const getZipError = () => {
-    if (!zip.trim()) return t("validation.zipRequired");
-    if (zip.trim().length < 3) return t("validation.zipRequired");
-    return "";
-  };
-
-  const getCityError = () => {
-    if (!city.trim()) return t("validation.cityRequired");
-    return "";
-  };
-
-  const getPhoneError = () => {
-    if (!phone.trim()) return t("validation.phoneRequired");
-    if (!phoneRegex.test(phone.trim())) return t("validation.phoneInvalid");
-    return "";
-  };
-
-  const fullNameError = touched.fullName ? getFullNameError() : "";
-  const streetError = touched.street ? getStreetError() : "";
-  const zipError = touched.zip ? getZipError() : "";
-  const cityError = touched.city ? getCityError() : "";
-  const phoneError = touched.phone ? getPhoneError() : "";
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,16 +54,7 @@ export default function CheckoutPage() {
       phone: true,
     });
 
-    const fnErr = getFullNameError();
-    const strErr = getStreetError();
-    const zipErr = getZipError();
-    const cityErr = getCityError();
-    const phErr = getPhoneError();
-
-    if (fnErr || strErr || zipErr || cityErr || phErr) {
-      return;
-    }
-
+    if (hasErrors(errors)) return;
     if (!user || items.length === 0) return;
 
     setSubmitting(true);
@@ -115,15 +73,14 @@ export default function CheckoutPage() {
         cod: t("checkout.paymentCod"),
       };
 
-      const newOrder = createOrder({
-        userId: user.uid,
-        userEmail: user.email || "kunde@beispiel.de",
-        customerName: fullName.trim() || user.email?.split("@")[0] || "Kunde",
-        phone: phone.trim(),
+      const newOrder = orderService.placeOrder({
+        customer: { id: user.id, email: user.email },
         items,
-        totalAmount: grandTotal,
-        status: "pending",
-        address: `${street.trim()}, ${zip.trim()} ${city.trim()}`,
+        fullName,
+        street,
+        zip,
+        city,
+        phone,
         deliverySlot: slotLabels[deliverySlot] || deliverySlot,
         paymentMethod: paymentLabels[paymentMethod] || paymentMethod,
         notes,
@@ -196,11 +153,11 @@ export default function CheckoutPage() {
                     setPhone={setPhone}
                     touched={touched}
                     setTouched={setTouched}
-                    fullNameError={fullNameError}
-                    streetError={streetError}
-                    zipError={zipError}
-                    cityError={cityError}
-                    phoneError={phoneError}
+                    fullNameError={fieldError("fullName")}
+                    streetError={fieldError("street")}
+                    zipError={fieldError("zip")}
+                    cityError={fieldError("city")}
+                    phoneError={fieldError("phone")}
                   />
 
                   <CheckoutSlotSelector

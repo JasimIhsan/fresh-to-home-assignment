@@ -3,8 +3,8 @@
 import { AuthCardWrapper } from "@/components/auth/AuthCardWrapper";
 import { useLanguage } from "@/context/LanguageContext";
 import { CheckCircle2, RotateCw, ShieldCheck, Smartphone } from "lucide-react";
-import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 export default function OtpVerificationPage() {
   const { t } = useLanguage();

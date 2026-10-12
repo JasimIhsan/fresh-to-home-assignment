@@ -15,7 +15,7 @@ import { PdpTrustBar } from "@/components/product-detail/PdpTrustBar";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
-import { getProductById } from "@/lib/store";
+import { productService } from "@/services";
 import { Product } from "@/types";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
@@ -36,7 +36,7 @@ export default function ProductDetailPage({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const found = getProductById(id);
+    const found = productService.getById(id);
     if (found) setProduct(found);
     setLoading(false);
   }, [id]);

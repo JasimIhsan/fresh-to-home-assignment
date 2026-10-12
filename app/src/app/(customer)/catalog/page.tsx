@@ -8,7 +8,7 @@ import { Pagination } from "@/components/ui/Pagination";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
-import { getStoredProducts } from "@/lib/store";
+import { ALL_CATEGORIES, productService } from "@/services";
 import { Product } from "@/types";
 import { Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -21,7 +21,8 @@ export default function CatalogPage() {
   const { addToCart, openCart, isOffline } = useCart();
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedCategory, setSelectedCategory] =
+    useState<string>(ALL_CATEGORIES);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [itemWeights, setItemWeights] = useState<Record<string, number>>({});
@@ -31,7 +32,7 @@ export default function CatalogPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    setProducts(getStoredProducts());
+    setProducts(productService.list());
   }, []);
 
   useEffect(() => {
@@ -46,27 +47,19 @@ export default function CatalogPage() {
     setCurrentPage(1);
   }, [searchQuery, selectedCategory]);
 
-  const categories = useMemo(() => {
-    return [
-      "all",
-      ...Array.from(new Set(products.map((p) => p.category))).filter(Boolean),
-    ];
-  }, [products]);
+  const categories = useMemo(
+    () => productService.getCategories(products),
+    [products]
+  );
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      const matchesCategory =
-        selectedCategory === "all" ||
-        product.category?.toLowerCase() === selectedCategory.toLowerCase();
-      const matchesSearch =
-        !debouncedQuery ||
-        product.name?.toLowerCase().includes(debouncedQuery) ||
-        product.description?.toLowerCase().includes(debouncedQuery) ||
-        (product.category &&
-          product.category.toLowerCase().includes(debouncedQuery));
-      return matchesCategory && matchesSearch;
-    });
-  }, [products, selectedCategory, debouncedQuery]);
+  const filteredProducts = useMemo(
+    () =>
+      productService.filter(products, {
+        category: selectedCategory,
+        query: debouncedQuery,
+      }),
+    [products, selectedCategory, debouncedQuery]
+  );
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -146,7 +139,7 @@ export default function CatalogPage() {
               <button
                 onClick={() => {
                   setSearchQuery("");
-                  setSelectedCategory("all");
+                  setSelectedCategory(ALL_CATEGORIES);
                 }}
                 className="bg-primary hover:bg-primary/90 cursor-pointer rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all"
               >

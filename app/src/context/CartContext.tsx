@@ -8,6 +8,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
+import { cartService } from "@/services";
 import { CartItem, Product } from "@/types";
 import { useAuth } from "./AuthContext";
 
@@ -22,7 +23,11 @@ interface CartContextType {
   updateWeight: (productId: string, weightKg: number) => boolean;
   removeFromCart: (productId: string) => boolean;
   clearCart: () => boolean;
+  /** Subtotal of all items, before delivery. */
   totalAmount: number;
+  deliveryFee: number;
+  /** Subtotal plus delivery fee. */
+  grandTotal: number;
   totalItemsCount: number;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
@@ -32,6 +37,10 @@ interface CartContextType {
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
+
+function isBrowserOffline(): boolean {
+  return typeof window !== "undefined" && !navigator.onLine;
+}
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
@@ -59,127 +68,54 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // Load user-specific cart when user logs in, or clear when logged out
   useEffect(() => {
-    if (!user) {
-      setItems([]);
-      setIsLoaded(true);
-      return;
-    }
-
-    try {
-      const stored = localStorage.getItem(`cart_${user.uid}`);
-      if (stored) {
-        setItems(JSON.parse(stored));
-      } else {
-        setItems([]);
-      }
-    } catch (e) {
-      console.error("Failed to parse stored cart:", e);
-      setItems([]);
-    }
+    setItems(user ? cartService.load(user.id) : []);
     setIsLoaded(true);
   }, [user]);
 
-  // Save cart to local storage whenever items change (only if user is logged in and online)
+  // Persist the cart whenever items change (only while logged in)
   useEffect(() => {
     if (!isLoaded || !user) return;
-    try {
-      localStorage.setItem(`cart_${user.uid}`, JSON.stringify(items));
-    } catch (e) {
-      console.error("Failed to save cart to localStorage:", e);
-    }
+    cartService.save(user.id, items);
   }, [items, user, isLoaded]);
 
   const addToCart = useCallback(
     (product: Product, weightKg: number): AddToCartResult => {
-      if (typeof window !== "undefined" && !navigator.onLine) {
-        return { success: false, reason: "offline" };
-      }
-      if (!user) {
-        return { success: false, reason: "not_logged_in" };
-      }
-      if (weightKg <= 0) {
-        return { success: false, reason: "invalid_weight" };
-      }
+      if (isBrowserOffline()) return { success: false, reason: "offline" };
+      if (!user) return { success: false, reason: "not_logged_in" };
+      if (weightKg <= 0) return { success: false, reason: "invalid_weight" };
 
-      setItems((prev) => {
-        const existingIndex = prev.findIndex(
-          (item) => item.product.id === product.id
-        );
-        if (existingIndex > -1) {
-          const updated = [...prev];
-          updated[existingIndex] = {
-            ...updated[existingIndex],
-            weightKg:
-              Math.round((updated[existingIndex].weightKg + weightKg) * 10) /
-              10,
-          };
-          return updated;
-        }
-        return [...prev, { product, weightKg }];
-      });
-
+      setItems((prev) => cartService.addItem(prev, product, weightKg));
       return { success: true };
     },
     [user]
   );
 
+  const removeFromCart = useCallback((productId: string): boolean => {
+    if (isBrowserOffline()) return false;
+    setItems((prev) => cartService.removeItem(prev, productId));
+    return true;
+  }, []);
+
   const updateWeight = useCallback(
     (productId: string, weightKg: number): boolean => {
-      if (typeof window !== "undefined" && !navigator.onLine) {
-        return false;
-      }
-      if (!user) return false;
-      if (weightKg <= 0) {
-        return removeFromCart(productId);
-      }
-      setItems((prev) =>
-        prev.map((item) =>
-          item.product.id === productId
-            ? { ...item, weightKg: Math.round(weightKg * 10) / 10 }
-            : item
-        )
-      );
+      if (isBrowserOffline() || !user) return false;
+      setItems((prev) => cartService.setWeight(prev, productId, weightKg));
       return true;
     },
     [user]
   );
 
-  const removeFromCart = useCallback((productId: string): boolean => {
-    if (typeof window !== "undefined" && !navigator.onLine) {
-      return false;
-    }
-    setItems((prev) => prev.filter((item) => item.product.id !== productId));
-    return true;
-  }, []);
-
   const clearCart = useCallback((): boolean => {
-    if (typeof window !== "undefined" && !navigator.onLine) {
-      return false;
-    }
+    if (isBrowserOffline()) return false;
     setItems([]);
-    if (user) {
-      try {
-        localStorage.removeItem(`cart_${user.uid}`);
-      } catch (e) {
-        console.error("Failed to clear cart in localStorage:", e);
-      }
-    }
+    if (user) cartService.clear(user.id);
     return true;
   }, [user]);
 
   const openCart = useCallback(() => setIsCartOpen(true), []);
   const closeCart = useCallback(() => setIsCartOpen(false), []);
 
-  const totalAmount = useMemo(() => {
-    return items.reduce(
-      (sum, item) => sum + item.product.pricePerKg * item.weightKg,
-      0
-    );
-  }, [items]);
-
-  const totalItemsCount = useMemo(() => {
-    return items.length;
-  }, [items]);
+  const summary = useMemo(() => cartService.getSummary(items), [items]);
 
   return (
     <CartContext.Provider
@@ -189,8 +125,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         updateWeight,
         removeFromCart,
         clearCart,
-        totalAmount,
-        totalItemsCount,
+        totalAmount: summary.subtotal,
+        deliveryFee: summary.deliveryFee,
+        grandTotal: summary.grandTotal,
+        totalItemsCount: items.length,
         isCartOpen,
         setIsCartOpen,
         openCart,

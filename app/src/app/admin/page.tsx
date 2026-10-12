@@ -4,7 +4,7 @@ import { AdminKpiGrid } from "@/components/admin/AdminKpiGrid";
 import { AdminRecentOrdersTable } from "@/components/admin/AdminRecentOrdersTable";
 import { AdminStockAlertsCard } from "@/components/admin/AdminStockAlertsCard";
 import { useLanguage } from "@/context/LanguageContext";
-import { getStoredOrders, getStoredProducts } from "@/lib/store";
+import { orderService, productService } from "@/services";
 import { Order, Product } from "@/types";
 import { Plus } from "lucide-react";
 import Link from "next/link";
@@ -16,25 +16,15 @@ export default function AdminDashboardPage() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    setOrders(getStoredOrders());
-    setProducts(getStoredProducts());
+    setOrders(orderService.list());
+    setProducts(productService.list());
   }, []);
 
-  const totalRevenue = useMemo(() => {
-    return orders
-      .filter((o) => o.status !== "cancelled")
-      .reduce((sum, o) => sum + o.totalAmount, 0);
-  }, [orders]);
-
-  const pendingCount = useMemo(() => {
-    return orders.filter(
-      (o) => o.status === "pending" || o.status === "processing"
-    ).length;
-  }, [orders]);
-
-  const recentOrders = useMemo(() => {
-    return orders.slice(0, 5);
-  }, [orders]);
+  const {
+    totalRevenue,
+    openOrderCount: pendingCount,
+    recentOrders,
+  } = useMemo(() => orderService.getDashboardStats(orders), [orders]);
 
   return (
     <div className="mx-auto max-w-6xl space-y-8">

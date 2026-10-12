@@ -6,7 +6,12 @@ import {
 } from "@/components/admin/AdminProductFormFields";
 import { AdminProductFormSidebar } from "@/components/admin/AdminProductFormSidebar";
 import { useLanguage } from "@/context/LanguageContext";
-import { deleteProduct, getProductById, saveProduct } from "@/lib/store";
+import {
+  hasErrors,
+  productService,
+  validateProductForm,
+  type ProductFormInput,
+} from "@/services";
 import { Product } from "@/types";
 import { AlertCircle, ArrowLeft, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -51,49 +56,39 @@ export default function EditProductPage({
     origin?: boolean;
   }>({});
 
-  const getNameError = () => {
-    if (!name.trim()) return t("validation.productNameRequired");
-    return "";
+  const formInput: ProductFormInput = {
+    name,
+    category,
+    pricePerKg,
+    stockKg,
+    isAvailable,
+    origin,
+    imageUrl,
+    description,
   };
-
-  const getPriceError = () => {
-    const val = parseFloat(pricePerKg);
-    if (!pricePerKg.trim() || isNaN(val) || val <= 0) {
-      return t("validation.priceRequired");
-    }
-    return "";
+  const errors = validateProductForm(formInput);
+  const fieldError = (field: keyof typeof touched) => {
+    const key = errors[field];
+    return touched[field] && key ? t(key) : "";
   };
-
-  const getStockError = () => {
-    const val = parseFloat(stockKg);
-    if (!stockKg.trim() || isNaN(val) || val < 0) {
-      return t("validation.stockRequired");
-    }
-    return "";
-  };
-
-  const getOriginError = () => {
-    if (!origin.trim()) return t("validation.originRequired");
-    return "";
-  };
-
-  const nameError = touched.name ? getNameError() : "";
-  const priceError = touched.pricePerKg ? getPriceError() : "";
-  const stockError = touched.stockKg ? getStockError() : "";
-  const originError = touched.origin ? getOriginError() : "";
+  const nameError = fieldError("name");
+  const priceError = fieldError("pricePerKg");
+  const stockError = fieldError("stockKg");
+  const originError = fieldError("origin");
 
   useEffect(() => {
-    const found = getProductById(id);
+    const found = productService.getById(id);
     if (found) {
+      const values = productService.toFormInput(found);
       setProduct(found);
-      setName(found.name);
-      setCategory(found.category || "Rind");
-      setPricePerKg(found.pricePerKg.toString());
-      setStockKg((found.stockKg ?? 50).toString());
-      setIsAvailable(found.isAvailable);
-      setOrigin(found.origin || "");
-      setImageUrl(found.imageUrl);
-      setDescription(found.description);
+      setName(values.name);
+      setCategory(values.category);
+      setPricePerKg(values.pricePerKg);
+      setStockKg(values.stockKg);
+      setIsAvailable(values.isAvailable);
+      setOrigin(values.origin);
+      setImageUrl(values.imageUrl);
+      setDescription(values.description);
     }
     setLoading(false);
   }, [id]);
@@ -109,27 +104,10 @@ export default function EditProductPage({
       origin: true,
     });
 
-    const nErr = getNameError();
-    const pErr = getPriceError();
-    const sErr = getStockError();
-    const oErr = getOriginError();
-
-    if (nErr || pErr || sErr || oErr) return;
+    if (hasErrors(errors)) return;
 
     setSaving(true);
-    const updated: Product = {
-      ...product,
-      name: name.trim(),
-      description: description.trim(),
-      pricePerKg: parseFloat(pricePerKg) || product.pricePerKg,
-      stockKg: parseFloat(stockKg) || 0,
-      imageUrl: imageUrl || product.imageUrl,
-      isAvailable,
-      category,
-      origin: origin.trim(),
-    };
-
-    saveProduct(updated);
+    productService.update(product, formInput);
     setTimeout(() => {
       setSaving(false);
       router.push("/admin/products");
@@ -138,7 +116,7 @@ export default function EditProductPage({
 
   const handleDelete = () => {
     if (confirm(t("admin.deleteConfirm"))) {
-      deleteProduct(id);
+      productService.delete(id);
       router.push("/admin/products");
     }
   };

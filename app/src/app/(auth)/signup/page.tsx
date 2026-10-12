@@ -2,17 +2,17 @@
 
 import { AuthCardWrapper } from "@/components/auth/AuthCardWrapper";
 import { SignupFormFields } from "@/components/auth/SignupFormFields";
-import { UserRole } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
-import { auth } from "@/lib/firebase";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { UserPlus } from "lucide-react";
+import { hasErrors, validateSignupForm } from "@/services";
+import { MailCheck, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 
 function SignupForm() {
   const { t } = useLanguage();
+  const { signUp } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,90 +26,50 @@ function SignupForm() {
   }>({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [confirmationSent, setConfirmationSent] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  const getNameError = () => {
-    if (!name.trim()) return t("validation.nameRequired");
-    if (name.trim().length < 2) return t("validation.nameMinLength");
-    return "";
+  const errors = validateSignupForm({ name, email, password, consent });
+  const fieldError = (field: keyof typeof touched) => {
+    const key = errors[field];
+    return touched[field] && key ? t(key) : "";
   };
-
-  const getEmailError = () => {
-    if (!email.trim()) return t("validation.emailRequired");
-    if (!emailRegex.test(email.trim())) return t("validation.emailInvalid");
-    return "";
-  };
-
-  const getPasswordError = () => {
-    if (!password) return t("validation.passwordRequired");
-    if (password.length < 6) return t("validation.passwordMinLength");
-    return "";
-  };
-
-  const getConsentError = () => {
-    if (!consent) return t("validation.consentRequired");
-    return "";
-  };
-
-  const nameError = touched.name ? getNameError() : "";
-  const emailError = touched.email ? getEmailError() : "";
-  const passwordError = touched.password ? getPasswordError() : "";
-  const consentError = touched.consent ? getConsentError() : "";
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched({ name: true, email: true, password: true, consent: true });
-
-    const nError = getNameError();
-    const eError = getEmailError();
-    const pError = getPasswordError();
-    const cError = getConsentError();
-
-    if (nError || eError || pError || cError) {
-      return;
-    }
-
-    if (!auth) {
-      setError("Firebase is not configured.");
-      return;
-    }
+    if (hasErrors(errors)) return;
 
     setLoading(true);
     setError("");
 
-    try {
-      // Mutual exclusivity: ensure any admin session is cleared when customer signs up
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("fth_admin_session");
-      }
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email.trim(),
-        password
+    const targetDestination = searchParams.get("redirect") || "/catalog";
+    const result = await signUp(
+      email,
+      password,
+      { name },
+      { emailRedirectTo: `${window.location.origin}${targetDestination}` }
+    );
+    setLoading(false);
+
+    if (result.error) {
+      setError(
+        result.error.code === "not_configured"
+          ? result.error.message
+          : t("signup.errorFailed")
       );
-
-      // Customer signup always provisions 'customer' account
-      const finalRole: UserRole = "customer";
-
-      // Persist name and role in Firebase Auth's displayName metadata
-      await updateProfile(userCredential.user, {
-        displayName: JSON.stringify({
-          name: name.trim(),
-          role: finalRole,
-        }),
-      });
-
-      const redirectParam = searchParams.get("redirect");
-      const targetDestination = redirectParam || "/catalog";
-      router.push(targetDestination);
-    } catch {
-      setError(t("signup.errorFailed"));
-    } finally {
-      setLoading(false);
+      return;
     }
+
+    // With email confirmation enabled, no session is issued until the
+    // user clicks the confirmation link
+    if (result.data.needsEmailConfirmation) {
+      setConfirmationSent(true);
+      return;
+    }
+
+    router.push(targetDestination);
   };
 
   return (
@@ -141,26 +101,42 @@ function SignupForm() {
         </div>
       )}
 
-      <SignupFormFields
-        name={name}
-        setName={setName}
-        email={email}
-        setEmail={setEmail}
-        password={password}
-        setPassword={setPassword}
-        showPassword={showPassword}
-        setShowPassword={setShowPassword}
-        consent={consent}
-        setConsent={setConsent}
-        nameError={nameError}
-        emailError={emailError}
-        passwordError={passwordError}
-        consentError={consentError}
-        touched={touched}
-        setTouched={setTouched}
-        loading={loading}
-        onSubmit={handleSignup}
-      />
+      {confirmationSent ? (
+        <div className="animate-fadeIn space-y-4 rounded-3xl border border-emerald-200 bg-emerald-50 p-6 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600">
+            <MailCheck size={32} />
+          </div>
+          <div>
+            <h3 className="text-base font-extrabold text-emerald-950">
+              {t("signup.confirmTitle")}
+            </h3>
+            <p className="mt-1 text-xs leading-relaxed text-emerald-800">
+              {t("signup.confirmDesc")}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <SignupFormFields
+          name={name}
+          setName={setName}
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          showPassword={showPassword}
+          setShowPassword={setShowPassword}
+          consent={consent}
+          setConsent={setConsent}
+          nameError={fieldError("name")}
+          emailError={fieldError("email")}
+          passwordError={fieldError("password")}
+          consentError={fieldError("consent")}
+          touched={touched}
+          setTouched={setTouched}
+          loading={loading}
+          onSubmit={handleSignup}
+        />
+      )}
     </AuthCardWrapper>
   );
 }

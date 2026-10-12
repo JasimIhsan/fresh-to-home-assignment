@@ -1,7 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { getStoredProducts } from "@/lib/store";
+import { productService } from "@/services";
 import { Product } from "@/types";
 import Link from "next/link";
 import { useMemo } from "react";
@@ -17,17 +17,10 @@ export function PdpRelatedProducts({
 }: PdpRelatedProductsProps) {
   const { t } = useLanguage();
 
-  const related = useMemo(() => {
-    const all = getStoredProducts();
-    return all
-      .filter(
-        (p) =>
-          p.id !== currentProductId &&
-          p.category === currentCategory &&
-          p.isAvailable
-      )
-      .slice(0, 4);
-  }, [currentProductId, currentCategory]);
+  const related = useMemo(
+    () => productService.getRelated(currentProductId, currentCategory),
+    [currentProductId, currentCategory]
+  );
 
   if (related.length === 0) return null;
 

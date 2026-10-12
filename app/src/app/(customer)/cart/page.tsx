@@ -8,6 +8,7 @@ import { CartSummaryCard } from "@/components/cart/CartSummaryCard";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { FREE_SHIPPING_THRESHOLD } from "@/services";
 import { Trash2 } from "lucide-react";
 
 export default function CartPage() {
@@ -17,16 +18,13 @@ export default function CartPage() {
     removeFromCart,
     clearCart,
     totalAmount,
+    deliveryFee,
+    grandTotal,
     totalItemsCount,
     isOffline,
   } = useCart();
   const { user } = useAuth();
   const { t } = useLanguage();
-
-  const FREE_SHIPPING_THRESHOLD = 50.0;
-  const deliveryFee =
-    totalAmount >= FREE_SHIPPING_THRESHOLD || totalAmount === 0 ? 0 : 4.9;
-  const grandTotal = totalAmount + deliveryFee;
 
   return (
     <div className="via-background to-background min-h-screen bg-linear-to-b from-purple-50/40 pb-28">

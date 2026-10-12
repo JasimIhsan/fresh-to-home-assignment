@@ -4,7 +4,7 @@ import { AdminOrderCustomerDetails } from "@/components/admin/AdminOrderCustomer
 import { AdminOrderItemsView } from "@/components/admin/AdminOrderItemsView";
 import { AdminOrderStatusActions } from "@/components/admin/AdminOrderStatusActions";
 import { useLanguage } from "@/context/LanguageContext";
-import { getOrderById, updateOrderStatus } from "@/lib/store";
+import { orderService } from "@/services";
 import { Order, OrderStatus } from "@/types";
 import { AlertCircle, ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
@@ -24,7 +24,7 @@ export default function AdminOrderDetailPage({
   const [feedback, setFeedback] = useState<string | null>(null);
 
   useEffect(() => {
-    const found = getOrderById(id);
+    const found = orderService.getById(id);
     if (found) {
       setOrder(found);
     }
@@ -34,7 +34,7 @@ export default function AdminOrderDetailPage({
   const handleUpdateStatus = (newStatus: OrderStatus) => {
     if (!order) return;
     setUpdating(true);
-    const updated = updateOrderStatus(order.id, newStatus);
+    const updated = orderService.updateStatus(order.id, newStatus);
     if (updated) {
       setOrder({ ...updated });
       setFeedback(`${t("admin.statusUpdated")} "${newStatus.toUpperCase()}".`);

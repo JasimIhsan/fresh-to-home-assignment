@@ -4,6 +4,7 @@ import { AdminLoginFormFields } from "@/components/admin/AdminLoginFormFields";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { authService } from "@/services";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -75,11 +76,9 @@ function AdminLoginForm() {
   };
 
   const handlePrefillDemo = () => {
-    const demoUser = process.env.NEXT_PUBLIC_ADMIN_USERNAME || "admin";
-    const demoPass =
-      process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "AdminPassword123!";
-    setIdentifier(demoUser);
-    setPassword(demoPass);
+    const demo = authService.getAdminDemoCredentials();
+    setIdentifier(demo.username);
+    setPassword(demo.password);
     setTouched({ identifier: true, password: true });
     setError("");
   };
