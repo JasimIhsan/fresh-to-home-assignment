@@ -63,7 +63,10 @@ export function SignupForm() {
     // Email confirmation enabled: verify the emailed code before the
     // account is active and a session is issued
     if (result.data.needsVerification) {
-      const params = new URLSearchParams({ email: result.data.email });
+      const params = new URLSearchParams({
+        email: result.data.email,
+        sent: "1",
+      });
       if (redirectParam) params.set("redirect", redirectParam);
       router.push(`/otp?${params.toString()}`);
       return;

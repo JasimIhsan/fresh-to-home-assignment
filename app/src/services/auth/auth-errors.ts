@@ -12,6 +12,10 @@ const AUTH_ERROR_MESSAGES: Record<AuthErrorCode, string> = {
   user_already_exists:
     "An account with this email already exists. Try signing in instead.",
   rate_limited: "Too many attempts. Please wait a moment and try again.",
+  email_limit:
+    "We can't send emails right now because of high demand. Please try again later.",
+  resend_cooldown:
+    "We just sent a code to this email. Please wait a minute before requesting another.",
   weak_password:
     "Your password is too weak. Use at least 8 characters with a mix of letters, numbers and symbols.",
   invalid_email: "Please enter a valid email address.",
@@ -80,8 +84,14 @@ export function normalizeAuthError(err: unknown): AuthErrorResponse {
           status,
           field: "email",
         });
-      case "over_request_rate_limit":
       case "over_email_send_rate_limit":
+        // One code covers two limits: the per-address resend window
+        // ("…only request this after 42 seconds") and the project-wide
+        // hourly email quota ("email rate limit exceeded").
+        return /after \d+ seconds?/.test(message)
+          ? buildAuthError("resend_cooldown", { status, field: "email" })
+          : buildAuthError("email_limit", { status });
+      case "over_request_rate_limit":
       case "over_sms_send_rate_limit":
         return buildAuthError("rate_limited", { status });
       case "weak_password":

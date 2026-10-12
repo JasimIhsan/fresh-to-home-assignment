@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { OTP_LENGTH, validateOtp } from "@/services";
 import { CheckCircle2, MailCheck, RotateCw, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { authErrorKey } from "../../(components)/auth-error-key";
 
 const EMPTY_OTP: readonly string[] = Array.from(
@@ -16,13 +16,18 @@ const EMPTY_OTP: readonly string[] = Array.from(
   () => ""
 );
 
+/** Matches Supabase's per-address window between confirmation emails. */
+const RESEND_COOLDOWN_SECONDS = 60;
+
 interface OtpFormProps {
   readonly email: string;
   /** Same-origin path to continue to once the account is verified. */
   readonly redirectTo: string;
+  /** True when a code was sent right before landing here (fresh sign up). */
+  readonly codeJustSent: boolean;
 }
 
-export function OtpForm({ email, redirectTo }: OtpFormProps) {
+export function OtpForm({ email, redirectTo, codeJustSent }: OtpFormProps) {
   const { t } = useLanguage();
   const { syncSession } = useAuth();
   const router = useRouter();
@@ -33,6 +38,15 @@ export function OtpForm({ email, redirectTo }: OtpFormProps) {
   const [touched, setTouched] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [cooldown, setCooldown] = useState(
+    codeJustSent ? RESEND_COOLDOWN_SECONDS : 0
+  );
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setTimeout(() => setCooldown((s) => s - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldown]);
 
   const code = otp.join("");
   const otpErrorKey = validateOtp(code);
@@ -100,8 +114,12 @@ export function OtpForm({ email, redirectTo }: OtpFormProps) {
 
     if (!result.success) {
       setError(t(authErrorKey(result.error)));
+      if (result.error === "resend_cooldown") {
+        setCooldown(RESEND_COOLDOWN_SECONDS);
+      }
       return;
     }
+    setCooldown(RESEND_COOLDOWN_SECONDS);
     setOtp(EMPTY_OTP);
     setTouched(false);
     setNotice(t("otp.resent"));
@@ -120,11 +138,17 @@ export function OtpForm({ email, redirectTo }: OtpFormProps) {
           <button
             type="button"
             onClick={handleResend}
-            disabled={resending || verified}
+            disabled={resending || verified || cooldown > 0}
             className="text-primary inline-flex cursor-pointer items-center gap-1.5 text-xs font-bold hover:underline disabled:opacity-50"
           >
             <RotateCw size={14} className={cn(resending && "animate-spin")} />
-            <span>{resending ? t("otp.resending") : t("otp.resendCode")}</span>
+            <span aria-live="polite">
+              {resending
+                ? t("otp.resending")
+                : cooldown > 0
+                  ? t("otp.resendIn").replace("{seconds}", String(cooldown))
+                  : t("otp.resendCode")}
+            </span>
           </button>
         </div>
       }

@@ -8,6 +8,7 @@ interface OtpPageProps {
   readonly searchParams: Promise<{
     readonly email?: string | string[];
     readonly redirect?: string | string[];
+    readonly sent?: string | string[];
   }>;
 }
 
@@ -32,5 +33,11 @@ async function OtpVerification({ searchParams }: OtpPageProps) {
   if (!email) redirect("/signup");
 
   const redirectTo = safeRedirectPath(firstParam(params.redirect, 512), "");
-  return <OtpForm email={email} redirectTo={redirectTo || "/catalog"} />;
+  return (
+    <OtpForm
+      email={email}
+      redirectTo={redirectTo || "/catalog"}
+      codeJustSent={firstParam(params.sent, 1) === "1"}
+    />
+  );
 }

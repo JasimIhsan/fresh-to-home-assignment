@@ -130,7 +130,8 @@
       "verifying": "Wird überprüft...",
       "resending": "Wird gesendet...",
       "backToSignup": "Zurück zur Registrierung",
-      "resent": "Ein neuer Code ist unterwegs. Bitte prüfen Sie Ihr Postfach."
+      "resent": "Ein neuer Code ist unterwegs. Bitte prüfen Sie Ihr Postfach.",
+      "resendIn": "Code erneut senden in {seconds} s"
     },
     "catalog": {
       "products": "Produkte",
@@ -455,13 +456,15 @@
     },
     "authErrors": {
       "user_already_exists": "Für diese E-Mail-Adresse existiert bereits ein Konto. Bitte melden Sie sich an.",
-      "rate_limited": "Zu viele Versuche. Bitte warten Sie einen Moment.",
+      "rate_limited": "Zu viele Versuche in kurzer Zeit. Bitte warten Sie einige Minuten und versuchen Sie es erneut.",
       "invalid_otp": "Dieser Code ist ungültig oder abgelaufen. Fordern Sie einen neuen an.",
       "weak_password": "Ihr Passwort ist zu schwach. Verwenden Sie mindestens 8 Zeichen mit Buchstaben, Zahlen und Sonderzeichen.",
       "invalid_email": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
       "network_error": "Keine Verbindung. Bitte prüfen Sie Ihre Internetverbindung.",
       "signup_disabled": "Registrierungen sind derzeit deaktiviert.",
-      "unknown": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+      "unknown": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "email_limit": "Wir können gerade keine Bestätigungs-E-Mails senden, da die Nachfrage sehr hoch ist. Bitte versuchen Sie es in Kürze erneut.",
+      "resend_cooldown": "Wir haben gerade einen Code an diese E-Mail-Adresse gesendet. Bitte warten Sie eine Minute, bevor Sie einen neuen anfordern."
     }
   },
   "en": {
@@ -595,7 +598,8 @@
       "verifying": "Verifying...",
       "resending": "Sending...",
       "backToSignup": "Back to sign up",
-      "resent": "A new code is on its way. Check your inbox."
+      "resent": "A new code is on its way. Check your inbox.",
+      "resendIn": "Resend code in {seconds}s"
     },
     "catalog": {
       "products": "Products",
@@ -920,13 +924,15 @@
     },
     "authErrors": {
       "user_already_exists": "An account with this email already exists. Try signing in instead.",
-      "rate_limited": "Too many attempts. Please wait a moment and try again.",
+      "rate_limited": "Too many attempts in a short time. Please wait a few minutes and try again.",
       "invalid_otp": "This code is invalid or has expired. Request a new one.",
       "weak_password": "Your password is too weak. Use at least 8 characters with letters, numbers and symbols.",
       "invalid_email": "Please enter a valid email address.",
       "network_error": "Unable to connect. Please check your internet connection.",
       "signup_disabled": "New sign ups are currently disabled.",
-      "unknown": "Something went wrong. Please try again."
+      "unknown": "Something went wrong. Please try again.",
+      "email_limit": "We can't send verification emails right now because of high demand. Please try again in a little while.",
+      "resend_cooldown": "We just sent a code to this email address. Please wait a minute before requesting a new one."
     }
   }
 }

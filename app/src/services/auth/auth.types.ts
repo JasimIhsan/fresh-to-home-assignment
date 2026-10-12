@@ -19,6 +19,8 @@ export type AuthErrorCode =
   | "email_not_confirmed"
   | "user_already_exists"
   | "rate_limited"
+  | "email_limit"
+  | "resend_cooldown"
   | "weak_password"
   | "invalid_email"
   | "invalid_otp"

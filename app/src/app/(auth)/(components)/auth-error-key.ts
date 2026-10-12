@@ -1,6 +1,8 @@
 const TRANSLATED_AUTH_ERRORS: ReadonlySet<string> = new Set([
   "user_already_exists",
   "rate_limited",
+  "email_limit",
+  "resend_cooldown",
   "invalid_otp",
   "weak_password",
   "invalid_email",
