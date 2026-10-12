@@ -58,8 +58,8 @@ export async function createProduct(
     .single();
 
   if (error) return fail("Could not create the product.");
-  bustProductCaches(data.id);
-  return ok({ id: data.id });
+  bustProductCaches(String(data.id));
+  return ok({ id: String(data.id) });
 }
 
 export async function updateProduct(
@@ -92,8 +92,8 @@ export async function updateProduct(
     .eq("id", parsedId.data);
 
   if (error) return fail("Could not update the product.");
-  bustProductCaches(parsedId.data);
-  return ok({ id: parsedId.data });
+  bustProductCaches(String(parsedId.data));
+  return ok({ id: String(parsedId.data) });
 }
 
 export async function setProductStatus(
@@ -118,7 +118,7 @@ export async function setProductStatus(
     .eq("id", parsedId.data);
 
   if (error) return fail("Could not update the status.");
-  bustProductCaches(parsedId.data);
+  bustProductCaches(String(parsedId.data));
   return ok({ status: parsedStatus.data });
 }
 
@@ -155,7 +155,7 @@ export async function adjustProductStock(input: {
     .eq("id", id);
 
   if (error) return fail("Could not update stock.");
-  bustProductCaches(id);
+  bustProductCaches(String(id));
   return ok({ stockKg });
 }
 
@@ -171,6 +171,6 @@ export async function deleteProduct(id: string): Promise<ActionResult<null>> {
     .eq("id", parsedId.data);
 
   if (error) return fail("Could not delete the product.");
-  bustProductCaches(parsedId.data);
+  bustProductCaches(String(parsedId.data));
   return ok(null);
 }

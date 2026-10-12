@@ -46,7 +46,7 @@ export async function placeOrder(
   revalidatePath("/orders");
   revalidatePath("/admin/orders");
   revalidatePath("/admin");
-  return ok({ id: data.id });
+  return ok({ id: String(data.id) });
 }
 
 export async function updateOrderStatus(

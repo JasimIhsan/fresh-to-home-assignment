@@ -26,7 +26,9 @@ class CartService {
   load(userId: string): CartItem[] {
     try {
       const stored = localStorage.getItem(this.storageKey(userId));
-      return stored ? (JSON.parse(stored) as CartItem[]) : [];
+      const items = stored ? (JSON.parse(stored) as CartItem[]) : [];
+      // Drop lines saved before product ids became numeric (e.g. "p1")
+      return items.filter((item) => /^\d+$/.test(String(item.product?.id)));
     } catch (e) {
       console.error("Failed to parse stored cart:", e);
       return [];

@@ -12,11 +12,7 @@ import type {
   AuthState,
   AuthUser,
   SignInData,
-  SignUpData,
-  SignUpMetadata,
-  SignUpOptions,
   UserMetadata,
-  UserRole,
 } from "./auth.types";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -38,7 +34,8 @@ function fail(context: string, error: AuthErrorResponse) {
 }
 
 /**
- * Browser-side auth flows on Supabase. Sessions live in cookies so the
+ * Browser-side auth flows on Supabase. Sign up and OTP verification run as
+ * Server Actions (src/app/actions/auth.actions.ts). Sessions live in cookies so the
  * server (DAL, Server Actions) sees the same user. React state lives in
  * AuthContext; authorization is enforced server-side.
  */
@@ -55,7 +52,9 @@ export class AuthService {
 
   static parseUserMetadata(user: AuthUser): UserMetadata {
     const fallbackName = user.email ? user.email.split("@")[0] : "";
-    const name: unknown = user.user_metadata?.name;
+    // Sign up stores `full_name`; accounts created earlier used `name`.
+    const name: unknown =
+      user.user_metadata?.full_name ?? user.user_metadata?.name;
     return {
       name: typeof name === "string" && name ? name : fallbackName,
       // app_metadata is only writable with the service role, so it is the
@@ -143,55 +142,6 @@ export class AuthService {
       return ok({ user: data.user, session: data.session });
     } catch (err) {
       return fail("signIn", normalizeAuthError(err));
-    }
-  }
-
-  async signUp(
-    email: string,
-    password: string,
-    metadata: SignUpMetadata = {},
-    options: SignUpOptions = {}
-  ): Promise<AuthResult<SignUpData>> {
-    if (!this.client) return fail("signUp", buildAuthError("not_configured"));
-
-    const cleanEmail = email.trim();
-    const invalid = this.validateCredentials(cleanEmail, password);
-    if (invalid) return fail("signUp", invalid);
-
-    try {
-      const { data, error } = await this.client.auth.signUp({
-        email: cleanEmail,
-        password,
-        options: {
-          // Self-service sign ups are always customers; the role is
-          // forced here so callers cannot self-assign admin.
-          data: {
-            ...metadata,
-            name: typeof metadata.name === "string" ? metadata.name.trim() : "",
-            role: "customer" satisfies UserRole,
-          },
-          emailRedirectTo: options.emailRedirectTo,
-        },
-      });
-      if (error) return fail("signUp", normalizeAuthError(error));
-
-      // With "Confirm email" enabled and an already-registered address,
-      // Supabase returns an obfuscated user with no identities instead of
-      // an error (to prevent email enumeration).
-      if (data.user && data.user.identities?.length === 0) {
-        return fail(
-          "signUp",
-          buildAuthError("user_already_exists", { field: "email" })
-        );
-      }
-
-      return ok({
-        user: data.user,
-        session: data.session,
-        needsEmailConfirmation: !data.session,
-      });
-    } catch (err) {
-      return fail("signUp", normalizeAuthError(err));
     }
   }
 

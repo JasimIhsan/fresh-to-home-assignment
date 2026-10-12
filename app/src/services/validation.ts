@@ -4,8 +4,10 @@
  */
 export type FieldErrors<F extends string> = Partial<Record<F, string>>;
 
-const MIN_PASSWORD_LENGTH = 6;
-const MIN_NAME_LENGTH = 2;
+export const MIN_PASSWORD_LENGTH = 6;
+export const MIN_NAME_LENGTH = 2;
+/** Digits in the email OTP; must match Auth → Email → "Email OTP Length". */
+export const OTP_LENGTH = 6;
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_PATTERN = /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]{5,15}$/;
@@ -69,6 +71,13 @@ export function validateSignupForm(values: {
     password: passwordError(values.password),
     consent: values.consent ? undefined : "validation.consentRequired",
   });
+}
+
+export function validateOtp(code: string) {
+  if (code.length < OTP_LENGTH) return "validation.otpRequired";
+  if (!new RegExp(`^\\d{${OTP_LENGTH}}$`).test(code)) {
+    return "validation.otpInvalid";
+  }
 }
 
 export function validatePasswordResetRequest(values: { email: string }) {

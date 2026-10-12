@@ -1,19 +1,21 @@
 "use client";
 
+import { signUp } from "@/app/actions/auth.actions";
 import { AuthCardWrapper } from "@/components/AuthCardWrapper";
 import { SignupFormFields } from "./SignupFormFields";
+import { authErrorKey } from "../../(components)/auth-error-key";
 import { safeRedirectPath } from "../../(components)/safe-redirect";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { hasErrors, validateSignupForm } from "@/services";
-import { MailCheck, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export function SignupForm() {
   const { t } = useLanguage();
-  const { signUp } = useAuth();
+  const { syncSession } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,7 +29,6 @@ export function SignupForm() {
   }>({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [confirmationSent, setConfirmationSent] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectParam = safeRedirectPath(searchParams.get("redirect"), "");
@@ -46,32 +47,30 @@ export function SignupForm() {
     setLoading(true);
     setError("");
 
-    const targetDestination = redirectParam || "/catalog";
-    const result = await signUp(
+    const result = await signUp({
+      fullName: name,
       email,
       password,
-      { name },
-      { emailRedirectTo: `${window.location.origin}${targetDestination}` }
-    );
-    setLoading(false);
+      consent,
+    });
 
-    if (result.error) {
-      setError(
-        result.error.code === "not_configured"
-          ? result.error.message
-          : t("signup.errorFailed")
-      );
+    if (!result.success) {
+      setLoading(false);
+      setError(t(authErrorKey(result.error)));
       return;
     }
 
-    // With email confirmation enabled, no session is issued until the
-    // user clicks the confirmation link
-    if (result.data.needsEmailConfirmation) {
-      setConfirmationSent(true);
+    // Email confirmation enabled: verify the emailed code before the
+    // account is active and a session is issued
+    if (result.data.needsVerification) {
+      const params = new URLSearchParams({ email: result.data.email });
+      if (redirectParam) params.set("redirect", redirectParam);
+      router.push(`/otp?${params.toString()}`);
       return;
     }
 
-    router.push(targetDestination);
+    await syncSession();
+    router.push(redirectParam || "/catalog");
   };
 
   return (
@@ -103,42 +102,26 @@ export function SignupForm() {
         </div>
       )}
 
-      {confirmationSent ? (
-        <div className="animate-fadeIn space-y-4 rounded-3xl border border-emerald-200 bg-emerald-50 p-6 text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600">
-            <MailCheck size={32} />
-          </div>
-          <div>
-            <h3 className="text-base font-extrabold text-emerald-950">
-              {t("signup.confirmTitle")}
-            </h3>
-            <p className="mt-1 text-xs leading-relaxed text-emerald-800">
-              {t("signup.confirmDesc")}
-            </p>
-          </div>
-        </div>
-      ) : (
-        <SignupFormFields
-          name={name}
-          setName={setName}
-          email={email}
-          setEmail={setEmail}
-          password={password}
-          setPassword={setPassword}
-          showPassword={showPassword}
-          setShowPassword={setShowPassword}
-          consent={consent}
-          setConsent={setConsent}
-          nameError={fieldError("name")}
-          emailError={fieldError("email")}
-          passwordError={fieldError("password")}
-          consentError={fieldError("consent")}
-          touched={touched}
-          setTouched={setTouched}
-          loading={loading}
-          onSubmit={handleSignup}
-        />
-      )}
+      <SignupFormFields
+        name={name}
+        setName={setName}
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        showPassword={showPassword}
+        setShowPassword={setShowPassword}
+        consent={consent}
+        setConsent={setConsent}
+        nameError={fieldError("name")}
+        emailError={fieldError("email")}
+        passwordError={fieldError("password")}
+        consentError={fieldError("consent")}
+        touched={touched}
+        setTouched={setTouched}
+        loading={loading}
+        onSubmit={handleSignup}
+      />
     </AuthCardWrapper>
   );
 }

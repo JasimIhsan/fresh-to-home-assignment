@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { dbIdSchema } from "./id.schema";
 
-export const orderIdSchema = z.string().trim().min(1).max(32);
+export const orderIdSchema = dbIdSchema;
 
 export const orderStatusSchema = z.enum([
   "pending",
@@ -14,7 +15,7 @@ export const placeOrderSchema = z.object({
   items: z
     .array(
       z.object({
-        productId: z.string().trim().min(1).max(64),
+        productId: dbIdSchema,
         weightKg: z.number().positive().max(50),
       })
     )
@@ -33,4 +34,4 @@ export const placeOrderSchema = z.object({
   notes: z.string().trim().max(500),
 });
 
-export type PlaceOrderInput = z.infer<typeof placeOrderSchema>;
+export type PlaceOrderInput = z.input<typeof placeOrderSchema>;

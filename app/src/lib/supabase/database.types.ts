@@ -14,7 +14,7 @@ type OrderRow = {
   created_at: string;
   customer_name: string;
   delivery_slot: string | null;
-  id: string;
+  id: number;
   items: Json;
   notes: string | null;
   payment_method: string | null;
@@ -32,7 +32,7 @@ type ProductRow = {
   created_by: string | null;
   description: string;
   gallery_images: string[];
-  id: string;
+  id: number;
   image_url: string;
   name: string;
   origin: string | null;
@@ -50,6 +50,23 @@ type ProductRow = {
   wholesale_cost_per_kg: number | null;
 };
 
+export type UserRole = "customer" | "admin";
+
+type ProfileRow = {
+  created_at: string;
+  email: string | null;
+  full_name: string;
+  id: number;
+  role: UserRole;
+  updated_at: string;
+  user_id: string;
+};
+
+/** `id` columns are `generated always as identity`, so writes never set them. */
+type Writable<Row extends { id: number }> = Partial<Omit<Row, "id">> & {
+  id?: never;
+};
+
 export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.18";
@@ -58,7 +75,7 @@ export type Database = {
     Tables: {
       orders: {
         Row: OrderRow;
-        Insert: Partial<OrderRow> &
+        Insert: Writable<OrderRow> &
           Pick<
             OrderRow,
             | "address"
@@ -68,14 +85,20 @@ export type Database = {
             | "total_amount"
             | "user_id"
           >;
-        Update: Partial<OrderRow>;
+        Update: Writable<OrderRow>;
         Relationships: [];
       };
       products: {
         Row: ProductRow;
-        Insert: Partial<ProductRow> &
+        Insert: Writable<ProductRow> &
           Pick<ProductRow, "category" | "name" | "price_per_kg">;
-        Update: Partial<ProductRow>;
+        Update: Writable<ProductRow>;
+        Relationships: [];
+      };
+      profiles: {
+        Row: ProfileRow;
+        Insert: Writable<ProfileRow> & Pick<ProfileRow, "user_id">;
+        Update: Writable<ProfileRow>;
         Relationships: [];
       };
     };
@@ -101,10 +124,11 @@ export type Database = {
         };
       };
     };
-    Enums: { [_ in never]: never };
+    Enums: { user_role: UserRole };
     CompositeTypes: { [_ in never]: never };
   };
 };
 
 export type ProductRecord = ProductRow;
 export type OrderRecord = OrderRow;
+export type ProfileRecord = ProfileRow;

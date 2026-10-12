@@ -1,6 +1,7 @@
 import "server-only";
 
 import { CacheTags } from "@/lib/cache-tags";
+import { parseDbId } from "@/lib/schemas/id.schema";
 import { createSessionClient, getPublicClient } from "@/lib/supabase/server";
 import type { Product } from "@/types";
 import { cacheLife, cacheTag } from "next/cache";
@@ -43,10 +44,13 @@ export async function getStorefrontProduct(
   cacheTag(CacheTags.products, CacheTags.product(id));
   cacheLife("hours");
 
+  const productId = parseDbId(id);
+  if (productId === null) return null;
+
   const { data, error } = await getPublicClient()
     .from("products")
     .select(STOREFRONT_PRODUCT_COLUMNS)
-    .eq("id", id.slice(0, 64))
+    .eq("id", productId)
     .eq("status", "active")
     .eq("visibility", "public")
     .maybeSingle();
@@ -64,11 +68,12 @@ export async function getRelatedProducts(
   cacheTag(CacheTags.products);
   cacheLife("hours");
 
+  const excludedId = parseDbId(productId) ?? 0;
   const { data, error } = await getPublicClient()
     .from("products")
     .select(STOREFRONT_PRODUCT_COLUMNS)
     .eq("category", category)
-    .neq("id", productId)
+    .neq("id", excludedId)
     .eq("status", "active")
     .eq("visibility", "public")
     .limit(limit);
@@ -103,11 +108,14 @@ export const getAdminProducts = cache(async (): Promise<readonly Product[]> => {
 export const getAdminProduct = cache(
   async (id: string): Promise<Product | null> => {
     await requireAdmin(`/admin/products/${encodeURIComponent(id)}`);
+    const productId = parseDbId(id);
+    if (productId === null) return null;
+
     const supabase = await createSessionClient();
     const { data, error } = await supabase
       .from("products")
       .select(ADMIN_PRODUCT_COLUMNS)
-      .eq("id", id.slice(0, 64))
+      .eq("id", productId)
       .maybeSingle();
 
     if (error) throw new Error(`Failed to load product: ${error.message}`);

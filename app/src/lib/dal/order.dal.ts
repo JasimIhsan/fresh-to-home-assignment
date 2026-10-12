@@ -1,5 +1,6 @@
 import "server-only";
 
+import { parseDbId } from "@/lib/schemas/id.schema";
 import { createSessionClient } from "@/lib/supabase/server";
 import type { Order } from "@/types";
 import { cache } from "react";
@@ -25,11 +26,14 @@ export const getMyOrders = cache(async (): Promise<readonly Order[]> => {
 
 export const getMyOrder = cache(async (id: string): Promise<Order | null> => {
   const user = await requireUser(`/orders/${encodeURIComponent(id)}`);
+  const orderId = parseDbId(id);
+  if (orderId === null) return null;
+
   const supabase = await createSessionClient();
   const { data, error } = await supabase
     .from("orders")
     .select(ORDER_COLUMNS)
-    .eq("id", id.slice(0, 32))
+    .eq("id", orderId)
     .eq("user_id", user.id)
     .maybeSingle();
 
@@ -53,11 +57,14 @@ export const getAdminOrders = cache(async (): Promise<readonly Order[]> => {
 export const getAdminOrder = cache(
   async (id: string): Promise<Order | null> => {
     await requireAdmin(`/admin/orders/${encodeURIComponent(id)}`);
+    const orderId = parseDbId(id);
+    if (orderId === null) return null;
+
     const supabase = await createSessionClient();
     const { data, error } = await supabase
       .from("orders")
       .select(ORDER_COLUMNS)
-      .eq("id", id.slice(0, 32))
+      .eq("id", orderId)
       .maybeSingle();
 
     if (error) throw new Error(`Failed to load order: ${error.message}`);

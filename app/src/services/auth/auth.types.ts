@@ -13,17 +13,6 @@ export type AuthUser = User;
 /** The Supabase session object exposed by the auth layer. */
 export type AuthSession = Session;
 
-/** Extra profile fields stored in `user_metadata` at sign up. */
-export interface SignUpMetadata {
-  name?: string;
-  [key: string]: unknown;
-}
-
-export interface SignUpOptions {
-  /** URL the email confirmation link redirects back to. */
-  emailRedirectTo?: string;
-}
-
 /** Normalized, UI-safe auth error categories. */
 export type AuthErrorCode =
   | "invalid_credentials"
@@ -32,6 +21,7 @@ export type AuthErrorCode =
   | "rate_limited"
   | "weak_password"
   | "invalid_email"
+  | "invalid_otp"
   | "validation_failed"
   | "signup_disabled"
   | "network_error"
@@ -59,13 +49,6 @@ export type AuthResult<T> =
 export interface SignInData {
   user: AuthUser;
   session: AuthSession;
-}
-
-export interface SignUpData {
-  user: AuthUser | null;
-  session: AuthSession | null;
-  /** True when email confirmation is enabled and no session was issued yet. */
-  needsEmailConfirmation: boolean;
 }
 
 /** Identity derived from the Supabase session. */

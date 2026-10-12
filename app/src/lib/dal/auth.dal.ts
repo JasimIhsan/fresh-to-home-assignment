@@ -13,7 +13,8 @@ export interface SessionUser {
 
 /**
  * The verified current user, or null. `getUser()` validates the token with
- * the auth server; deduped per request via React.cache.
+ * the auth server; deduped per request via React.cache. Name and role come
+ * from `profiles`, which users cannot change the role of.
  */
 export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
   const supabase = await createSessionClient();
@@ -21,16 +22,17 @@ export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
   if (error || !data.user) return null;
 
   const { user } = data;
-  const metaName: unknown = user.user_metadata?.name;
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("full_name, role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
   return {
     id: user.id,
     email: user.email ?? null,
-    name:
-      typeof metaName === "string" && metaName
-        ? metaName
-        : (user.email?.split("@")[0] ?? ""),
-    // app_metadata is only writable with the service role, so it is trusted.
-    role: user.app_metadata?.role === "admin" ? "admin" : "customer",
+    name: profile?.full_name || (user.email?.split("@")[0] ?? ""),
+    role: profile?.role === "admin" ? "admin" : "customer",
   };
 });
 

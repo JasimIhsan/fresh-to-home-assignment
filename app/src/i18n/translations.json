@@ -96,10 +96,7 @@
       "consentEnd": " zu.",
       "submit": "Registrieren",
       "alreadyHaveAccount": "Bereits ein Konto?",
-      "login": "Anmelden",
-      "errorFailed": "Registrierung fehlgeschlagen. Möglicherweise existiert diese E-Mail bereits.",
-      "confirmTitle": "Bestätigen Sie Ihre E-Mail",
-      "confirmDesc": "Wir haben Ihnen einen Bestätigungslink gesendet. Bitte überprüfen Sie Ihren Posteingang, um Ihr Konto zu aktivieren."
+      "login": "Anmelden"
     },
     "forgotPassword": {
       "title": "Passwort zurücksetzen",
@@ -124,15 +121,16 @@
       "error": "Passwort konnte nicht aktualisiert werden."
     },
     "otp": {
-      "title": "Code bestätigen",
-      "subtitle": "Wir haben einen 6-stelligen Bestätigungscode an Ihre Nummer gesendet.",
+      "title": "E-Mail bestätigen",
+      "subtitle": "Wir haben einen 6-stelligen Code an Ihre E-Mail-Adresse gesendet. Geben Sie ihn ein, um Ihr Konto zu erstellen.",
       "verifyButton": "Code bestätigen",
       "resendCode": "Code erneut senden",
-      "backToLogin": "Zurück zum Login",
-      "successTitle": "Erfolgreich verifiziert!",
-      "successDesc": "Sie werden zum Sortiment weitergeleitet...",
+      "successTitle": "Konto erstellt!",
+      "successDesc": "Sie werden weitergeleitet...",
       "verifying": "Wird überprüft...",
-      "resending": "Wird gesendet..."
+      "resending": "Wird gesendet...",
+      "backToSignup": "Zurück zur Registrierung",
+      "resent": "Ein neuer Code ist unterwegs. Bitte prüfen Sie Ihr Postfach."
     },
     "catalog": {
       "products": "Produkte",
@@ -454,6 +452,16 @@
       "cachedNotice": "Sie surfen offline mit gespeicherten Daten.",
       "cartOfflineNotice": "Warenkorb-Änderungen sind offline deaktiviert.",
       "cartOfflineBadge": "Offline (Änderungen gesperrt)"
+    },
+    "authErrors": {
+      "user_already_exists": "Für diese E-Mail-Adresse existiert bereits ein Konto. Bitte melden Sie sich an.",
+      "rate_limited": "Zu viele Versuche. Bitte warten Sie einen Moment.",
+      "invalid_otp": "Dieser Code ist ungültig oder abgelaufen. Fordern Sie einen neuen an.",
+      "weak_password": "Ihr Passwort ist zu schwach. Verwenden Sie mindestens 8 Zeichen mit Buchstaben, Zahlen und Sonderzeichen.",
+      "invalid_email": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+      "network_error": "Keine Verbindung. Bitte prüfen Sie Ihre Internetverbindung.",
+      "signup_disabled": "Registrierungen sind derzeit deaktiviert.",
+      "unknown": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
     }
   },
   "en": {
@@ -553,10 +561,7 @@
       "consentEnd": ".",
       "submit": "Register",
       "alreadyHaveAccount": "Already have an account?",
-      "login": "Login",
-      "errorFailed": "Registration failed. This email might already exist.",
-      "confirmTitle": "Confirm your email",
-      "confirmDesc": "We sent you a confirmation link. Please check your inbox to activate your account."
+      "login": "Login"
     },
     "forgotPassword": {
       "title": "Reset Password",
@@ -581,15 +586,16 @@
       "error": "Failed to update password."
     },
     "otp": {
-      "title": "Enter Verification Code",
-      "subtitle": "We sent a 6-digit security code to your registered mobile number.",
+      "title": "Verify your email",
+      "subtitle": "We sent a 6-digit code to your email address. Enter it below to create your account.",
       "verifyButton": "Verify Code",
       "resendCode": "Resend Code",
-      "backToLogin": "Back to Login",
-      "successTitle": "Successfully verified!",
-      "successDesc": "Redirecting to catalog...",
+      "successTitle": "Account created!",
+      "successDesc": "Redirecting...",
       "verifying": "Verifying...",
-      "resending": "Sending..."
+      "resending": "Sending...",
+      "backToSignup": "Back to sign up",
+      "resent": "A new code is on its way. Check your inbox."
     },
     "catalog": {
       "products": "Products",
@@ -911,6 +917,16 @@
       "cachedNotice": "You are viewing cached offline content.",
       "cartOfflineNotice": "Cart modifications are disabled while offline to preserve sync accuracy.",
       "cartOfflineBadge": "Offline (Modifications Locked)"
+    },
+    "authErrors": {
+      "user_already_exists": "An account with this email already exists. Try signing in instead.",
+      "rate_limited": "Too many attempts. Please wait a moment and try again.",
+      "invalid_otp": "This code is invalid or has expired. Request a new one.",
+      "weak_password": "Your password is too weak. Use at least 8 characters with letters, numbers and symbols.",
+      "invalid_email": "Please enter a valid email address.",
+      "network_error": "Unable to connect. Please check your internet connection.",
+      "signup_disabled": "New sign ups are currently disabled.",
+      "unknown": "Something went wrong. Please try again."
     }
   }
 }

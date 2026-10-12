@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { dbIdSchema } from "./id.schema";
 
-export const productIdSchema = z.string().trim().min(1).max(64);
+export const productIdSchema = dbIdSchema;
 
 export const productStatusSchema = z.enum(["draft", "active", "archived"]);
 

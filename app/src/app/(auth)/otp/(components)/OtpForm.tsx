@@ -1,47 +1,63 @@
 "use client";
 
+import { resendSignupOtp, verifySignupOtp } from "@/app/actions/auth.actions";
 import { AuthCardWrapper } from "@/components/AuthCardWrapper";
+import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, RotateCw, ShieldCheck, Smartphone } from "lucide-react";
+import { OTP_LENGTH, validateOtp } from "@/services";
+import { CheckCircle2, MailCheck, RotateCw, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { authErrorKey } from "../../(components)/auth-error-key";
 
-export function OtpForm() {
+const EMPTY_OTP: readonly string[] = Array.from(
+  { length: OTP_LENGTH },
+  () => ""
+);
+
+interface OtpFormProps {
+  readonly email: string;
+  /** Same-origin path to continue to once the account is verified. */
+  readonly redirectTo: string;
+}
+
+export function OtpForm({ email, redirectTo }: OtpFormProps) {
   const { t } = useLanguage();
+  const { syncSession } = useAuth();
   const router = useRouter();
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otp, setOtp] = useState<readonly string[]>(EMPTY_OTP);
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
   const [resending, setResending] = useState(false);
   const [touched, setTouched] = useState(false);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
 
-  const getOtpError = () => {
-    const raw = otp.join("");
-    if (!raw) return t("validation.otpRequired");
-    if (raw.length < 6) return t("validation.otpRequired");
-    if (!/^\d{6}$/.test(raw)) return t("validation.otpInvalid");
-    return "";
-  };
+  const code = otp.join("");
+  const otpErrorKey = validateOtp(code);
+  const otpError = touched && otpErrorKey ? t(otpErrorKey) : "";
 
-  const otpError = touched ? getOtpError() : "";
+  const focusInput = (index: number) =>
+    document.getElementById(`otp-input-${index}`)?.focus();
 
   const handleOtpChange = (index: number, value: string) => {
     if (value && !/^\d+$/.test(value)) return;
 
+    const next = [...otp];
     if (value.length > 1) {
-      value = value.slice(-1);
+      // Pasted or autofilled code: spread the digits across the inputs
+      const digits = value.slice(0, OTP_LENGTH - index).split("");
+      digits.forEach((digit, offset) => (next[index + offset] = digit));
+      setOtp(next);
+      focusInput(Math.min(index + digits.length, OTP_LENGTH - 1));
+    } else {
+      next[index] = value;
+      setOtp(next);
+      if (value && index < OTP_LENGTH - 1) focusInput(index + 1);
     }
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
     if (!touched) setTouched(true);
-
-    // Auto-focus next input
-    if (value && index < 5) {
-      const nextInput = document.getElementById(`otp-input-${index + 1}`);
-      nextInput?.focus();
-    }
+    setError("");
   };
 
   const handleKeyDown = (
@@ -49,50 +65,62 @@ export function OtpForm() {
     e: React.KeyboardEvent<HTMLInputElement>
   ) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
-      const prevInput = document.getElementById(`otp-input-${index - 1}`);
-      prevInput?.focus();
+      focusInput(index - 1);
     }
   };
 
-  const handleVerify = (e: React.FormEvent) => {
+  const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched(true);
-    const err = getOtpError();
-    if (err) return;
+    if (otpErrorKey) return;
 
     setVerifying(true);
-    setTimeout(() => {
+    setError("");
+    setNotice("");
+    const result = await verifySignupOtp({ email, token: code });
+
+    if (!result.success) {
       setVerifying(false);
-      setVerified(true);
-      setTimeout(() => {
-        router.push("/catalog");
-      }, 1500);
-    }, 1000);
+      setError(t(authErrorKey(result.error)));
+      return;
+    }
+
+    await syncSession();
+    setVerifying(false);
+    setVerified(true);
+    router.replace(redirectTo);
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setResending(true);
-    setTimeout(() => {
-      setResending(false);
-      setOtp(["", "", "", "", "", ""]);
-      setTouched(false);
-      document.getElementById("otp-input-0")?.focus();
-    }, 1200);
+    setError("");
+    setNotice("");
+    const result = await resendSignupOtp({ email });
+    setResending(false);
+
+    if (!result.success) {
+      setError(t(authErrorKey(result.error)));
+      return;
+    }
+    setOtp(EMPTY_OTP);
+    setTouched(false);
+    setNotice(t("otp.resent"));
+    focusInput(0);
   };
 
   return (
     <AuthCardWrapper
       title={t("otp.title")}
       subtitle={t("otp.subtitle")}
-      backHref="/login"
-      backLabel={t("otp.backToLogin")}
-      badgeIcon={<Smartphone size={24} />}
+      backHref="/signup"
+      backLabel={t("otp.backToSignup")}
+      badgeIcon={<MailCheck size={24} />}
       footer={
         <div className="text-center">
           <button
             type="button"
             onClick={handleResend}
-            disabled={resending}
+            disabled={resending || verified}
             className="text-primary inline-flex cursor-pointer items-center gap-1.5 text-xs font-bold hover:underline disabled:opacity-50"
           >
             <RotateCw size={14} className={cn(resending && "animate-spin")} />
@@ -115,6 +143,21 @@ export function OtpForm() {
         </div>
       ) : (
         <form onSubmit={handleVerify} noValidate className="space-y-6">
+          <p className="truncate text-center text-sm font-bold text-gray-900">
+            {email}
+          </p>
+
+          {error && (
+            <div className="text-secondary animate-fadeIn rounded-2xl border border-red-200 bg-red-50 p-4 text-sm">
+              {error}
+            </div>
+          )}
+          {notice && (
+            <div className="animate-fadeIn rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+              {notice}
+            </div>
+          )}
+
           <div>
             <div className="flex justify-between gap-2">
               {otp.map((digit, i) => (
@@ -123,7 +166,8 @@ export function OtpForm() {
                   id={`otp-input-${i}`}
                   type="text"
                   inputMode="numeric"
-                  maxLength={1}
+                  autoComplete={i === 0 ? "one-time-code" : "off"}
+                  maxLength={OTP_LENGTH}
                   value={digit}
                   onChange={(e) => handleOtpChange(i, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(i, e)}

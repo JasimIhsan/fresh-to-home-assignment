@@ -63,7 +63,7 @@ export function toProduct(
   const status = toProductStatus(row.status);
   const visibility = row.visibility === "hidden" ? "hidden" : "public";
   return {
-    id: row.id,
+    id: String(row.id),
     name: row.name,
     description: row.description,
     pricePerKg: Number(row.price_per_kg),
@@ -107,11 +107,12 @@ function toCartItems(items: Json): CartItem[] {
   for (const line of items) {
     if (!isRecord(line) || !isRecord(line.product)) continue;
     const p = line.product;
-    if (typeof p.id !== "string" || typeof p.name !== "string") continue;
+    const id = typeof p.id === "number" ? String(p.id) : p.id;
+    if (typeof id !== "string" || typeof p.name !== "string") continue;
     lines.push({
       weightKg: Number(line.weightKg) || 0,
       product: {
-        id: p.id,
+        id,
         name: p.name,
         description: typeof p.description === "string" ? p.description : "",
         pricePerKg: Number(p.pricePerKg) || 0,
@@ -127,7 +128,7 @@ function toCartItems(items: Json): CartItem[] {
 
 export function toOrder(row: OrderRecord): Order {
   return {
-    id: row.id,
+    id: String(row.id),
     userId: row.user_id,
     userEmail: row.user_email ?? undefined,
     customerName: row.customer_name,

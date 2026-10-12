@@ -15,6 +15,7 @@ const AUTH_ERROR_MESSAGES: Record<AuthErrorCode, string> = {
   weak_password:
     "Your password is too weak. Use at least 8 characters with a mix of letters, numbers and symbols.",
   invalid_email: "Please enter a valid email address.",
+  invalid_otp: "This code is invalid or has expired. Request a new one.",
   validation_failed: "Some of the details you entered are invalid.",
   signup_disabled: "New sign ups are currently disabled.",
   network_error:
@@ -85,6 +86,8 @@ export function normalizeAuthError(err: unknown): AuthErrorResponse {
         return buildAuthError("rate_limited", { status });
       case "weak_password":
         return buildAuthError("weak_password", { status, field: "password" });
+      case "otp_expired":
+        return buildAuthError("invalid_otp", { status });
       case "email_address_invalid":
       case "email_address_not_authorized":
         return buildAuthError("invalid_email", { status, field: "email" });

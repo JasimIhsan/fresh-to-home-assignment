@@ -8,9 +8,6 @@ import {
   type AuthState,
   type AuthUser,
   type SignInData,
-  type SignUpData,
-  type SignUpMetadata,
-  type SignUpOptions,
   type UserRole,
 } from "@/services/auth";
 import { useRouter } from "next/navigation";
@@ -32,12 +29,11 @@ interface AuthContextType {
   isAdmin: boolean;
 
   signIn: (email: string, password: string) => Promise<AuthResult<SignInData>>;
-  signUp: (
-    email: string,
-    password: string,
-    metadata?: SignUpMetadata,
-    options?: SignUpOptions
-  ) => Promise<AuthResult<SignUpData>>;
+  /**
+   * Re-reads the session cookie. Call after a Server Action signs the user
+   * in (e.g. OTP verification), since that does not emit a browser event.
+   */
+  syncSession: () => Promise<void>;
   signOut: () => Promise<AuthResult<null>>;
   loginAdmin: (
     email: string,
@@ -99,15 +95,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
-  const signUp = useCallback(
-    (
-      email: string,
-      password: string,
-      metadata?: SignUpMetadata,
-      options?: SignUpOptions
-    ) => authService.signUp(email, password, metadata, options),
-    []
-  );
+  const syncSession = useCallback(async () => {
+    const result = await authService.getSession();
+    setState(authService.resolveState(result.data));
+  }, []);
 
   const signOut = useCallback(async () => {
     const result = await authService.signOut();
@@ -130,11 +121,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       role,
       isAdmin,
       signIn,
-      signUp,
+      syncSession,
       signOut,
       loginAdmin,
     }),
-    [user, isLoading, role, isAdmin, signIn, signUp, signOut, loginAdmin]
+    [user, isLoading, role, isAdmin, signIn, syncSession, signOut, loginAdmin]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

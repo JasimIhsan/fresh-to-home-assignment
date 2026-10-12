@@ -43,6 +43,13 @@ export function LoginForm() {
 
     const result = await signIn(email, password);
     setLoading(false);
+    if (result.error?.code === "email_not_confirmed") {
+      // Sign up was never finished: verify the emailed code first
+      const params = new URLSearchParams({ email: email.trim() });
+      if (redirectParam) params.set("redirect", redirectParam);
+      router.push(`/otp?${params.toString()}`);
+      return;
+    }
     if (result.error) {
       setError(
         result.error.code === "not_configured"
