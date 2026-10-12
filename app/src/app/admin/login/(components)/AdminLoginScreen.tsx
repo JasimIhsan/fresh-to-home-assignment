@@ -1,6 +1,6 @@
 "use client";
 
-import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useLanguage } from "@/context/LanguageContext";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
 import Image from "next/image";

@@ -1,8 +1,8 @@
 "use client";
 
-import { AuthCardWrapper } from "@/components/auth/AuthCardWrapper";
-import { LoginFormFields } from "@/components/auth/LoginFormFields";
-import { safeRedirectPath } from "@/components/auth/safe-redirect";
+import { AuthCardWrapper } from "@/components/AuthCardWrapper";
+import { LoginFormFields } from "./LoginFormFields";
+import { safeRedirectPath } from "../../(components)/safe-redirect";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { hasErrors, validateLoginForm } from "@/services";

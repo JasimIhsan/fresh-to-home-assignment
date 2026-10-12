@@ -1,9 +1,9 @@
 "use client";
 
 import { updateOrderStatus } from "@/app/actions/order.actions";
-import { AdminOrderCustomerDetails } from "@/components/admin/AdminOrderCustomerDetails";
-import { AdminOrderItemsView } from "@/components/admin/AdminOrderItemsView";
-import { AdminOrderStatusActions } from "@/components/admin/AdminOrderStatusActions";
+import { AdminOrderCustomerDetails } from "./AdminOrderCustomerDetails";
+import { AdminOrderItemsView } from "./AdminOrderItemsView";
+import { AdminOrderStatusActions } from "./AdminOrderStatusActions";
 import { useLanguage } from "@/context/LanguageContext";
 import type { Order, OrderStatus } from "@/types";
 import { AlertCircle, ArrowLeft, CheckCircle2 } from "lucide-react";

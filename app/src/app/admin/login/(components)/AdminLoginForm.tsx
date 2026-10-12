@@ -1,6 +1,6 @@
 "use client";
 
-import { AdminLoginFormFields } from "@/components/admin/AdminLoginFormFields";
+import { AdminLoginFormFields } from "./AdminLoginFormFields";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useRouter, useSearchParams } from "next/navigation";

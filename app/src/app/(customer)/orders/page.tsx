@@ -1,5 +1,5 @@
-import { CustomerOrderCard } from "@/components/orders/CustomerOrderCard";
-import { CustomerOrdersEmpty } from "@/components/orders/CustomerOrdersEmpty";
+import { CustomerOrderCard } from "./(components)/CustomerOrderCard";
+import { CustomerOrdersEmpty } from "./(components)/CustomerOrdersEmpty";
 import { getMyOrders } from "@/lib/dal/order.dal";
 import { orderService } from "@/services";
 import { Suspense } from "react";

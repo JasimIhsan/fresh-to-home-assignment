@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthCardWrapper } from "@/components/auth/AuthCardWrapper";
+import { AuthCardWrapper } from "@/components/AuthCardWrapper";
 import { useLanguage } from "@/context/LanguageContext";
 import { cn } from "@/lib/utils";
 import { CheckCircle2, RotateCw, ShieldCheck, Smartphone } from "lucide-react";

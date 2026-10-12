@@ -1,7 +1,7 @@
 "use client";
 
-import { ProfileLogoutButton } from "@/components/profile/ProfileLogoutButton";
-import { LogoutConfirmModal } from "@/components/ui/LogoutConfirmModal";
+import { ProfileLogoutButton } from "./ProfileLogoutButton";
+import { LogoutConfirmModal } from "@/components/LogoutConfirmModal";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

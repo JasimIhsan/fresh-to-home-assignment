@@ -1,4 +1,4 @@
-import { AdminProductsTableSkeleton } from "@/components/admin/AdminProductSkeletons";
+import { AdminProductsTableSkeleton } from "./(components)/AdminProductSkeletons";
 
 export default function Loading() {
   return (

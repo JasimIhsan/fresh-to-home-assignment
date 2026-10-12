@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthCardWrapper } from "@/components/auth/AuthCardWrapper";
+import { AuthCardWrapper } from "@/components/AuthCardWrapper";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/context/LanguageContext";
 import { hasErrors, validatePasswordResetRequest } from "@/services";

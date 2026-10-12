@@ -1,9 +1,9 @@
-import { ProfileHeader } from "@/components/profile/ProfileHeader";
-import { ProfileIdentityCard } from "@/components/profile/ProfileIdentityCard";
-import { ProfileLanguageFeature } from "@/components/profile/ProfileLanguageFeature";
-import { ProfileQuickActions } from "@/components/profile/ProfileQuickActions";
-import { ProfileSecuritySection } from "@/components/profile/ProfileSecuritySection";
-import { ProfileStats } from "@/components/profile/ProfileStats";
+import { ProfileHeader } from "./(components)/ProfileHeader";
+import { ProfileIdentityCard } from "./(components)/ProfileIdentityCard";
+import { ProfileLanguageFeature } from "./(components)/ProfileLanguageFeature";
+import { ProfileQuickActions } from "./(components)/ProfileQuickActions";
+import { ProfileSecuritySection } from "./(components)/ProfileSecuritySection";
+import { ProfileStats } from "./(components)/ProfileStats";
 import { requireUser } from "@/lib/dal/auth.dal";
 import { getMyOrders } from "@/lib/dal/order.dal";
 import { Suspense } from "react";

@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  formatEuro,
-  formatKg,
-  formatOrderDate,
-} from "@/components/orders/format";
+import { formatEuro, formatKg, formatOrderDate } from "@/lib/format";
 import { useLanguage } from "@/context/LanguageContext";
 import { isOptimizableImage } from "@/lib/image";
 import type { Order } from "@/types";

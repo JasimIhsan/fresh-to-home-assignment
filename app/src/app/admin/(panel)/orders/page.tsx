@@ -1,5 +1,5 @@
-import { AdminOrdersFilter } from "@/components/admin/AdminOrdersFilter";
-import { AdminOrdersTable } from "@/components/admin/AdminOrdersTable";
+import { AdminOrdersFilter } from "./(components)/AdminOrdersFilter";
+import { AdminOrdersTable } from "./(components)/AdminOrdersTable";
 import { getAdminOrders } from "@/lib/dal/order.dal";
 import { orderService } from "@/services/order.service";
 import { Suspense } from "react";

@@ -1,7 +1,7 @@
-import { AdminProductsFilter } from "@/components/admin/AdminProductsFilter";
-import { AdminProductsHeader } from "@/components/admin/AdminProductsHeader";
-import { AdminProductsTableSkeleton } from "@/components/admin/AdminProductSkeletons";
-import { AdminProductsTable } from "@/components/admin/AdminProductsTable";
+import { AdminProductsFilter } from "./(components)/AdminProductsFilter";
+import { AdminProductsHeader } from "./(components)/AdminProductsHeader";
+import { AdminProductsTableSkeleton } from "./(components)/AdminProductSkeletons";
+import { AdminProductsTable } from "./(components)/AdminProductsTable";
 import { getAdminProducts } from "@/lib/dal/product.dal";
 import { ALL_CATEGORIES, productService } from "@/services";
 import { Suspense } from "react";

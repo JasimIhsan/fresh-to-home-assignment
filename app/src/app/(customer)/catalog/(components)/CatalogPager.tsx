@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  buildCatalogHref,
-  type CatalogParams,
-} from "@/components/catalog/catalog-url";
+import { buildCatalogHref, type CatalogParams } from "./catalog-url";
 import { Pagination } from "@/components/ui/Pagination";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";

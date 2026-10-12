@@ -1,8 +1,8 @@
-import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
-import { HomeFooter } from "@/components/home/HomeFooter";
-import { HomeHeader } from "@/components/home/HomeHeader";
-import { HomeHero } from "@/components/home/HomeHero";
-import { HomeTrending } from "@/components/home/HomeTrending";
+import { PwaInstallPrompt } from "./(components)/PwaInstallPrompt";
+import { HomeFooter } from "./(components)/HomeFooter";
+import { HomeHeader } from "./(components)/HomeHeader";
+import { HomeHero } from "./(components)/HomeHero";
+import { HomeTrending } from "./(components)/HomeTrending";
 import { cacheLife } from "next/cache";
 import Image from "next/image";
 

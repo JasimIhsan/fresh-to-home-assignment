@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthCardWrapper } from "@/components/auth/AuthCardWrapper";
+import { AuthCardWrapper } from "@/components/AuthCardWrapper";
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { cn } from "@/lib/utils";

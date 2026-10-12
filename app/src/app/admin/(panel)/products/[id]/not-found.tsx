@@ -1,4 +1,4 @@
-import { AdminProductNotFound } from "@/components/admin/AdminProductNotFound";
+import { AdminProductNotFound } from "./(components)/AdminProductNotFound";
 
 export default function NotFound() {
   return <AdminProductNotFound />;

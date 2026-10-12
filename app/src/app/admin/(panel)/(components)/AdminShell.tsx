@@ -21,7 +21,7 @@ import { Suspense, useEffect, useState, type ReactNode } from "react";
 
 // Only needed once the user asks to log out.
 const LogoutConfirmModal = dynamic(() =>
-  import("@/components/ui/LogoutConfirmModal").then((m) => m.LogoutConfirmModal)
+  import("@/components/LogoutConfirmModal").then((m) => m.LogoutConfirmModal)
 );
 
 const NAV_ITEMS = [

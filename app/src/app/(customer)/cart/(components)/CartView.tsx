@@ -1,10 +1,10 @@
 "use client";
 
-import { CartEmptyState } from "@/components/cart/CartEmptyState";
-import { CartFreeShippingBar } from "@/components/cart/CartFreeShippingBar";
-import { CartHeader } from "@/components/cart/CartHeader";
-import { CartItemCard } from "@/components/cart/CartItemCard";
-import { CartSummaryCard } from "@/components/cart/CartSummaryCard";
+import { CartEmptyState } from "./CartEmptyState";
+import { CartFreeShippingBar } from "./CartFreeShippingBar";
+import { CartHeader } from "./CartHeader";
+import { CartItemCard } from "./CartItemCard";
+import { CartSummaryCard } from "./CartSummaryCard";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";

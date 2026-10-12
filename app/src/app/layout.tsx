@@ -1,4 +1,4 @@
-import { NetworkStatusWatcher } from "@/components/ui/NetworkStatusWatcher";
+import { NetworkStatusWatcher } from "@/components/NetworkStatusWatcher";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { LanguageProvider } from "@/context/LanguageContext";

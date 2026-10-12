@@ -1,6 +1,6 @@
-import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
-import { Navbar } from "@/components/layout/Navbar";
-import { CartDrawer } from "@/components/ui/CartDrawer";
+import { MobileBottomNav } from "./(components)/MobileBottomNav";
+import { Navbar } from "./(components)/Navbar";
+import { CartDrawer } from "./(components)/CartDrawer";
 import { Suspense, type ReactNode } from "react";
 
 export default function CustomerLayout({

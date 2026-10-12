@@ -1,4 +1,4 @@
-import { AdminProductForm } from "@/components/admin/AdminProductForm";
+import { AdminProductForm } from "../(components)/AdminProductForm";
 
 export default function NewProductPage() {
   return <AdminProductForm mode="create" />;

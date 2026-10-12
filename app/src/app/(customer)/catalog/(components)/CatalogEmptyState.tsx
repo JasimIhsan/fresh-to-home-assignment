@@ -1,6 +1,6 @@
 "use client";
 
-import { CATALOG_PATH } from "@/components/catalog/catalog-url";
+import { CATALOG_PATH } from "./catalog-url";
 import { useLanguage } from "@/context/LanguageContext";
 import { Search } from "lucide-react";
 import Link from "next/link";

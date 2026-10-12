@@ -1,6 +1,6 @@
-import { AdminKpiGrid } from "@/components/admin/AdminKpiGrid";
-import { AdminRecentOrdersTable } from "@/components/admin/AdminRecentOrdersTable";
-import { AdminStockAlertsCard } from "@/components/admin/AdminStockAlertsCard";
+import { AdminKpiGrid } from "./(components)/AdminKpiGrid";
+import { AdminRecentOrdersTable } from "./(components)/AdminRecentOrdersTable";
+import { AdminStockAlertsCard } from "./(components)/AdminStockAlertsCard";
 import { getAdminOrders } from "@/lib/dal/order.dal";
 import { getAdminProducts } from "@/lib/dal/product.dal";
 import { orderService } from "@/services/order.service";

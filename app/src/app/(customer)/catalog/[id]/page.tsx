@@ -1,18 +1,18 @@
-import { PdpAccordion } from "@/components/product-detail/PdpAccordion";
-import { PdpBreadcrumb } from "@/components/product-detail/PdpBreadcrumb";
-import { PdpFreshnessPromise } from "@/components/product-detail/PdpFreshnessPromise";
-import { PdpHeader } from "@/components/product-detail/PdpHeader";
-import { PdpImageGallery } from "@/components/product-detail/PdpImageGallery";
-import { PdpProductInfo } from "@/components/product-detail/PdpProductInfo";
+import { PdpAccordion } from "./(components)/PdpAccordion";
+import { PdpBreadcrumb } from "./(components)/PdpBreadcrumb";
+import { PdpFreshnessPromise } from "./(components)/PdpFreshnessPromise";
+import { PdpHeader } from "./(components)/PdpHeader";
+import { PdpImageGallery } from "./(components)/PdpImageGallery";
+import { PdpProductInfo } from "./(components)/PdpProductInfo";
 import {
   PdpAddToCartSlot,
   PdpPurchaseProvider,
   PdpStickyBarSlot,
   PdpWeightSelectorSlot,
-} from "@/components/product-detail/PdpPurchaseContext";
-import { PdpRelatedProducts } from "@/components/product-detail/PdpRelatedProducts";
-import { PdpReviews } from "@/components/product-detail/PdpReviews";
-import { PdpTrustBar } from "@/components/product-detail/PdpTrustBar";
+} from "./(components)/PdpPurchaseContext";
+import { PdpRelatedProducts } from "./(components)/PdpRelatedProducts";
+import { PdpReviews } from "./(components)/PdpReviews";
+import { PdpTrustBar } from "./(components)/PdpTrustBar";
 import {
   getRelatedProducts,
   getStorefrontProduct,

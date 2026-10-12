@@ -1,4 +1,4 @@
-import type { RawSearchParams } from "@/components/catalog/catalog-url";
+import type { RawSearchParams } from "./(components)/catalog-url";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { CatalogSkeleton } from "./(components)/CatalogSkeleton";

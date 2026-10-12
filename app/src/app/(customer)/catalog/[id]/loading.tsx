@@ -1,4 +1,4 @@
-import { PdpSkeleton } from "@/components/product-detail/PdpSkeleton";
+import { PdpSkeleton } from "./(components)/PdpSkeleton";
 
 export default function Loading() {
   return <PdpSkeleton />;

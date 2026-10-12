@@ -1,11 +1,11 @@
-import { CatalogNavbar } from "@/components/catalog/CatalogNavbar";
-import { CatalogSearch } from "@/components/catalog/CatalogSearch";
+import { CatalogNavbar } from "./CatalogNavbar";
+import { CatalogSearch } from "./CatalogSearch";
 import {
   CATALOG_PAGE_SIZE,
   parseCatalogParams,
   type RawSearchParams,
-} from "@/components/catalog/catalog-url";
-import { CategoryFilter } from "@/components/catalog/CategoryFilter";
+} from "./catalog-url";
+import { CategoryFilter } from "./CategoryFilter";
 import { getStorefrontProducts } from "@/lib/dal/product.dal";
 import { ALL_CATEGORIES, productService } from "@/services/product.service";
 import { CatalogEmptyState } from "./CatalogEmptyState";

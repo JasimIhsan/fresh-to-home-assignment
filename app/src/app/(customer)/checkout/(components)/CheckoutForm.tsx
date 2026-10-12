@@ -4,10 +4,10 @@ import { placeOrder } from "@/app/actions/order.actions";
 import {
   CheckoutAddressForm,
   type CheckoutTouched,
-} from "@/components/checkout/CheckoutAddressForm";
-import { CheckoutPaymentForm } from "@/components/checkout/CheckoutPaymentForm";
-import { CheckoutSlotSelector } from "@/components/checkout/CheckoutSlotSelector";
-import { CheckoutSummary } from "@/components/checkout/CheckoutSummary";
+} from "./CheckoutAddressForm";
+import { CheckoutPaymentForm } from "./CheckoutPaymentForm";
+import { CheckoutSlotSelector } from "./CheckoutSlotSelector";
+import { CheckoutSummary } from "./CheckoutSummary";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { hasErrors, validateCheckoutForm } from "@/services";

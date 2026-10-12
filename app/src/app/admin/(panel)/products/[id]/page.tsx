@@ -1,5 +1,5 @@
-import { AdminProductDetailView } from "@/components/admin/AdminProductDetailView";
-import { AdminProductDetailSkeleton } from "@/components/admin/AdminProductSkeletons";
+import { AdminProductDetailView } from "./(components)/AdminProductDetailView";
+import { AdminProductDetailSkeleton } from "../(components)/AdminProductSkeletons";
 import { getAdminProduct } from "@/lib/dal/product.dal";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";

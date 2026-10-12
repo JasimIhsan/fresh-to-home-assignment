@@ -1,5 +1,5 @@
-import { AdminProductForm } from "@/components/admin/AdminProductForm";
-import { AdminProductFormSkeleton } from "@/components/admin/AdminProductSkeletons";
+import { AdminProductForm } from "../../(components)/AdminProductForm";
+import { AdminProductFormSkeleton } from "../../(components)/AdminProductSkeletons";
 import { getAdminProduct } from "@/lib/dal/product.dal";
 import { productService } from "@/services";
 import { notFound } from "next/navigation";

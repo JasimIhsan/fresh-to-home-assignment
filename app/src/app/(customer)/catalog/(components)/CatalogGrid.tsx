@@ -1,6 +1,6 @@
 "use client";
 
-import { ProductCard } from "@/components/catalog/ProductCard";
+import { ProductCard } from "./ProductCard";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import type { Product } from "@/types";

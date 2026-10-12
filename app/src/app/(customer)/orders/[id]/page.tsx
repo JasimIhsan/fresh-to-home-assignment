@@ -1,6 +1,6 @@
-import { OrderDeliveryInfoCard } from "@/components/orders/OrderDeliveryInfoCard";
-import { OrderItemList } from "@/components/orders/OrderItemList";
-import { OrderTrackingProgress } from "@/components/orders/OrderTrackingProgress";
+import { OrderDeliveryInfoCard } from "./(components)/OrderDeliveryInfoCard";
+import { OrderItemList } from "./(components)/OrderItemList";
+import { OrderTrackingProgress } from "./(components)/OrderTrackingProgress";
 import { getMyOrder } from "@/lib/dal/order.dal";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
