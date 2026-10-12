@@ -5,10 +5,10 @@ import { ArrowRight, ShieldCheck, Truck } from "lucide-react";
 import Link from "next/link";
 
 interface CartSummaryCardProps {
-  totalAmount: number;
-  deliveryFee: number;
-  grandTotal: number;
-  disabled?: boolean;
+  readonly totalAmount: number;
+  readonly deliveryFee: number;
+  readonly grandTotal: number;
+  readonly disabled?: boolean;
 }
 
 export function CartSummaryCard({

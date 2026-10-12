@@ -1,16 +1,20 @@
 "use client";
 
+import { useLanguage } from "@/context/LanguageContext";
 import { Mail, ShieldCheck } from "lucide-react";
 
 interface ProfileIdentityCardProps {
-  displayName: string;
-  email?: string | null;
+  readonly displayName: string;
+  readonly email?: string | null;
 }
 
 export function ProfileIdentityCard({
-  displayName,
+  displayName: rawName,
   email,
 }: ProfileIdentityCardProps) {
+  const { t } = useLanguage();
+  const displayName = rawName || t("profile.customer");
+
   return (
     <div className="relative overflow-hidden rounded-3xl border border-gray-100/90 bg-white p-6 shadow-xl shadow-purple-950/5 backdrop-blur-xl sm:p-7">
       {/* Ambient background glow elements */}

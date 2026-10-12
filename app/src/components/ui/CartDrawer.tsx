@@ -3,6 +3,8 @@
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { isOptimizableImage } from "@/lib/image";
+import { cn } from "@/lib/utils";
 import {
   ArrowRight,
   Lock,
@@ -14,6 +16,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -68,19 +71,30 @@ export function CartDrawer() {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex justify-end overflow-hidden transition-all duration-300 ${isCartOpen ? "pointer-events-auto visible" : "pointer-events-none invisible delay-300"}`}
+      className={cn(
+        "fixed inset-0 z-50 flex justify-end overflow-hidden transition-all duration-300",
+        isCartOpen
+          ? "pointer-events-auto visible"
+          : "pointer-events-none invisible delay-300"
+      )}
       aria-hidden={!isCartOpen}
     >
       {/* Backdrop with Blur & Fade transition */}
       <div
-        className={`fixed inset-0 cursor-pointer bg-black/60 backdrop-blur-md transition-opacity duration-300 ease-in-out ${isCartOpen ? "opacity-100" : "opacity-0"}`}
+        className={cn(
+          "fixed inset-0 cursor-pointer bg-black/60 backdrop-blur-md transition-opacity duration-300 ease-in-out",
+          isCartOpen ? "opacity-100" : "opacity-0"
+        )}
         onClick={closeCart}
         aria-hidden="true"
       />
 
       {/* Drawer Panel - 90% width on mobile, capped cleanly on larger screens with Slide In/Out transition */}
       <div
-        className={`relative z-10 flex h-full w-[90%] max-w-[90vw] transform flex-col overflow-hidden rounded-l-3xl bg-white shadow-2xl transition-transform duration-300 ease-out will-change-transform sm:w-110 sm:max-w-110 ${isCartOpen ? "translate-x-0" : "translate-x-full"}`}
+        className={cn(
+          "relative z-10 flex h-full w-[90%] max-w-[90vw] transform flex-col overflow-hidden rounded-l-3xl bg-white shadow-2xl transition-transform duration-300 ease-out will-change-transform sm:w-110 sm:max-w-110",
+          isCartOpen ? "translate-x-0" : "translate-x-full"
+        )}
       >
         {/* Header */}
         <div className="bg-primary flex items-center justify-between rounded-tl-3xl p-5 text-white shadow-md">
@@ -167,9 +181,15 @@ export function CartDrawer() {
                     <div className="flex items-start gap-3">
                       {/* Item Image */}
                       <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-gray-100 bg-gray-100 sm:h-16 sm:w-16">
-                        <img
+                        <Image
                           src={item.product.imageUrl}
                           alt={item.product.name}
+                          width={64}
+                          height={64}
+                          sizes="64px"
+                          unoptimized={
+                            !isOptimizableImage(item.product.imageUrl)
+                          }
                           className="h-full w-full object-cover"
                         />
                       </div>

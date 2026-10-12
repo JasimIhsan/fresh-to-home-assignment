@@ -4,8 +4,8 @@ import { useLanguage } from "@/context/LanguageContext";
 import { LogOut } from "lucide-react";
 
 interface ProfileLogoutButtonProps {
-  onLogout: () => void;
-  loading: boolean;
+  readonly onLogout: () => void;
+  readonly loading: boolean;
 }
 
 export function ProfileLogoutButton({

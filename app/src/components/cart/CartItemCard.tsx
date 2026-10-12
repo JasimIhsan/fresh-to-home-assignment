@@ -1,16 +1,18 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { Product } from "@/types";
+import { isOptimizableImage } from "@/lib/image";
+import type { Product } from "@/types";
 import { Minus, Plus, Trash2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 interface CartItemCardProps {
-  product: Product;
-  weightKg: number;
-  onUpdateWeight: (newWeight: number) => void;
-  onRemove: () => void;
-  disabled?: boolean;
+  readonly product: Readonly<Product>;
+  readonly weightKg: number;
+  readonly onUpdateWeight: (newWeight: number) => void;
+  readonly onRemove: () => void;
+  readonly disabled?: boolean;
 }
 
 export function CartItemCard({
@@ -34,9 +36,13 @@ export function CartItemCard({
           href={`/catalog/${product.id}`}
           className="group h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50 shadow-xs sm:h-20 sm:w-20"
         >
-          <img
+          <Image
             src={product.imageUrl}
             alt={product.name}
+            width={80}
+            height={80}
+            sizes="80px"
+            unoptimized={!isOptimizableImage(product.imageUrl)}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         </Link>

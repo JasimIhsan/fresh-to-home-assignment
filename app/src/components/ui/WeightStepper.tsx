@@ -7,7 +7,10 @@ interface WeightStepperProps {
   onChange: (newWeight: number) => void;
 }
 
-export function WeightStepper({ weight, onChange }: WeightStepperProps) {
+export function WeightStepper({
+  weight,
+  onChange,
+}: Readonly<WeightStepperProps>) {
   const step = 0.5;
 
   const handleDecrease = () => {

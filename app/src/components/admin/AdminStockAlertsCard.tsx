@@ -1,15 +1,23 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { Product } from "@/types";
+import { cn } from "@/lib/utils";
 import { AlertTriangle, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
-export interface AdminStockAlertsCardProps {
-  products: Product[];
+export interface StockAlertItem {
+  readonly id: string;
+  readonly name: string;
+  readonly stockKg: number;
 }
 
-export function AdminStockAlertsCard({ products }: AdminStockAlertsCardProps) {
+export interface AdminStockAlertsCardProps {
+  readonly items: readonly StockAlertItem[];
+}
+
+const LOW_STOCK_KG = 30;
+
+export function AdminStockAlertsCard({ items }: AdminStockAlertsCardProps) {
   const { t } = useLanguage();
 
   return (
@@ -29,9 +37,14 @@ export function AdminStockAlertsCard({ products }: AdminStockAlertsCardProps) {
         </div>
 
         <div className="space-y-3">
-          {products.slice(0, 4).map((p) => {
-            const stock = p.stockKg ?? 50;
-            const isLow = stock < 30;
+          {items.length === 0 && (
+            <p className="py-4 text-center text-xs text-gray-400">
+              {t("catalog.noResults")}
+            </p>
+          )}
+          {items.map((p) => {
+            const stock = p.stockKg;
+            const isLow = stock < LOW_STOCK_KG;
             return (
               <Link
                 key={p.id}
@@ -43,7 +56,10 @@ export function AdminStockAlertsCard({ products }: AdminStockAlertsCardProps) {
                     {p.name}
                   </span>
                   <span
-                    className={`font-black ${isLow ? "text-red-600" : "text-gray-700"}`}
+                    className={cn(
+                      "font-black",
+                      isLow ? "text-red-600" : "text-gray-700"
+                    )}
                   >
                     {stock} kg
                   </span>
@@ -51,7 +67,10 @@ export function AdminStockAlertsCard({ products }: AdminStockAlertsCardProps) {
 
                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
                   <div
-                    className={`h-1.5 rounded-full ${isLow ? "bg-red-500" : "bg-primary"}`}
+                    className={cn(
+                      "h-1.5 rounded-full",
+                      isLow ? "bg-red-500" : "bg-primary"
+                    )}
                     style={{ width: `${Math.min(100, (stock / 60) * 100)}%` }}
                   />
                 </div>

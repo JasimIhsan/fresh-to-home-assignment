@@ -1,10 +1,10 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { Order } from "@/types";
+import type { Order } from "@/types";
 
 export interface OrderDeliveryInfoCardProps {
-  order: Order;
+  readonly order: Order;
 }
 
 export function OrderDeliveryInfoCard({ order }: OrderDeliveryInfoCardProps) {

@@ -2,6 +2,7 @@
 
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { cn } from "@/lib/utils";
 import { ShoppingCart } from "lucide-react";
 
 interface PdpStickyBarProps {
@@ -45,13 +46,14 @@ export function PdpStickyBar({
         <button
           onClick={onAddToCart}
           disabled={isOffline}
-          className={`flex h-14 flex-1 items-center justify-center gap-2.5 rounded-2xl text-[15px] font-bold shadow-lg transition-all duration-200 select-none ${
+          className={cn(
+            "flex h-14 flex-1 items-center justify-center gap-2.5 rounded-2xl text-[15px] font-bold shadow-lg transition-all duration-200 select-none",
             isOffline
               ? "cursor-not-allowed bg-gray-200 text-gray-500 shadow-none"
               : isAdded
                 ? "cursor-pointer bg-emerald-500 text-white shadow-emerald-500/40"
                 : "bg-primary shadow-primary/40 cursor-pointer text-white hover:bg-purple-700 active:scale-[0.98]"
-          }`}
+          )}
           aria-live="polite"
           id="sticky-add-to-cart-btn"
         >

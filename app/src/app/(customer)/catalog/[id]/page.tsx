@@ -1,230 +1,106 @@
-"use client";
-
 import { PdpAccordion } from "@/components/product-detail/PdpAccordion";
-import { PdpAddToCart } from "@/components/product-detail/PdpAddToCart";
 import { PdpBreadcrumb } from "@/components/product-detail/PdpBreadcrumb";
 import { PdpFreshnessPromise } from "@/components/product-detail/PdpFreshnessPromise";
 import { PdpHeader } from "@/components/product-detail/PdpHeader";
 import { PdpImageGallery } from "@/components/product-detail/PdpImageGallery";
 import { PdpProductInfo } from "@/components/product-detail/PdpProductInfo";
+import {
+  PdpAddToCartSlot,
+  PdpPurchaseProvider,
+  PdpStickyBarSlot,
+  PdpWeightSelectorSlot,
+} from "@/components/product-detail/PdpPurchaseContext";
 import { PdpRelatedProducts } from "@/components/product-detail/PdpRelatedProducts";
 import { PdpReviews } from "@/components/product-detail/PdpReviews";
-import { PdpSkeleton } from "@/components/product-detail/PdpSkeleton";
-import { PdpStickyBar } from "@/components/product-detail/PdpStickyBar";
 import { PdpTrustBar } from "@/components/product-detail/PdpTrustBar";
-import { useAuth } from "@/context/AuthContext";
-import { useCart } from "@/context/CartContext";
-import { useLanguage } from "@/context/LanguageContext";
-import { productService } from "@/services";
-import { Product } from "@/types";
-import Link from "next/link";
-import { use, useEffect, useState } from "react";
+import {
+  getRelatedProducts,
+  getStorefrontProduct,
+  getStorefrontProductIds,
+} from "@/lib/dal/product.dal";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
-export default function ProductDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
-  const { t } = useLanguage();
-  const { user } = useAuth();
-  const { addToCart, openCart, isOffline } = useCart();
-
-  const [product, setProduct] = useState<Product | null>(null);
-  const [weight, setWeight] = useState(1.0); // Pre-selected popular weight (Hick's Law)
-  const [isAdded, setIsAdded] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const found = productService.getById(id);
-    if (found) setProduct(found);
-    setLoading(false);
-  }, [id]);
-
-  // ── Loading ──────────────────────────────────────────────────────────────
-  if (loading) return <PdpSkeleton />;
-
-  // ── Not Found ─────────────────────────────────────────────────────────────
-  if (!product) {
-    return (
-      <div className="bg-background flex min-h-screen flex-col items-center justify-center gap-4 p-6 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-gray-100 text-3xl">
-          {t("productDetail.notFoundIcon")}
-        </div>
-        <h2 className="text-2xl font-extrabold text-gray-900">
-          {t("notFound.title")}
-        </h2>
-        <p className="max-w-xs text-sm text-gray-400">
-          {t("catalog.noResultsDesc")}
-        </p>
-        <Link
-          href="/catalog"
-          className="bg-primary shadow-primary/30 mt-2 inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-bold text-white shadow-lg transition-all duration-200 hover:bg-purple-700 active:scale-95"
-        >
-          {t("productDetail.back")}
-        </Link>
-      </div>
-    );
-  }
-
-  // ── Computed Values ───────────────────────────────────────────────────────
-  const calculatedPrice = (product.pricePerKg * weight)
-    .toFixed(2)
-    .replace(".", ",");
-
-  const handleAddToCart = () => {
-    if (!user) {
-      openCart();
-      return;
-    }
-    const res = addToCart(product, weight);
-    if (res.success) {
-      setIsAdded(true);
-      setTimeout(() => setIsAdded(false), 2200);
-    }
-  };
-
-  // ── Page Render ───────────────────────────────────────────────────────────
-  return (
-    <div className="w-full bg-[#fafafa]">
-      {/* ── Mobile Sticky Header (Progressive Disclosure) ─────────────────── */}
-      <PdpHeader
-        productName={product.name}
-        category={product.category}
-        isLoggedIn={!!user}
-      />
-
-      <main className="mx-auto max-w-7xl px-4 pt-5 pb-32 sm:px-6 md:pt-10 md:pb-12">
-        {/* ── Desktop Breadcrumb ─────────────────────────────────────────── */}
-        <PdpBreadcrumb category={product.category} productName={product.name} />
-
-        {/*
-         * ── Two-Column Desktop Layout ──────────────────────────────────
-         * Mobile: Single column, full-width stacked
-         * Desktop: Left 60% gallery (sticky scroll) + Right 40% info rail
-         */}
-        <div className="items-start md:grid md:grid-cols-[58%_42%] md:gap-10 lg:gap-14">
-          {/* ═══════════════ LEFT COLUMN – Gallery ═══════════════════════ */}
-          <div className="md:sticky md:top-6">
-            <PdpImageGallery product={product} />
-
-            {/* Desktop Freshness Promise (below gallery) */}
-            <div className="mt-4 hidden md:block">
-              <PdpFreshnessPromise />
-            </div>
-          </div>
-
-          {/* ═══════════════ RIGHT COLUMN – Info Rail ════════════════════ */}
-          <div className="mt-5 space-y-5 md:mt-0">
-            {/*
-             * 1. Product Info: Title, Rating (Social Proof), Price,
-             *    Ethical Scarcity Alert, Description, Icon Badges
-             */}
-            <PdpProductInfo product={product} />
-
-            {/*
-             * 2. Weight Selector (Hick's Law presets + Fitts's Law steppers)
-             */}
-            <PdpWeightSelectorSection
-              weight={weight}
-              pricePerKg={product.pricePerKg}
-              onWeightChange={setWeight}
-            />
-
-            {/*
-             * 3. Add to Cart + Wishlist (Von Restorff isolation)
-             *    Only shown on desktop – mobile uses StickyBar
-             */}
-            <div className="hidden md:block">
-              <PdpAddToCart
-                isAdded={isAdded}
-                isLoggedIn={!!user}
-                calculatedPrice={calculatedPrice}
-                onAddToCart={handleAddToCart}
-                weight={weight}
-                isOffline={isOffline}
-              />
-            </div>
-
-            {/*
-             * 4. Trust Bar – Key Value Props (post-decision anxiety relief)
-             */}
-            <PdpTrustBar />
-
-            {/*
-             * 5. Progressive Disclosure Accordion – secondary info
-             */}
-            <PdpAccordion product={product} />
-
-            {/* Mobile Freshness Promise */}
-            <div className="md:hidden">
-              <PdpFreshnessPromise />
-            </div>
-
-            {/*
-             * 6. Mobile: Add to Cart (visible, above reviews, below accordion)
-             *    Desktop users use the inline CTA above.
-             */}
-            <div className="md:hidden">
-              <PdpAddToCart
-                isAdded={isAdded}
-                isLoggedIn={!!user}
-                calculatedPrice={calculatedPrice}
-                onAddToCart={handleAddToCart}
-                weight={weight}
-              />
-            </div>
-
-            {/*
-             * 7. Reviews & Social Proof (Bandwagon Effect)
-             */}
-            <PdpReviews />
-
-            {/*
-             * 8. Cross-Sell / Related Products (max 4, Hick's Law)
-             */}
-            <PdpRelatedProducts
-              currentProductId={product.id}
-              currentCategory={product.category}
-            />
-          </div>
-        </div>
-      </main>
-
-      {/*
-       * ── Mobile Sticky Bottom Bar (Fitts's Law – thumb zone) ──────────
-       * Fixed at bottom, always visible on mobile.
-       * Desktop users see the inline CTA in the right rail.
-       */}
-      <PdpStickyBar
-        calculatedPrice={calculatedPrice}
-        isAdded={isAdded}
-        isLoggedIn={!!user}
-        onAddToCart={handleAddToCart}
-        productName={product.name}
-        isOffline={isOffline}
-      />
-    </div>
-  );
+interface ProductPageProps {
+  readonly params: Promise<{ readonly id: string }>;
 }
 
-// ── Inline wrapper for weight selector to keep page clean ──────────────────
-import { PdpWeightSelector } from "@/components/product-detail/PdpWeightSelector";
+/** Prerenders every storefront product; new products render on first visit. */
+export async function generateStaticParams(): Promise<{ id: string }[]> {
+  const ids = await getStorefrontProductIds();
+  // Cache Components requires at least one param to validate the route.
+  return ids.length > 0 ? ids.map((id) => ({ id })) : [{ id: "__none__" }];
+}
 
-function PdpWeightSelectorSection({
-  weight,
-  pricePerKg,
-  onWeightChange,
-}: {
-  weight: number;
-  pricePerKg: number;
-  onWeightChange: (w: number) => void;
-}) {
+export async function generateMetadata({
+  params,
+}: ProductPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const product = await getStorefrontProduct(id);
+  if (!product) return {};
+  return {
+    title: `${product.name} | Frisch nach Hause`,
+    description: product.description,
+    openGraph: { images: product.imageUrl ? [product.imageUrl] : [] },
+  };
+}
+
+export default async function ProductDetailPage({ params }: ProductPageProps) {
+  const { id } = await params;
+  const product = await getStorefrontProduct(id);
+  if (!product) notFound();
+
+  const related = await getRelatedProducts(product.id, product.category);
+
   return (
-    <PdpWeightSelector
-      weight={weight}
-      pricePerKg={pricePerKg}
-      onWeightChange={onWeightChange}
-    />
+    <PdpPurchaseProvider product={product}>
+      <div className="w-full bg-[#fafafa]">
+        {/* Mobile sticky header */}
+        <PdpHeader productName={product.name} category={product.category} />
+
+        <main className="mx-auto max-w-7xl px-4 pt-5 pb-32 sm:px-6 md:pt-10 md:pb-12">
+          <PdpBreadcrumb
+            category={product.category}
+            productName={product.name}
+          />
+
+          {/* Mobile: single column. Desktop: 58% gallery + 42% info rail. */}
+          <div className="items-start md:grid md:grid-cols-[58%_42%] md:gap-10 lg:gap-14">
+            <div className="md:sticky md:top-6">
+              <PdpImageGallery product={product} />
+              <div className="mt-4 hidden md:block">
+                <PdpFreshnessPromise />
+              </div>
+            </div>
+
+            <div className="mt-5 space-y-5 md:mt-0">
+              <PdpProductInfo product={product} />
+              <PdpWeightSelectorSlot />
+
+              {/* Desktop CTA; mobile uses the sticky bar */}
+              <div className="hidden md:block">
+                <PdpAddToCartSlot />
+              </div>
+
+              <PdpTrustBar />
+              <PdpAccordion product={product} />
+
+              <div className="md:hidden">
+                <PdpFreshnessPromise />
+              </div>
+              <div className="md:hidden">
+                <PdpAddToCartSlot />
+              </div>
+
+              <PdpReviews />
+              <PdpRelatedProducts products={related} />
+            </div>
+          </div>
+        </main>
+
+        {/* Mobile sticky bottom bar (thumb zone) */}
+        <PdpStickyBarSlot />
+      </div>
+    </PdpPurchaseProvider>
   );
 }

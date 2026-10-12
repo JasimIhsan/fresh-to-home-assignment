@@ -2,6 +2,7 @@
 
 import { useLanguage } from "@/context/LanguageContext";
 import { ArrowRight, ShoppingBag } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export function HomeTrending() {
@@ -24,7 +25,7 @@ export function HomeTrending() {
             className="text-primary hover:text-primary/80 group hidden items-center gap-2 font-bold transition-colors md:flex"
           >
             {t("trending.view_all")}
-            <ArrowRight className="groups-hover:translate-x-1 h-5 w-5 transition-transform" />
+            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
 
@@ -35,10 +36,12 @@ export function HomeTrending() {
             href="/catalog"
             className="group relative col-span-1 block h-87.5 min-h-0 w-full overflow-hidden rounded-[2rem] border border-white/10 shadow-2xl transition-all duration-500 hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] md:col-span-2 md:h-full"
           >
-            <img
+            <Image
               src="/images/products/raw_beef_steak.jpg"
               alt="Premium Beef"
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              fill
+              sizes="(min-width: 768px) 66vw, 100vw"
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-100"></div>
 
@@ -65,10 +68,12 @@ export function HomeTrending() {
               href="/catalog"
               className="group relative block h-62.5 min-h-0 w-full overflow-hidden rounded-[2rem] border border-white/10 shadow-2xl transition-all duration-500 hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] md:h-full"
             >
-              <img
+              <Image
                 src="/images/products/raw_chicken_breast.jpg"
                 alt="Fresh Chicken"
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                fill
+                sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-100"></div>
 
@@ -89,10 +94,12 @@ export function HomeTrending() {
               href="/catalog"
               className="group relative block h-62.5 min-h-0 w-full overflow-hidden rounded-[2rem] border border-white/10 shadow-2xl transition-all duration-500 hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] md:h-full"
             >
-              <img
+              <Image
                 src="/images/products/raw_lamb_chops.jpg"
                 alt="Lamb Cuts"
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                fill
+                sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-100"></div>
 

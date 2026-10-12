@@ -1,3 +1,6 @@
+"use client";
+
+import Image from "next/image";
 import Link from "next/link";
 import { Menu, X, Globe } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -15,17 +18,16 @@ export const HomeHeader = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Prevent scroll when mobile menu is open
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [isMobileMenuOpen]);
 
   const toggleLanguage = () => {
@@ -43,9 +45,11 @@ export const HomeHeader = () => {
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2">
-          <img
+          <Image
             src="/icons/icon-192x192.png"
             alt="Frisch nach Hause Logo"
+            width={32}
+            height={32}
             className="h-8 w-8 rounded-lg object-contain"
           />
           <span className="text-xl font-bold tracking-tight text-white">

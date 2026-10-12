@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { cn } from "@/lib/utils";
 import { Check, Globe } from "lucide-react";
 
 const LANGUAGES = [
@@ -43,11 +44,13 @@ export function ProfileLanguageFeature() {
               key={lang.code}
               type="button"
               onClick={() => setLanguage(lang.code)}
-              className={`flex w-full cursor-pointer items-center justify-between rounded-2xl border p-3.5 text-left transition-all duration-200 ${
+              aria-pressed={isSelected}
+              className={cn(
+                "flex w-full cursor-pointer items-center justify-between rounded-2xl border p-3.5 text-left transition-all duration-200",
                 isSelected
                   ? "border-primary bg-primary/5 text-primary ring-primary/20 shadow-xs ring-1"
                   : "border-gray-100 text-gray-700 hover:border-gray-200 hover:bg-gray-50/80"
-              }`}
+              )}
             >
               <div className="flex items-center gap-3.5">
                 <span className="text-2xl leading-none">{lang.flag}</span>

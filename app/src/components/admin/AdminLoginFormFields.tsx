@@ -1,82 +1,95 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { Eye, EyeOff, KeyRound, Lock, Shield, Sparkles } from "lucide-react";
-import React from "react";
+import { cn } from "@/lib/utils";
+import { Eye, EyeOff, Lock, Mail, Shield } from "lucide-react";
+import type { Dispatch, FormEvent, SetStateAction } from "react";
+
+type Touched = { email?: boolean; password?: boolean };
+
+const MAX_EMAIL_LENGTH = 254;
+const MAX_PASSWORD_LENGTH = 128;
 
 export interface AdminLoginFormFieldsProps {
-  identifier: string;
-  setIdentifier: (val: string) => void;
-  password: string;
-  setPassword: (val: string) => void;
-  showPassword: boolean;
-  setShowPassword: (val: boolean) => void;
-  identifierError: string;
-  passwordError: string;
-  touched: { identifier?: boolean; password?: boolean };
-  setTouched: React.Dispatch<
-    React.SetStateAction<{ identifier?: boolean; password?: boolean }>
-  >;
-  loading: boolean;
-  onSubmit: (e: React.FormEvent) => void;
-  onPrefillDemo: () => void;
+  readonly email: string;
+  readonly setEmail: (val: string) => void;
+  readonly password: string;
+  readonly setPassword: (val: string) => void;
+  readonly showPassword: boolean;
+  readonly setShowPassword: (val: boolean) => void;
+  readonly emailError: string;
+  readonly passwordError: string;
+  readonly touched: Touched;
+  readonly setTouched: Dispatch<SetStateAction<Touched>>;
+  readonly loading: boolean;
+  readonly onSubmit: (e: FormEvent) => void;
 }
 
 export function AdminLoginFormFields({
-  identifier,
-  setIdentifier,
+  email,
+  setEmail,
   password,
   setPassword,
   showPassword,
   setShowPassword,
-  identifierError,
+  emailError,
   passwordError,
   touched,
   setTouched,
   loading,
   onSubmit,
-  onPrefillDemo,
 }: AdminLoginFormFieldsProps) {
   const { t } = useLanguage();
 
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-4">
       <div>
-        <label className="mb-1.5 block text-[11px] font-bold tracking-wider text-slate-600 uppercase">
-          {t("adminLogin.usernameOrEmail")}
+        <label
+          htmlFor="admin-email"
+          className="mb-1.5 block text-[11px] font-bold tracking-wider text-slate-600 uppercase"
+        >
+          {t("login.email")}
         </label>
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
-            <KeyRound size={17} />
+            <Mail size={17} />
           </div>
           <input
-            type="text"
+            id="admin-email"
+            type="email"
+            autoComplete="username"
             autoCapitalize="none"
             autoCorrect="off"
-            value={identifier}
+            maxLength={MAX_EMAIL_LENGTH}
+            value={email}
             onChange={(e) => {
-              setIdentifier(e.target.value);
-              if (!touched.identifier)
-                setTouched((prev) => ({ ...prev, identifier: true }));
+              setEmail(e.target.value);
+              if (!touched.email)
+                setTouched((prev) => ({ ...prev, email: true }));
             }}
-            onBlur={() => setTouched((prev) => ({ ...prev, identifier: true }))}
-            placeholder="admin or admin@freshtohome.de"
-            className={`w-full rounded-xl border bg-slate-50 py-3 pr-4 pl-10 text-sm font-medium text-slate-900 placeholder-slate-400 transition-all focus:bg-white focus:outline-hidden ${
-              identifierError
+            onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
+            placeholder="admin@freshtohome.de"
+            aria-invalid={!!emailError}
+            className={cn(
+              "w-full rounded-xl border bg-slate-50 py-3 pr-4 pl-10 text-sm font-medium text-slate-900 placeholder-slate-400 transition-all focus:bg-white focus:outline-hidden",
+              emailError
                 ? "border-red-400 bg-red-50/20 focus:border-red-500"
                 : "focus:border-primary focus:ring-primary/10 border-slate-200 focus:ring-2"
-            }`}
+            )}
           />
         </div>
-        {identifierError && (
+        {emailError && (
           <p className="mt-1 ml-1 text-xs font-medium text-red-600">
-            {identifierError}
+            {emailError}
           </p>
         )}
       </div>
 
       <div>
-        <label className="mb-1.5 block text-[11px] font-bold tracking-wider text-slate-600 uppercase">
+        <label
+          htmlFor="admin-password"
+          className="mb-1.5 block text-[11px] font-bold tracking-wider text-slate-600 uppercase"
+        >
           {t("adminLogin.password")}
         </label>
         <div className="relative">
@@ -84,7 +97,10 @@ export function AdminLoginFormFields({
             <Lock size={17} />
           </div>
           <input
+            id="admin-password"
             type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            maxLength={MAX_PASSWORD_LENGTH}
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
@@ -93,11 +109,13 @@ export function AdminLoginFormFields({
             }}
             onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
             placeholder="••••••••••••"
-            className={`w-full rounded-xl border bg-slate-50 py-3 pr-11 pl-10 text-sm font-medium text-slate-900 placeholder-slate-400 transition-all focus:bg-white focus:outline-hidden ${
+            aria-invalid={!!passwordError}
+            className={cn(
+              "w-full rounded-xl border bg-slate-50 py-3 pr-11 pl-10 text-sm font-medium text-slate-900 placeholder-slate-400 transition-all focus:bg-white focus:outline-hidden",
               passwordError
                 ? "border-red-400 bg-red-50/20 focus:border-red-500"
                 : "focus:border-primary focus:ring-primary/10 border-slate-200 focus:ring-2"
-            }`}
+            )}
           />
           <button
             type="button"
@@ -105,7 +123,7 @@ export function AdminLoginFormFields({
             className="absolute inset-y-0 right-0 flex cursor-pointer items-center pr-3.5 text-slate-400 transition-colors hover:text-slate-600"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
-            <EyeOff size={18} />
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         </div>
         {passwordError && (
@@ -115,19 +133,6 @@ export function AdminLoginFormFields({
         )}
       </div>
 
-      {/* Demo Credential Shortcut */}
-      <div className="flex items-center justify-between pt-1 text-xs">
-        <button
-          type="button"
-          onClick={onPrefillDemo}
-          className="text-primary inline-flex cursor-pointer items-center gap-1.5 font-semibold transition-colors hover:text-purple-700"
-        >
-          <Sparkles size={13} />
-          <span>{t("adminLogin.prefillDemo")}</span>
-        </button>
-      </div>
-
-      {/* Submit Button */}
       <button
         type="submit"
         disabled={loading}

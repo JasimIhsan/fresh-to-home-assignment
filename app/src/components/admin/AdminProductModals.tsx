@@ -1,8 +1,9 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { cn } from "@/lib/utils";
 import { AlertTriangle, Layers, XCircle } from "lucide-react";
-import React from "react";
+import type React from "react";
 
 export interface AdminProductModalsProps {
   isStockModalOpen: boolean;
@@ -17,6 +18,8 @@ export interface AdminProductModalsProps {
   setIsDeleteModalOpen: (open: boolean) => void;
   productName: string;
   onDeleteConfirm: () => void;
+  /** True while a Server Action triggered from a dialog is in flight. */
+  pending?: boolean;
 }
 
 export function AdminProductModals({
@@ -32,7 +35,8 @@ export function AdminProductModals({
   setIsDeleteModalOpen,
   productName,
   onDeleteConfirm,
-}: AdminProductModalsProps) {
+  pending = false,
+}: Readonly<AdminProductModalsProps>) {
   const { t } = useLanguage();
 
   return (
@@ -51,7 +55,9 @@ export function AdminProductModals({
                 </h3>
               </div>
               <button
+                type="button"
                 onClick={() => setIsStockModalOpen(false)}
+                aria-label={t("admin.cancel")}
                 className="cursor-pointer text-slate-400 hover:text-slate-600"
               >
                 <XCircle size={20} />
@@ -67,22 +73,26 @@ export function AdminProductModals({
                   <button
                     type="button"
                     onClick={() => setStockAdjustMode("set")}
-                    className={`cursor-pointer rounded-lg py-2 transition-all ${
+                    aria-pressed={stockAdjustMode === "set"}
+                    className={cn(
+                      "cursor-pointer rounded-lg py-2 transition-all",
                       stockAdjustMode === "set"
                         ? "bg-white text-slate-900 shadow-xs"
                         : "text-slate-500"
-                    }`}
+                    )}
                   >
                     Set Exact Stock
                   </button>
                   <button
                     type="button"
                     onClick={() => setStockAdjustMode("add")}
-                    className={`cursor-pointer rounded-lg py-2 transition-all ${
+                    aria-pressed={stockAdjustMode === "add"}
+                    className={cn(
+                      "cursor-pointer rounded-lg py-2 transition-all",
                       stockAdjustMode === "add"
                         ? "bg-white text-slate-900 shadow-xs"
                         : "text-slate-500"
-                    }`}
+                    )}
                   >
                     Add / Restock
                   </button>
@@ -100,6 +110,7 @@ export function AdminProductModals({
                     type="number"
                     step="1"
                     min="0"
+                    max="100000"
                     required
                     value={stockInput}
                     onChange={(e) => setStockInput(e.target.value)}
@@ -124,7 +135,8 @@ export function AdminProductModals({
                 </button>
                 <button
                   type="submit"
-                  className="bg-primary cursor-pointer rounded-xl px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-purple-700"
+                  disabled={pending}
+                  className="bg-primary cursor-pointer rounded-xl px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-purple-700 disabled:opacity-50"
                 >
                   Apply Stock Update
                 </button>
@@ -164,7 +176,8 @@ export function AdminProductModals({
               <button
                 type="button"
                 onClick={onDeleteConfirm}
-                className="cursor-pointer rounded-xl bg-red-600 px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-red-700"
+                disabled={pending}
+                className="cursor-pointer rounded-xl bg-red-600 px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-red-700 disabled:opacity-50"
               >
                 {t("admin.deleteProduct")}
               </button>

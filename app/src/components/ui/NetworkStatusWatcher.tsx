@@ -1,9 +1,10 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { useLanguage } from "@/context/LanguageContext";
 import { NavigatorWithNetwork } from "@/types";
 import { CheckCircle2, RefreshCw, SignalLow, WifiOff, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export function NetworkStatusWatcher() {
   const { t } = useLanguage();
@@ -174,7 +175,10 @@ export function NetworkStatusWatcher() {
               className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-amber-500 px-3 py-1.5 text-xs font-bold text-white shadow-sm shadow-amber-500/20 transition hover:bg-amber-600 active:scale-95 disabled:opacity-60"
             >
               <RefreshCw
-                className={`h-3.5 w-3.5 ${isReconnecting ? "animate-spin" : ""}`}
+                className={cn(
+                  "h-3.5 w-3.5",
+                  isReconnecting ? "animate-spin" : ""
+                )}
               />
               <span>{t("network.retry")}</span>
             </button>

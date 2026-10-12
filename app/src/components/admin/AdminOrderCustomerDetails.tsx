@@ -1,11 +1,11 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { Order } from "@/types";
+import type { Order } from "@/types";
 import { Truck, User } from "lucide-react";
 
 export interface AdminOrderCustomerDetailsProps {
-  order: Order;
+  readonly order: Readonly<Order>;
 }
 
 export function AdminOrderCustomerDetails({
@@ -26,7 +26,7 @@ export function AdminOrderCustomerDetails({
           <div className="flex justify-between border-b border-gray-50 py-1">
             <span className="text-gray-400">{t("signup.fullName")}:</span>
             <span className="font-bold text-gray-900">
-              {order.customerName || "Max Mustermann"}
+              {order.customerName || "-"}
             </span>
           </div>
           <div className="flex justify-between border-b border-gray-50 py-1">

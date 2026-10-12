@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { useLanguage } from "@/context/LanguageContext";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import Link from "next/link";
@@ -35,7 +36,7 @@ export function LoginFormFields({
   setTouched,
   loading,
   onSubmit,
-}: LoginFormFieldsProps) {
+}: Readonly<LoginFormFieldsProps>) {
   const { t } = useLanguage();
 
   return (
@@ -53,6 +54,8 @@ export function LoginFormFields({
           </div>
           <input
             type="email"
+            maxLength={254}
+            autoComplete="email"
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -60,11 +63,12 @@ export function LoginFormFields({
                 setTouched((prev) => ({ ...prev, email: true }));
             }}
             onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
-            className={`block w-full rounded-2xl border-2 bg-gray-50/70 py-3.5 pr-4 pl-11 text-sm text-gray-900 transition-all focus:outline-hidden ${
+            className={cn(
+              "block w-full rounded-2xl border-2 bg-gray-50/70 py-3.5 pr-4 pl-11 text-sm text-gray-900 transition-all focus:outline-hidden",
               emailError
                 ? "border-red-400 bg-red-50/20 focus:border-red-500"
                 : "focus:border-primary border-gray-100 focus:bg-white"
-            }`}
+            )}
             placeholder={t("login.email")}
             aria-invalid={!!emailError}
           />
@@ -97,6 +101,8 @@ export function LoginFormFields({
           </div>
           <input
             type={showPassword ? "text" : "password"}
+            maxLength={128}
+            autoComplete="current-password"
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
@@ -104,11 +110,12 @@ export function LoginFormFields({
                 setTouched((prev) => ({ ...prev, password: true }));
             }}
             onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
-            className={`block w-full rounded-2xl border-2 bg-gray-50/70 py-3.5 pr-11 pl-11 text-sm text-gray-900 transition-all focus:outline-hidden ${
+            className={cn(
+              "block w-full rounded-2xl border-2 bg-gray-50/70 py-3.5 pr-11 pl-11 text-sm text-gray-900 transition-all focus:outline-hidden",
               passwordError
                 ? "border-red-400 bg-red-50/20 focus:border-red-500"
                 : "focus:border-primary border-gray-100 focus:bg-white"
-            }`}
+            )}
             placeholder={t("login.password")}
             aria-invalid={!!passwordError}
           />

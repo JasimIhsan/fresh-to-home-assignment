@@ -5,8 +5,8 @@ import React, {
   createContext,
   useCallback,
   useContext,
-  useEffect,
-  useState,
+  useMemo,
+  useSyncExternalStore,
 } from "react";
 
 type Language = "de" | "en";
@@ -64,34 +64,63 @@ function resolveTranslation(path: string, lang: Language): string {
   return path;
 }
 
+const LANGUAGE_STORAGE_KEY = "app_language";
+const DEFAULT_LANGUAGE: Language = "de";
+
+const languageListeners = new Set<() => void>();
+/** In-memory fallback when localStorage is unavailable. */
+let memoryLanguage: Language = DEFAULT_LANGUAGE;
+
+function readStoredLanguage(): Language {
+  try {
+    const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    if (saved === "de" || saved === "en") return saved;
+  } catch {
+    // Storage blocked — fall through to the in-memory value
+  }
+  return memoryLanguage;
+}
+
+function subscribeLanguage(listener: () => void): () => void {
+  languageListeners.add(listener);
+  // Keep tabs in sync when another tab changes the language
+  const onStorage = (e: StorageEvent) => {
+    if (e.key === LANGUAGE_STORAGE_KEY) listener();
+  };
+  window.addEventListener("storage", onStorage);
+  return () => {
+    languageListeners.delete(listener);
+    window.removeEventListener("storage", onStorage);
+  };
+}
+
 const LanguageContext = createContext<LanguageContextType>({
   language: "de",
   setLanguage: () => {},
   t: (key: string) => resolveTranslation(key, "de"),
 });
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>("de");
-
-  useEffect(() => {
-    // Load saved language on mount
-    try {
-      const saved = localStorage.getItem("app_language") as Language;
-      if (saved && (saved === "de" || saved === "en")) {
-        setLanguage(saved);
-      }
-    } catch {
-      // Ignore localStorage errors (e.g. private browsing or disabled storage)
-    }
-  }, []);
+export function LanguageProvider({
+  children,
+}: {
+  readonly children: React.ReactNode;
+}) {
+  // Server render and hydration use "de"; the saved choice is read from
+  // localStorage after hydration via useSyncExternalStore (no mismatch).
+  const language = useSyncExternalStore(
+    subscribeLanguage,
+    readStoredLanguage,
+    () => DEFAULT_LANGUAGE
+  );
 
   const handleSetLanguage = useCallback((lang: Language) => {
-    setLanguage(lang);
     try {
-      localStorage.setItem("app_language", lang);
+      localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
     } catch {
-      // Ignore localStorage errors
+      // Ignore localStorage errors (private browsing / disabled storage)
     }
+    memoryLanguage = lang;
+    for (const listener of languageListeners) listener();
   }, []);
 
   const t = useCallback(
@@ -101,10 +130,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     [language]
   );
 
+  const value = useMemo<LanguageContextType>(
+    () => ({ language, setLanguage: handleSetLanguage, t }),
+    [language, handleSetLanguage, t]
+  );
+
   return (
-    <LanguageContext.Provider
-      value={{ language, setLanguage: handleSetLanguage, t }}
-    >
+    <LanguageContext.Provider value={value}>
       {children}
     </LanguageContext.Provider>
   );

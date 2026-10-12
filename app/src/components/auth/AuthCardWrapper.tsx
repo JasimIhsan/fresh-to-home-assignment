@@ -2,8 +2,9 @@
 
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { ArrowLeft } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import React, { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 interface AuthCardWrapperProps {
   title: string;
@@ -23,7 +24,7 @@ export function AuthCardWrapper({
   badgeIcon,
   children,
   footer,
-}: AuthCardWrapperProps) {
+}: Readonly<AuthCardWrapperProps>) {
   return (
     <div className="via-background to-background selection:bg-primary/20 flex min-h-screen flex-col justify-between bg-linear-to-b from-purple-50/40 px-4 py-6 sm:py-10">
       {/* Top Navigation Bar: Back link & Language Switcher */}
@@ -47,9 +48,12 @@ export function AuthCardWrapper({
         <div className="mb-6 flex flex-col items-center text-center">
           <Link href="/" className="group mb-3 flex items-center gap-2.5">
             <div className="bg-primary shadow-primary/25 flex h-11 w-11 items-center justify-center rounded-2xl shadow-lg transition-transform duration-200 group-hover:scale-105">
-              <img
+              <Image
                 src="/icons/icon-192x192.png"
                 alt="Frisch nach Hause"
+                width={28}
+                height={28}
+                priority
                 className="h-7 w-7 rounded-lg object-contain"
               />
             </div>

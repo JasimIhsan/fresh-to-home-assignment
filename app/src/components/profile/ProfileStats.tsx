@@ -5,7 +5,7 @@ import { Package, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 
 interface ProfileStatsProps {
-  orderCount: number;
+  readonly orderCount: number;
 }
 
 export function ProfileStats({ orderCount }: ProfileStatsProps) {

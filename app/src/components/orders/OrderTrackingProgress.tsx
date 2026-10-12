@@ -1,12 +1,14 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { OrderStatus } from "@/types";
+import { cn } from "@/lib/utils";
+import type { OrderStatus } from "@/types";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { formatOrderDate, formatOrderTime } from "./format";
 
 export interface OrderTrackingProgressProps {
-  status: OrderStatus;
-  createdAt: string;
+  readonly status: OrderStatus;
+  readonly createdAt: string;
 }
 
 export function OrderTrackingProgress({
@@ -65,12 +67,8 @@ export function OrderTrackingProgress({
             {t("orderDetail.trackingTitle")}
           </h2>
           <p className="mt-0.5 text-xs text-gray-500">
-            {t("orderDetail.placedOn")}{" "}
-            {new Date(createdAt).toLocaleDateString()} {t("orderDetail.atTime")}{" "}
-            {new Date(createdAt).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+            {t("orderDetail.placedOn")} {formatOrderDate(createdAt)}{" "}
+            {t("orderDetail.atTime")} {formatOrderTime(createdAt)}
           </p>
         </div>
         <span className="text-primary rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-bold tracking-wider uppercase">
@@ -96,23 +94,25 @@ export function OrderTrackingProgress({
             return (
               <div key={step.key} className="relative flex items-start">
                 <div
-                  className={`absolute top-0.5 -left-12 flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold transition-colors ${
+                  className={cn(
+                    "absolute top-0.5 -left-12 flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold transition-colors",
                     isCompleted
                       ? "bg-primary shadow-primary/25 text-white shadow-md ring-4 ring-purple-100"
                       : "border-2 border-gray-300 bg-white text-gray-400"
-                  }`}
+                  )}
                 >
                   {isCompleted ? <CheckCircle2 size={18} /> : idx + 1}
                 </div>
                 <div className="space-y-1 pt-0.5">
                   <h4
-                    className={`text-sm font-bold sm:text-base ${
+                    className={cn(
+                      "text-sm font-bold sm:text-base",
                       isCurrent
                         ? "text-primary font-extrabold"
                         : isCompleted
                           ? "text-gray-900"
                           : "text-gray-400"
-                    }`}
+                    )}
                   >
                     {step.label}
                   </h4>

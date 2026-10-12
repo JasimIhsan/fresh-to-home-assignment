@@ -5,7 +5,7 @@ import { ArrowRight, ShoppingBag, ShoppingCart, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 interface CartEmptyStateProps {
-  isGuest?: boolean;
+  readonly isGuest?: boolean;
 }
 
 export function CartEmptyState({ isGuest = false }: CartEmptyStateProps) {

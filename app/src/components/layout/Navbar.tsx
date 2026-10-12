@@ -4,10 +4,16 @@ import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { ShoppingCart } from "lucide-react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { LogoutConfirmModal } from "@/components/ui/LogoutConfirmModal";
+
+// Only needed once the user asks to log out; keep it out of the initial bundle.
+const LogoutConfirmModal = dynamic(() =>
+  import("@/components/ui/LogoutConfirmModal").then((m) => m.LogoutConfirmModal)
+);
 
 export function Navbar() {
   const { t } = useLanguage();
@@ -39,9 +45,12 @@ export function Navbar() {
             href="/"
             className="flex items-center gap-2.5 text-xl font-extrabold tracking-tight"
           >
-            <img
+            <Image
               src="/images/logo-mark.png"
               alt="Frisch nach Hause Logo"
+              width={36}
+              height={36}
+              priority
               className="h-9 w-9 object-contain drop-shadow-sm"
             />
             <span>{t("app.title")}</span>
@@ -68,6 +77,7 @@ export function Navbar() {
             {user && (
               <button
                 onClick={openCart}
+                aria-label="Open Cart"
                 className="relative cursor-pointer rounded-full p-2 transition-colors hover:bg-white/10"
               >
                 <ShoppingCart size={20} />
@@ -83,6 +93,8 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                  aria-expanded={isProfileMenuOpen}
+                  aria-label={t("catalog.profile")}
                   className="text-primary flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-white text-xs font-bold shadow-xs transition-transform hover:scale-105"
                 >
                   {user.email?.charAt(0).toUpperCase()}
@@ -134,12 +146,14 @@ export function Navbar() {
         </div>
       </nav>
 
-      <LogoutConfirmModal
-        isOpen={showLogoutModal}
-        onClose={() => setShowLogoutModal(false)}
-        onConfirm={handleLogout}
-        loading={loggingOut}
-      />
+      {showLogoutModal && (
+        <LogoutConfirmModal
+          isOpen={showLogoutModal}
+          onClose={() => setShowLogoutModal(false)}
+          onConfirm={handleLogout}
+          loading={loggingOut}
+        />
+      )}
     </>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import {
   ChevronLeft,
   ChevronRight,
@@ -28,7 +29,7 @@ export const Pagination = ({
   showItemCount = false,
   totalItems,
   pageSize,
-}: PaginationProps) => {
+}: Readonly<PaginationProps>) => {
   const { language } = useLanguage();
 
   if (totalPages <= 1) return null;
@@ -79,7 +80,10 @@ export const Pagination = ({
     <nav
       role="navigation"
       aria-label="Pagination Navigation"
-      className={`border-border mt-12 flex flex-col items-center justify-between gap-4 border-t pt-8 sm:flex-row ${className}`}
+      className={cn(
+        "border-border mt-12 flex flex-col items-center justify-between gap-4 border-t pt-8 sm:flex-row",
+        className
+      )}
     >
       {/* Status Text / Info */}
       <div className="text-muted-foreground order-2 text-xs font-medium sm:order-1 sm:text-sm">
@@ -173,11 +177,12 @@ export const Pagination = ({
                 key={`page-${page}`}
                 onClick={() => onPageChange(page)}
                 aria-current={isActive ? "page" : undefined}
-                className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-xs font-bold transition-all sm:h-9 sm:w-9 sm:text-sm ${
+                className={cn(
+                  "flex h-8 w-8 cursor-pointer items-center justify-center rounded-xl text-xs font-bold transition-all sm:h-9 sm:w-9 sm:text-sm",
                   isActive
                     ? "bg-primary scale-105 text-white shadow-xs"
                     : "bg-card text-foreground hover:bg-accent hover:text-foreground border-border/70 border"
-                }`}
+                )}
               >
                 {page}
               </button>

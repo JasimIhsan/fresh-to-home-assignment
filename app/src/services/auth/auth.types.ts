@@ -68,18 +68,10 @@ export interface SignUpData {
   needsEmailConfirmation: boolean;
 }
 
-export interface AdminSession {
-  username: string;
-  email: string;
-  role: "admin";
-  loggedInAt: string;
-}
-
-/** Identity derived from the Supabase session and the local admin session. */
+/** Identity derived from the Supabase session. */
 export interface AuthState {
   user: AuthUser | null;
   session: AuthSession | null;
-  adminSession: AdminSession | null;
   role: UserRole;
   userName: string;
 }

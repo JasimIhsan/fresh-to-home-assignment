@@ -1,12 +1,34 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { cn } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
+import Image from "next/image";
 
 export interface SampleImageOption {
-  label: string;
-  url: string;
+  readonly label: string;
+  readonly url: string;
 }
+
+export interface ProductFormTouched {
+  name?: boolean;
+  pricePerKg?: boolean;
+  stockKg?: boolean;
+  origin?: boolean;
+}
+
+const CATEGORY_OPTIONS: readonly { value: string; label: string }[] = [
+  { value: "Rind", label: "Rind / Beef" },
+  { value: "Geflügel", label: "Geflügel / Poultry" },
+  { value: "Lamm", label: "Lamm / Lamb" },
+  { value: "Fisch", label: "Fisch & Meeresfrüchte" },
+  { value: "Feinkost", label: "Wurst & Feinkost" },
+];
+
+const INPUT_BASE =
+  "w-full rounded-xl border bg-gray-50 px-4 py-3 text-sm transition-all focus:bg-white focus:outline-hidden";
+const INPUT_OK = "focus:border-primary border-gray-200";
+const INPUT_ERROR = "border-red-400 bg-red-50/20 focus:border-red-500";
 
 export interface AdminProductFormFieldsProps {
   name: string;
@@ -29,21 +51,9 @@ export interface AdminProductFormFieldsProps {
   priceError: string;
   stockError: string;
   originError: string;
-  touched: {
-    name?: boolean;
-    pricePerKg?: boolean;
-    stockKg?: boolean;
-    origin?: boolean;
-  };
-  setTouched: React.Dispatch<
-    React.SetStateAction<{
-      name?: boolean;
-      pricePerKg?: boolean;
-      stockKg?: boolean;
-      origin?: boolean;
-    }>
-  >;
-  sampleImages: SampleImageOption[];
+  touched: ProductFormTouched;
+  setTouched: React.Dispatch<React.SetStateAction<ProductFormTouched>>;
+  sampleImages: readonly SampleImageOption[];
 }
 
 export function AdminProductFormFields({
@@ -96,11 +106,8 @@ export function AdminProductFormFields({
               }}
               onBlur={() => setTouched((prev) => ({ ...prev, name: true }))}
               placeholder="z.B. Bio Rinderfilet Extra Zart"
-              className={`w-full rounded-xl border bg-gray-50 px-4 py-3 text-sm transition-all focus:bg-white focus:outline-hidden ${
-                nameError
-                  ? "border-red-400 bg-red-50/20 focus:border-red-500"
-                  : "focus:border-primary border-gray-200"
-              }`}
+              maxLength={120}
+              className={cn(INPUT_BASE, nameError ? INPUT_ERROR : INPUT_OK)}
               aria-invalid={!!nameError}
             />
             {nameError && (
@@ -119,11 +126,16 @@ export function AdminProductFormFields({
               onChange={(e) => setCategory(e.target.value)}
               className="focus:border-primary w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium transition-all focus:bg-white focus:outline-hidden"
             >
-              <option value="Rind">Rind / Beef</option>
-              <option value="Geflügel">Geflügel / Poultry</option>
-              <option value="Lamm">Lamm / Lamb</option>
-              <option value="Fisch">Fisch & Meeresfrüchte</option>
-              <option value="Wurst & Spezialitäten">Wurst & Feinkost</option>
+              {CATEGORY_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+              {/* Keep a legacy category selectable instead of silently resetting it */}
+              {category &&
+                !CATEGORY_OPTIONS.some((opt) => opt.value === category) && (
+                  <option value={category}>{category}</option>
+                )}
             </select>
           </div>
 
@@ -141,11 +153,8 @@ export function AdminProductFormFields({
               }}
               onBlur={() => setTouched((prev) => ({ ...prev, origin: true }))}
               placeholder="z.B. Deutschland, Bayern"
-              className={`w-full rounded-xl border bg-gray-50 px-4 py-3 text-sm transition-all focus:bg-white focus:outline-hidden ${
-                originError
-                  ? "border-red-400 bg-red-50/20 focus:border-red-500"
-                  : "focus:border-primary border-gray-200"
-              }`}
+              maxLength={120}
+              className={cn(INPUT_BASE, originError ? INPUT_ERROR : INPUT_OK)}
               aria-invalid={!!originError}
             />
             {originError && (
@@ -162,6 +171,7 @@ export function AdminProductFormFields({
           </label>
           <textarea
             rows={3}
+            maxLength={2000}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Geben Sie eine detaillierte Beschreibung der Fleischqualität, Reifung und Zubereitungsempfehlung an..."
@@ -186,6 +196,7 @@ export function AdminProductFormFields({
                 type="number"
                 step="0.10"
                 min="0"
+                max="10000"
                 value={pricePerKg}
                 onChange={(e) => {
                   setPricePerKg(e.target.value);
@@ -195,11 +206,11 @@ export function AdminProductFormFields({
                 onBlur={() =>
                   setTouched((prev) => ({ ...prev, pricePerKg: true }))
                 }
-                className={`w-full rounded-xl border bg-gray-50 px-4 py-3 text-sm font-semibold transition-all focus:bg-white focus:outline-hidden ${
-                  priceError
-                    ? "border-red-400 bg-red-50/20 focus:border-red-500"
-                    : "focus:border-primary border-gray-200"
-                }`}
+                className={cn(
+                  INPUT_BASE,
+                  "font-semibold",
+                  priceError ? INPUT_ERROR : INPUT_OK
+                )}
                 aria-invalid={!!priceError}
               />
               <span className="absolute top-3.5 right-4 text-xs font-bold text-gray-400">
@@ -222,6 +233,7 @@ export function AdminProductFormFields({
                 type="number"
                 step="1"
                 min="0"
+                max="100000"
                 value={stockKg}
                 onChange={(e) => {
                   setStockKg(e.target.value);
@@ -231,11 +243,11 @@ export function AdminProductFormFields({
                 onBlur={() =>
                   setTouched((prev) => ({ ...prev, stockKg: true }))
                 }
-                className={`w-full rounded-xl border bg-gray-50 px-4 py-3 text-sm font-semibold transition-all focus:bg-white focus:outline-hidden ${
-                  stockError
-                    ? "border-red-400 bg-red-50/20 focus:border-red-500"
-                    : "focus:border-primary border-gray-200"
-                }`}
+                className={cn(
+                  INPUT_BASE,
+                  "font-semibold",
+                  stockError ? INPUT_ERROR : INPUT_OK
+                )}
                 aria-invalid={!!stockError}
               />
               <span className="absolute top-3.5 right-4 text-xs font-bold text-gray-400">
@@ -288,15 +300,20 @@ export function AdminProductFormFields({
               key={img.url}
               type="button"
               onClick={() => setImageUrl(img.url)}
-              className={`cursor-pointer overflow-hidden rounded-2xl border-2 p-2 text-left transition-all ${
+              aria-pressed={imageUrl === img.url}
+              className={cn(
+                "cursor-pointer overflow-hidden rounded-2xl border-2 p-2 text-left transition-all",
                 imageUrl === img.url
                   ? "border-primary bg-purple-50/50 shadow-xs"
                   : "border-gray-100 hover:border-gray-200"
-              }`}
+              )}
             >
-              <img
+              <Image
                 src={img.url}
                 alt={img.label}
+                width={160}
+                height={80}
+                sizes="(min-width: 640px) 160px, 45vw"
                 className="mb-1.5 h-20 w-full rounded-xl object-cover"
               />
               <span className="block truncate text-xs font-bold text-gray-800">
@@ -312,6 +329,7 @@ export function AdminProductFormFields({
           </label>
           <input
             type="text"
+            maxLength={500}
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
             placeholder="/images/products/..."

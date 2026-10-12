@@ -1,18 +1,8 @@
-import {
-  deleteProduct,
-  getProductById,
-  getStoredProducts,
-  saveProduct,
-  updateProductStatus,
-  updateProductStock,
-} from "@/lib/store";
-import { Product, ProductStatus } from "@/types";
+import type { ProductInput } from "@/lib/schemas/product.schema";
+import type { Product, ProductStatus } from "@/types";
 
 export const ALL_CATEGORIES = "all";
 
-const DEFAULT_DESCRIPTION =
-  "Frisches Qualitätsprodukt aus sorgfältig kontrollierter Aufzucht.";
-const DEFAULT_ORIGIN = "Deutschland";
 const DEFAULT_REORDER_POINT_KG = 15;
 /** Assumed wholesale cost when none is recorded. */
 const DEFAULT_WHOLESALE_RATIO = 0.6;
@@ -50,30 +40,16 @@ export interface ProductMetrics {
 export type StockAdjustMode = "set" | "add";
 
 export class ProductService {
-  list(): Product[] {
-    return getStoredProducts();
-  }
-
-  getById(id: string): Product | undefined {
-    return getProductById(id);
-  }
-
-  /** Available products from the same category, excluding the product. */
-  getRelated(productId: string, category: string, limit = 4): Product[] {
-    return this.list()
-      .filter(
-        (p) => p.id !== productId && p.category === category && p.isAvailable
-      )
-      .slice(0, limit);
-  }
-
   /** Distinct categories, prefixed with the "all" option. */
-  getCategories(products: Product[]): string[] {
+  getCategories(products: readonly Product[]): string[] {
     const categories = new Set(products.map((p) => p.category));
     return [ALL_CATEGORIES, ...Array.from(categories).filter(Boolean)];
   }
 
-  filter(products: Product[], { category, query }: ProductFilter): Product[] {
+  filter(
+    products: readonly Product[],
+    { category, query }: ProductFilter
+  ): Product[] {
     const q = query?.trim().toLowerCase() ?? "";
     const cat = category?.toLowerCase();
     return products.filter((p) => {
@@ -88,42 +64,8 @@ export class ProductService {
     });
   }
 
-  /** Creates a product from validated form input. */
-  create(input: ProductFormInput, fallbackImageUrl: string): Product {
-    const product: Product = {
-      id: `prod_${Date.now()}`,
-      name: input.name.trim(),
-      description: input.description.trim() || DEFAULT_DESCRIPTION,
-      pricePerKg: parseFloat(input.pricePerKg),
-      stockKg: parseFloat(input.stockKg),
-      imageUrl: input.imageUrl || fallbackImageUrl,
-      isAvailable: input.isAvailable,
-      category: input.category,
-      origin: input.origin.trim() || DEFAULT_ORIGIN,
-    };
-    saveProduct(product);
-    return product;
-  }
-
-  /** Applies validated form input to an existing product. */
-  update(product: Product, input: ProductFormInput): Product {
-    const updated: Product = {
-      ...product,
-      name: input.name.trim(),
-      description: input.description.trim(),
-      pricePerKg: parseFloat(input.pricePerKg) || product.pricePerKg,
-      stockKg: parseFloat(input.stockKg) || 0,
-      imageUrl: input.imageUrl || product.imageUrl,
-      isAvailable: input.isAvailable,
-      category: input.category,
-      origin: input.origin.trim(),
-    };
-    saveProduct(updated);
-    return updated;
-  }
-
   /** Maps a product back to form values for editing. */
-  toFormInput(product: Product): ProductFormInput {
+  toFormInput(product: Readonly<Product>): ProductFormInput {
     return {
       name: product.name,
       category: product.category || "Rind",
@@ -136,41 +78,26 @@ export class ProductService {
     };
   }
 
-  toggleAvailability(product: Product): Product {
-    const updated = { ...product, isAvailable: !product.isAvailable };
-    saveProduct(updated);
-    return updated;
+  /** Parses raw form values into the Server Action payload. */
+  toInput(form: ProductFormInput): ProductInput {
+    return {
+      name: form.name.trim(),
+      category: form.category,
+      pricePerKg: parseFloat(form.pricePerKg) || 0,
+      stockKg: parseFloat(form.stockKg) || 0,
+      isAvailable: form.isAvailable,
+      origin: form.origin.trim(),
+      imageUrl: form.imageUrl.trim(),
+      description: form.description.trim(),
+    };
   }
 
-  setStatus(id: string, status: ProductStatus): Product | undefined {
-    return updateProductStatus(id, status);
-  }
-
-  /**
-   * Sets or increments stock. Returns the updated product and the new stock
-   * level, or null when the amount is invalid or the product is missing.
-   */
-  adjustStock(
-    product: Product,
-    amount: number,
-    mode: StockAdjustMode
-  ): { product: Product; stockKg: number } | null {
-    if (isNaN(amount) || amount < 0) return null;
-    const target = mode === "set" ? amount : (product.stockKg ?? 0) + amount;
-    const updated = updateProductStock(product.id, target);
-    return updated ? { product: updated, stockKg: target } : null;
-  }
-
-  delete(id: string): void {
-    deleteProduct(id);
-  }
-
-  getStatus(product: Product): ProductStatus {
+  getStatus(product: Readonly<Product>): ProductStatus {
     return product.status || (product.isAvailable ? "active" : "draft");
   }
 
   /** Pricing and inventory figures shown on the admin product page. */
-  getMetrics(product: Product): ProductMetrics {
+  getMetrics(product: Readonly<Product>): ProductMetrics {
     const retailPrice = product.pricePerKg || 0;
     const wholesaleCost =
       product.wholesaleCostPerKg ?? retailPrice * DEFAULT_WHOLESALE_RATIO;
@@ -194,7 +121,7 @@ export class ProductService {
   }
 
   /** Main image followed by unique gallery images. */
-  getGallery(product: Product): string[] {
+  getGallery(product: Readonly<Product>): string[] {
     return [product.imageUrl, ...(product.galleryImages || [])].filter(
       (url, idx, self) => url && self.indexOf(url) === idx
     );

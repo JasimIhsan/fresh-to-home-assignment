@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import type { AuthChangeEvent, SupabaseClient } from "@supabase/supabase-js";
 import {
   buildAuthError,
@@ -6,7 +6,6 @@ import {
   normalizeAuthError,
 } from "./auth-errors";
 import type {
-  AdminSession,
   AuthErrorResponse,
   AuthResult,
   AuthSession,
@@ -20,23 +19,14 @@ import type {
   UserRole,
 } from "./auth.types";
 
-const ADMIN_STORAGE_KEY = "fth_admin_session";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const SIGNED_OUT_STATE: AuthState = {
   user: null,
   session: null,
-  adminSession: null,
   role: "customer",
   userName: "",
 };
-
-function parseEmailList(value: string | undefined): string[] {
-  return (value || "")
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-}
 
 function ok<T>(data: T): AuthResult<T> {
   return { data, error: null };
@@ -48,8 +38,9 @@ function fail(context: string, error: AuthErrorResponse) {
 }
 
 /**
- * Business logic for customer (Supabase) and admin (local) authentication.
- * Stateless apart from persisted sessions — React state lives in AuthContext.
+ * Browser-side auth flows on Supabase. Sessions live in cookies so the
+ * server (DAL, Server Actions) sees the same user. React state lives in
+ * AuthContext; authorization is enforced server-side.
  */
 export class AuthService {
   constructor(private readonly client: SupabaseClient | null) {}
@@ -62,91 +53,24 @@ export class AuthService {
   // Identity rules
   // -------------------------------------------------------------------------
 
-  static isAdminEmail(email?: string | null): boolean {
-    if (!email) return false;
-    const cleanEmail = email.trim().toLowerCase();
-    return (
-      parseEmailList(process.env.NEXT_PUBLIC_ADMIN_EMAILS).includes(
-        cleanEmail
-      ) ||
-      cleanEmail === "admin@freshtohome.com" ||
-      cleanEmail.startsWith("admin@")
-    );
-  }
-
   static parseUserMetadata(user: AuthUser): UserMetadata {
     const fallbackName = user.email ? user.email.split("@")[0] : "";
-
-    // app_metadata can only be set server-side (service role), so it is the
-    // trusted source for admin privileges (equivalent of custom claims)
-    const appMeta = user.app_metadata ?? {};
-    if (appMeta.admin === true || appMeta.role === "admin") {
-      return {
-        name:
-          typeof user.user_metadata?.name === "string"
-            ? user.user_metadata.name
-            : fallbackName,
-        role: "admin",
-      };
-    }
-
-    const fallbackRole: UserRole = AuthService.isAdminEmail(user.email)
-      ? "admin"
-      : "customer";
-    const meta = user.user_metadata ?? {};
-    const parsedRole: UserRole =
-      meta.role === "admin" || meta.role === "customer"
-        ? meta.role
-        : fallbackRole;
-
+    const name: unknown = user.user_metadata?.name;
     return {
-      name:
-        typeof meta.name === "string" && meta.name ? meta.name : fallbackName,
-      role: parsedRole,
+      name: typeof name === "string" && name ? name : fallbackName,
+      // app_metadata is only writable with the service role, so it is the
+      // sole trusted source for admin privileges. user_metadata is not.
+      role: user.app_metadata?.role === "admin" ? "admin" : "customer",
     };
   }
 
-  /**
-   * Derives the app's auth state from a Supabase session. An active admin
-   * session always wins; `dropCustomerSession` tells the caller a customer
-   * session must be signed out to keep the two mutually exclusive.
-   */
-  resolveState(session: AuthSession | null): {
-    state: AuthState;
-    dropCustomerSession: boolean;
-  } {
-    const adminSession = this.getAdminSession();
-    if (adminSession) {
-      return {
-        state: {
-          ...SIGNED_OUT_STATE,
-          adminSession,
-          role: "admin",
-          userName: adminSession.username || "Admin",
-        },
-        dropCustomerSession: !!session?.user,
-      };
-    }
-
+  /** Derives the app's auth state from a Supabase session. */
+  resolveState(session: AuthSession | null): AuthState {
     const user = session?.user ?? null;
-    if (!user) {
-      return {
-        state: { ...SIGNED_OUT_STATE, session },
-        dropCustomerSession: false,
-      };
-    }
+    if (!user) return { ...SIGNED_OUT_STATE, session };
 
     const meta = AuthService.parseUserMetadata(user);
-    return {
-      state: {
-        user,
-        session,
-        adminSession: null,
-        role: meta.role,
-        userName: meta.name,
-      },
-      dropCustomerSession: false,
-    };
+    return { user, session, role: meta.role, userName: meta.name };
   }
 
   private validateCredentials(
@@ -196,16 +120,6 @@ export class AuthService {
     return () => subscription.unsubscribe();
   }
 
-  /** Drops the customer session on this device only, without a server call. */
-  async signOutLocal(): Promise<void> {
-    if (!this.client) return;
-    try {
-      await this.client.auth.signOut({ scope: "local" });
-    } catch (err) {
-      logAuthIssue("signOut (local)", normalizeAuthError(err));
-    }
-  }
-
   // -------------------------------------------------------------------------
   // Customer auth
   // -------------------------------------------------------------------------
@@ -219,10 +133,6 @@ export class AuthService {
     const cleanEmail = email.trim();
     const invalid = this.validateCredentials(cleanEmail, password);
     if (invalid) return fail("signIn", invalid);
-
-    // Clear any admin session first, otherwise the auth listener would
-    // sign this customer straight back out.
-    this.clearAdminSession();
 
     try {
       const { data, error } = await this.client.auth.signInWithPassword({
@@ -247,8 +157,6 @@ export class AuthService {
     const cleanEmail = email.trim();
     const invalid = this.validateCredentials(cleanEmail, password);
     if (invalid) return fail("signUp", invalid);
-
-    this.clearAdminSession();
 
     try {
       const { data, error } = await this.client.auth.signUp({
@@ -288,7 +196,6 @@ export class AuthService {
   }
 
   async signOut(): Promise<AuthResult<null>> {
-    this.clearAdminSession();
     if (!this.client) return ok(null);
 
     try {
@@ -335,105 +242,25 @@ export class AuthService {
     }
   }
 
-  async updateRole(
-    user: AuthUser,
-    role: UserRole,
-    fallbackName: string
-  ): Promise<AuthResult<null>> {
-    if (!this.client) return ok(null);
-    try {
-      const meta = AuthService.parseUserMetadata(user);
-      const { error } = await this.client.auth.updateUser({
-        data: { name: meta.name || fallbackName, role },
-      });
-      if (error) return fail("setRole", normalizeAuthError(error));
-      return ok(null);
-    } catch (err) {
-      return fail("setRole", normalizeAuthError(err));
-    }
-  }
-
-  // -------------------------------------------------------------------------
-  // Admin auth (local session)
-  // -------------------------------------------------------------------------
-
-  getAdminSession(): AdminSession | null {
-    if (typeof window === "undefined") return null;
-    try {
-      const raw = localStorage.getItem(ADMIN_STORAGE_KEY);
-      return raw ? (JSON.parse(raw) as AdminSession) : null;
-    } catch {
-      return null;
-    }
-  }
-
-  clearAdminSession(): void {
-    if (typeof window === "undefined") return;
-    try {
-      localStorage.removeItem(ADMIN_STORAGE_KEY);
-    } catch {
-      // storage unavailable (private mode / blocked) — nothing to clear
-    }
-  }
-
-  /** Demo credentials, also used to prefill the admin login form. */
-  getAdminDemoCredentials(): { username: string; password: string } {
-    return {
-      username: process.env.NEXT_PUBLIC_ADMIN_USERNAME || "admin",
-      password: process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "AdminPassword123!",
-    };
-  }
-
   /**
-   * Verifies admin credentials and persists a local admin session. Any
-   * customer session is signed out first to keep the two mutually exclusive.
+   * Signs in and requires the admin role from app_metadata. A valid
+   * non-admin account is signed straight back out.
    */
   async loginAdmin(
-    identifier: string,
-    password: string,
-    { hasCustomerSession }: { hasCustomerSession: boolean }
-  ): Promise<AdminSession | null> {
-    const demo = this.getAdminDemoCredentials();
-    const expectedUsername = demo.username.toLowerCase().trim();
-    const expectedEmail = (
-      process.env.NEXT_PUBLIC_ADMIN_EMAIL || "admin@freshtohome.de"
-    )
-      .toLowerCase()
-      .trim();
-    const allowedEmails = parseEmailList(process.env.NEXT_PUBLIC_ADMIN_EMAILS);
+    email: string,
+    password: string
+  ): Promise<AuthResult<SignInData>> {
+    const result = await this.signIn(email, password);
+    if (result.error) return result;
 
-    const cleanInput = identifier.trim().toLowerCase();
-    const isValidUser =
-      cleanInput === expectedUsername ||
-      cleanInput === expectedEmail ||
-      allowedEmails.includes(cleanInput);
-
-    if (!isValidUser || password !== demo.password) return null;
-
-    if (this.client && hasCustomerSession) {
-      try {
-        await this.client.auth.signOut();
-      } catch (err) {
-        logAuthIssue("signOut (admin login)", normalizeAuthError(err));
-      }
+    if (AuthService.parseUserMetadata(result.data.user).role !== "admin") {
+      await this.client?.auth.signOut({ scope: "local" }).catch(() => {});
+      return fail(
+        "loginAdmin",
+        buildAuthError("invalid_credentials", { field: "email" })
+      );
     }
-
-    const adminSession: AdminSession = {
-      username: cleanInput.includes("@")
-        ? cleanInput.split("@")[0]
-        : cleanInput,
-      email: cleanInput.includes("@") ? cleanInput : expectedEmail,
-      role: "admin",
-      loggedInAt: new Date().toISOString(),
-    };
-
-    try {
-      localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(adminSession));
-    } catch {
-      logAuthIssue("persist admin session", buildAuthError("unknown"));
-    }
-
-    return adminSession;
+    return result;
   }
 }
 

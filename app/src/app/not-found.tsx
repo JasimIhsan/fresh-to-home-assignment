@@ -24,7 +24,7 @@ export default function NotFound() {
 
       <Link
         href="/"
-        className="bg-background flex items-center rounded-xl px-6 py-3 font-bold text-white shadow-md transition-opacity hover:opacity-90"
+        className="bg-primary flex items-center rounded-xl px-6 py-3 font-bold text-white shadow-md transition-opacity hover:opacity-90"
       >
         <ArrowLeft className="mr-2" size={20} />
         {t("notFound.backHome")}

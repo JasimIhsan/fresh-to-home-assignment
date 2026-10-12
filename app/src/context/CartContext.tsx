@@ -7,6 +7,7 @@ import React, {
   useState,
   useMemo,
   useCallback,
+  useSyncExternalStore,
 } from "react";
 import { cartService } from "@/services";
 import { CartItem, Product } from "@/types";
@@ -18,7 +19,7 @@ interface AddToCartResult {
 }
 
 interface CartContextType {
-  items: CartItem[];
+  items: readonly CartItem[];
   addToCart: (product: Product, weightKg: number) => AddToCartResult;
   updateWeight: (productId: string, weightKg: number) => boolean;
   removeFromCart: (productId: string) => boolean;
@@ -42,41 +43,50 @@ function isBrowserOffline(): boolean {
   return typeof window !== "undefined" && !navigator.onLine;
 }
 
+function subscribeToNetwork(onChange: () => void): () => void {
+  window.addEventListener("online", onChange);
+  window.addEventListener("offline", onChange);
+  return () => {
+    window.removeEventListener("online", onChange);
+    window.removeEventListener("offline", onChange);
+  };
+}
+
+interface UserCart {
+  /** Owner of `items`; null while signed out. */
+  readonly userId: string | null;
+  readonly items: CartItem[];
+}
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  const [items, setItems] = useState<CartItem[]>([]);
+  const userId = user?.id ?? null;
+  const [cart, setCart] = useState<UserCart>({ userId: null, items: [] });
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isOffline, setIsOffline] = useState(false);
+  const isOffline = useSyncExternalStore(
+    subscribeToNetwork,
+    isBrowserOffline,
+    () => false
+  );
 
-  // Monitor network online/offline state
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    setIsOffline(!navigator.onLine);
+  // Swap to the signed-in user's saved cart (or clear on sign-out) during
+  // render, so there is never a frame showing another user's items. The user
+  // only resolves on the client, so the server render always sees no cart.
+  if (cart.userId !== userId) {
+    setCart({ userId, items: userId ? cartService.load(userId) : [] });
+  }
+  const items = cart.items;
 
-    const handleOnline = () => setIsOffline(false);
-    const handleOffline = () => setIsOffline(true);
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
-
-  // Load user-specific cart when user logs in, or clear when logged out
-  useEffect(() => {
-    setItems(user ? cartService.load(user.id) : []);
-    setIsLoaded(true);
-  }, [user]);
+  const setItems = useCallback(
+    (update: (prev: CartItem[]) => CartItem[]) =>
+      setCart((prev) => ({ ...prev, items: update(prev.items) })),
+    []
+  );
 
   // Persist the cart whenever items change (only while logged in)
   useEffect(() => {
-    if (!isLoaded || !user) return;
-    cartService.save(user.id, items);
-  }, [items, user, isLoaded]);
+    if (cart.userId) cartService.save(cart.userId, cart.items);
+  }, [cart]);
 
   const addToCart = useCallback(
     (product: Product, weightKg: number): AddToCartResult => {
@@ -87,14 +97,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setItems((prev) => cartService.addItem(prev, product, weightKg));
       return { success: true };
     },
-    [user]
+    [user, setItems]
   );
 
-  const removeFromCart = useCallback((productId: string): boolean => {
-    if (isBrowserOffline()) return false;
-    setItems((prev) => cartService.removeItem(prev, productId));
-    return true;
-  }, []);
+  const removeFromCart = useCallback(
+    (productId: string): boolean => {
+      if (isBrowserOffline()) return false;
+      setItems((prev) => cartService.removeItem(prev, productId));
+      return true;
+    },
+    [setItems]
+  );
 
   const updateWeight = useCallback(
     (productId: string, weightKg: number): boolean => {
@@ -102,15 +115,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setItems((prev) => cartService.setWeight(prev, productId, weightKg));
       return true;
     },
-    [user]
+    [user, setItems]
   );
 
   const clearCart = useCallback((): boolean => {
     if (isBrowserOffline()) return false;
-    setItems([]);
+    setItems(() => []);
     if (user) cartService.clear(user.id);
     return true;
-  }, [user]);
+  }, [user, setItems]);
 
   const openCart = useCallback(() => setIsCartOpen(true), []);
   const closeCart = useCallback(() => setIsCartOpen(false), []);

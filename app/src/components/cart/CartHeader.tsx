@@ -5,9 +5,9 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 interface CartHeaderProps {
-  totalItemsCount: number;
-  totalAmount: number;
-  isLoggedIn: boolean;
+  readonly totalItemsCount: number;
+  readonly totalAmount: number;
+  readonly isLoggedIn: boolean;
 }
 
 export function CartHeader({

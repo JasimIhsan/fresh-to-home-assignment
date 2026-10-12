@@ -1,5 +1,3 @@
-"use client";
-
 /**
  * Skeleton loading state for the Product Detail Page.
  * Prevents layout shift and communicates progress (reduces frustration).

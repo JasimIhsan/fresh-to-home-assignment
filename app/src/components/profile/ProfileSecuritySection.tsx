@@ -5,7 +5,7 @@ import { ChevronRight, ExternalLink, FileText, Shield } from "lucide-react";
 import Link from "next/link";
 
 interface ProfileSecuritySectionProps {
-  isAdmin?: boolean;
+  readonly isAdmin?: boolean;
 }
 
 export function ProfileSecuritySection({

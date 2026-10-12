@@ -1,7 +1,8 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { Product, ProductStatus } from "@/types";
+import { cn } from "@/lib/utils";
+import type { Product, ProductStatus } from "@/types";
 import {
   Calendar,
   ChevronRight,
@@ -16,19 +17,28 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+const LIFECYCLE_STATUSES: readonly ProductStatus[] = [
+  "draft",
+  "active",
+  "archived",
+];
+
 export interface AdminProductSidebarProps {
-  product: Product;
-  currentStatus: ProductStatus;
-  stockLevel: number;
-  onStatusChange: (st: ProductStatus) => void;
-  onOpenStockModal: () => void;
-  onOpenDeleteModal: () => void;
+  readonly product: Readonly<Product>;
+  readonly currentStatus: ProductStatus;
+  readonly stockLevel: number;
+  /** Disables lifecycle buttons while a status change is in flight. */
+  readonly statusPending?: boolean;
+  readonly onStatusChange: (st: ProductStatus) => void;
+  readonly onOpenStockModal: () => void;
+  readonly onOpenDeleteModal: () => void;
 }
 
 export function AdminProductSidebar({
   product,
   currentStatus,
   stockLevel,
+  statusPending = false,
   onStatusChange,
   onOpenStockModal,
   onOpenDeleteModal,
@@ -73,6 +83,7 @@ export function AdminProductSidebar({
           <Link
             href={`/catalog/${product.id}`}
             target="_blank"
+            prefetch={false}
             rel="noopener noreferrer"
             className="text-primary flex w-full cursor-pointer items-center justify-between rounded-xl border border-purple-100 bg-purple-50/60 p-3 text-xs font-bold transition-colors hover:bg-purple-100"
           >
@@ -109,22 +120,23 @@ export function AdminProductSidebar({
               Lifecycle Status
             </label>
             <div className="grid grid-cols-3 gap-1.5 rounded-xl bg-slate-100 p-1">
-              {(["draft", "active", "archived"] as ProductStatus[]).map(
-                (st) => (
-                  <button
-                    key={st}
-                    type="button"
-                    onClick={() => onStatusChange(st)}
-                    className={`cursor-pointer rounded-lg py-1.5 text-xs font-bold capitalize transition-all ${
-                      currentStatus === st
-                        ? "bg-white text-slate-900 shadow-xs"
-                        : "text-slate-500 hover:text-slate-900"
-                    }`}
-                  >
-                    {st}
-                  </button>
-                )
-              )}
+              {LIFECYCLE_STATUSES.map((st) => (
+                <button
+                  key={st}
+                  type="button"
+                  onClick={() => onStatusChange(st)}
+                  disabled={statusPending}
+                  aria-pressed={currentStatus === st}
+                  className={cn(
+                    "cursor-pointer rounded-lg py-1.5 text-xs font-bold capitalize transition-all disabled:cursor-wait",
+                    currentStatus === st
+                      ? "bg-white text-slate-900 shadow-xs"
+                      : "text-slate-500 hover:text-slate-900"
+                  )}
+                >
+                  {st}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -134,7 +146,10 @@ export function AdminProductSidebar({
                 Storefront Visibility
               </span>
               <span
-                className={`font-bold ${product.isAvailable ? "text-emerald-600" : "text-slate-400"}`}
+                className={cn(
+                  "font-bold",
+                  product.isAvailable ? "text-emerald-600" : "text-slate-400"
+                )}
               >
                 {product.isAvailable
                   ? t("admin.visibilityPublic")

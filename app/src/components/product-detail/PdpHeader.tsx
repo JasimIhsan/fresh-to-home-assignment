@@ -1,21 +1,18 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { ArrowLeft, ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface PdpHeaderProps {
-  productName: string;
-  category: string;
-  isLoggedIn: boolean;
+  readonly productName: string;
+  readonly category: string;
 }
 
-export function PdpHeader({
-  productName,
-  category,
-  isLoggedIn,
-}: PdpHeaderProps) {
+export function PdpHeader({ productName, category }: PdpHeaderProps) {
+  const isLoggedIn = !!useAuth().user;
   const { t } = useLanguage();
   const { totalItemsCount, openCart } = useCart();
   const router = useRouter();

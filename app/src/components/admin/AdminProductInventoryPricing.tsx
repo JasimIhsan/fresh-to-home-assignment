@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { cn } from "@/lib/utils";
 import { DollarSign, Layers, TrendingUp } from "lucide-react";
 
 export interface AdminProductInventoryPricingProps {
@@ -27,7 +28,7 @@ export function AdminProductInventoryPricing({
   grossMargin,
   marginPercentage,
   onOpenStockModal,
-}: AdminProductInventoryPricingProps) {
+}: Readonly<AdminProductInventoryPricingProps>) {
   const { t } = useLanguage();
 
   return (
@@ -59,7 +60,12 @@ export function AdminProductInventoryPricing({
       {/* Inventory KPI Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div
-          className={`rounded-2xl border p-4 ${isLowStock ? "border-red-200 bg-red-50/60" : "border-slate-100 bg-slate-50"}`}
+          className={cn(
+            "rounded-2xl border p-4",
+            isLowStock
+              ? "border-red-200 bg-red-50/60"
+              : "border-slate-100 bg-slate-50"
+          )}
         >
           <div className="mb-1.5 flex items-center justify-between">
             <span className="text-[11px] font-bold tracking-wider text-slate-500 uppercase">
@@ -77,7 +83,10 @@ export function AdminProductInventoryPricing({
           </div>
           <div className="flex items-baseline gap-1">
             <span
-              className={`text-2xl font-black ${isLowStock ? "text-red-600" : "text-slate-900"}`}
+              className={cn(
+                "text-2xl font-black",
+                isLowStock ? "text-red-600" : "text-slate-900"
+              )}
             >
               {stockLevel}
             </span>

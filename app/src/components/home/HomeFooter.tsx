@@ -1,10 +1,15 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 
-export const HomeFooter = () => {
+interface HomeFooterProps {
+  /** Resolved on the server so the prerendered shell stays deterministic. */
+  readonly year: number;
+}
+
+export const HomeFooter = ({ year }: HomeFooterProps) => {
   const { t } = useLanguage();
-  const year = new Date().getFullYear();
 
   return (
     <footer className="border-t border-white/10 bg-black/40 pt-16 pb-8 text-white backdrop-blur-xl">
@@ -12,9 +17,11 @@ export const HomeFooter = () => {
         <div className="mb-12 grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5">
           <div className="col-span-2 lg:col-span-2">
             <div className="mb-6 flex items-center gap-2">
-              <img
+              <Image
                 src="/icons/icon-192x192.png"
                 alt="Frisch nach Hause Logo"
+                width={24}
+                height={24}
                 className="h-6 w-6 rounded-md object-contain"
               />
               <span className="text-lg font-bold tracking-tight">

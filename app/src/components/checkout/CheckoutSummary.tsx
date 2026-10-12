@@ -1,15 +1,16 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { CartItem } from "@/types";
+import { formatEuro, formatKg } from "@/components/orders/format";
+import type { CartItem } from "@/types";
 import { ShieldCheck } from "lucide-react";
 
 export interface CheckoutSummaryProps {
-  items: CartItem[];
-  totalAmount: number;
-  deliveryFee: number;
-  grandTotal: number;
-  submitting: boolean;
+  readonly items: readonly CartItem[];
+  readonly totalAmount: number;
+  readonly deliveryFee: number;
+  readonly grandTotal: number;
+  readonly submitting: boolean;
 }
 
 export function CheckoutSummary({
@@ -38,15 +39,12 @@ export function CheckoutSummary({
                 {item.product.name}
               </p>
               <p className="text-xs text-gray-500">
-                {item.weightKg.toFixed(1).replace(".", ",")} kg ×{" "}
-                {item.product.pricePerKg.toFixed(2).replace(".", ",")} €
+                {formatKg(item.weightKg)} kg ×{" "}
+                {formatEuro(item.product.pricePerKg)} €
               </p>
             </div>
             <span className="font-bold whitespace-nowrap text-gray-800">
-              {(item.weightKg * item.product.pricePerKg)
-                .toFixed(2)
-                .replace(".", ",")}{" "}
-              €
+              {formatEuro(item.weightKg * item.product.pricePerKg)} €
             </span>
           </div>
         ))}
@@ -55,7 +53,7 @@ export function CheckoutSummary({
       <div className="space-y-2 border-t border-gray-100 pt-3 text-sm text-gray-600">
         <div className="flex justify-between">
           <span>{t("cart.subtotal")}</span>
-          <span>{totalAmount.toFixed(2).replace(".", ",")} €</span>
+          <span>{formatEuro(totalAmount)} €</span>
         </div>
         <div className="flex justify-between">
           <span>{t("cart.deliveryFee")}</span>
@@ -65,7 +63,7 @@ export function CheckoutSummary({
                 {t("cart.freeDelivery")}
               </span>
             ) : (
-              `${deliveryFee.toFixed(2).replace(".", ",")} €`
+              `${formatEuro(deliveryFee)} €`
             )}
           </span>
         </div>
@@ -73,7 +71,7 @@ export function CheckoutSummary({
 
       <div className="text-primary flex items-center justify-between border-t border-gray-200 pt-4 text-lg font-black">
         <span>{t("checkout.total")}</span>
-        <span>{grandTotal.toFixed(2).replace(".", ",")} €</span>
+        <span>{formatEuro(grandTotal)} €</span>
       </div>
 
       <button

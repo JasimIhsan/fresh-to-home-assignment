@@ -1,26 +1,19 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { productService } from "@/services";
-import { Product } from "@/types";
+import { isOptimizableImage } from "@/lib/image";
+import type { Product } from "@/types";
+import Image from "next/image";
 import Link from "next/link";
-import { useMemo } from "react";
 
 interface PdpRelatedProductsProps {
-  currentProductId: string;
-  currentCategory: string;
+  readonly products: readonly Product[];
 }
 
 export function PdpRelatedProducts({
-  currentProductId,
-  currentCategory,
+  products: related,
 }: PdpRelatedProductsProps) {
   const { t } = useLanguage();
-
-  const related = useMemo(
-    () => productService.getRelated(currentProductId, currentCategory),
-    [currentProductId, currentCategory]
-  );
 
   if (related.length === 0) return null;
 
@@ -47,7 +40,11 @@ export function PdpRelatedProducts({
   );
 }
 
-function RelatedProductCard({ product }: { product: Product }) {
+function RelatedProductCard({
+  product,
+}: {
+  readonly product: Readonly<Product>;
+}) {
   const { t } = useLanguage();
 
   return (
@@ -56,10 +53,13 @@ function RelatedProductCard({ product }: { product: Product }) {
       className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xs transition-all duration-200 hover:border-gray-200 hover:shadow-md"
     >
       <div className="relative aspect-4/3 overflow-hidden bg-gray-50">
-        <img
+        <Image
           src={product.imageUrl}
           alt={product.name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+          fill
+          sizes="(min-width: 1024px) 12vw, 50vw"
+          unoptimized={!isOptimizableImage(product.imageUrl)}
+          className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
         />
         {!product.isAvailable && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/40">

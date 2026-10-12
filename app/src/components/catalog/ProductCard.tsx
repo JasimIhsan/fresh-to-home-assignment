@@ -2,18 +2,24 @@
 
 import { WeightStepper } from "@/components/ui/WeightStepper";
 import { useLanguage } from "@/context/LanguageContext";
-import { Product } from "@/types";
+import { isOptimizableImage } from "@/lib/image";
+import { cn } from "@/lib/utils";
+import type { Product } from "@/types";
 import { Check, Globe, ShoppingCart } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { categoryLabel } from "./categoryLabel";
 
 interface ProductCardProps {
-  product: Product;
-  currentWeight: number;
-  isAdded: boolean;
-  isLoggedIn: boolean;
-  onWeightChange: (id: string, weight: number) => void;
-  onAddToCart: (product: Product) => void;
-  isOffline?: boolean;
+  readonly product: Readonly<Product>;
+  readonly currentWeight: number;
+  readonly isAdded: boolean;
+  readonly isLoggedIn: boolean;
+  readonly onWeightChange: (id: string, weight: number) => void;
+  readonly onAddToCart: (product: Readonly<Product>) => void;
+  readonly isOffline?: boolean;
+  /** Eager-load the image (first row of the grid, likely the LCP element). */
+  readonly priority?: boolean;
 }
 
 export const ProductCard = ({
@@ -24,6 +30,7 @@ export const ProductCard = ({
   onWeightChange,
   onAddToCart,
   isOffline = false,
+  priority = false,
 }: ProductCardProps) => {
   const { t } = useLanguage();
 
@@ -34,20 +41,19 @@ export const ProductCard = ({
           href={`/catalog/${product.id}`}
           className="block h-full w-full cursor-pointer"
         >
-          <img
+          <Image
             src={product.imageUrl}
             alt={product.name}
-            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            priority={priority}
+            unoptimized={!isOptimizableImage(product.imageUrl)}
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
         </Link>
         <div className="absolute top-2 left-2">
           <span className="bg-background/90 text-foreground border-border/50 rounded border px-2 py-1 text-[10px] font-bold tracking-wider uppercase shadow-sm backdrop-blur-sm">
-            {product.category
-              ? t(`categories.${product.category}`) !==
-                `categories.${product.category}`
-                ? t(`categories.${product.category}`)
-                : product.category
-              : ""}
+            {product.category ? categoryLabel(product.category, t) : ""}
           </span>
         </div>
       </div>
@@ -91,13 +97,14 @@ export const ProductCard = ({
             <button
               onClick={() => !isOffline && onAddToCart(product)}
               disabled={isOffline}
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-sm transition-all duration-200 active:scale-95 ${
+              className={cn(
+                "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-sm transition-all duration-200 active:scale-95",
                 isOffline
                   ? "cursor-not-allowed bg-gray-200 text-gray-400 shadow-none"
                   : isAdded
                     ? "cursor-pointer bg-emerald-500 text-white"
                     : "bg-primary hover:bg-primary/90 cursor-pointer text-white"
-              }`}
+              )}
               title={
                 isOffline
                   ? t("network.cartOfflineBadge")

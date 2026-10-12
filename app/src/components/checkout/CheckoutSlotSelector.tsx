@@ -1,11 +1,12 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { cn } from "@/lib/utils";
 import { Clock } from "lucide-react";
 
 export interface CheckoutSlotSelectorProps {
-  deliverySlot: string;
-  setDeliverySlot: (slot: string) => void;
+  readonly deliverySlot: string;
+  readonly setDeliverySlot: (slot: string) => void;
 }
 
 export function CheckoutSlotSelector({
@@ -15,9 +16,21 @@ export function CheckoutSlotSelector({
   const { t } = useLanguage();
 
   const slots = [
-    { id: "morning", label: t("checkout.slotMorning"), tag: "Standard" },
-    { id: "afternoon", label: t("checkout.slotAfternoon"), tag: "Beliebt" },
-    { id: "evening", label: t("checkout.slotEvening"), tag: "Standard" },
+    {
+      id: "morning",
+      label: t("checkout.slotMorning"),
+      tag: t("checkout.slotTagStandard"),
+    },
+    {
+      id: "afternoon",
+      label: t("checkout.slotAfternoon"),
+      tag: t("checkout.slotTagPopular"),
+    },
+    {
+      id: "evening",
+      label: t("checkout.slotEvening"),
+      tag: t("checkout.slotTagStandard"),
+    },
     { id: "express", label: t("checkout.slotExpress"), tag: "+2.00 €" },
   ];
 
@@ -32,11 +45,12 @@ export function CheckoutSlotSelector({
         {slots.map((slot) => (
           <label
             key={slot.id}
-            className={`flex cursor-pointer items-center justify-between rounded-2xl border-2 p-3.5 transition-all ${
+            className={cn(
+              "flex cursor-pointer items-center justify-between rounded-2xl border-2 p-3.5 transition-all",
               deliverySlot === slot.id
                 ? "border-primary bg-primary-light/40 text-primary font-bold shadow-xs"
                 : "border-gray-100 bg-gray-50 font-medium text-gray-700 hover:bg-gray-100"
-            }`}
+            )}
           >
             <div className="flex items-center space-x-2.5">
               <input

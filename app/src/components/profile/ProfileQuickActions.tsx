@@ -5,7 +5,7 @@ import { ChevronRight, Package, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 
 interface ProfileQuickActionsProps {
-  orderCount: number;
+  readonly orderCount: number;
 }
 
 export function ProfileQuickActions({ orderCount }: ProfileQuickActionsProps) {

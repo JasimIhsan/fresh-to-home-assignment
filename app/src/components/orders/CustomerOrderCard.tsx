@@ -1,9 +1,18 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { OrderStatus } from "@/types";
-import { AlertCircle, CheckCircle2, Clock, Truck } from "lucide-react";
-import React from "react";
+import { cn } from "@/lib/utils";
+import type { Order, OrderStatus } from "@/types";
+import {
+  AlertCircle,
+  CheckCircle2,
+  ChevronRight,
+  Clock,
+  Truck,
+} from "lucide-react";
+import Link from "next/link";
+import type React from "react";
+import { formatEuro, formatKg, formatOrderDate } from "./format";
 
 export interface OrderStatusBadgeConfig {
   label: string;
@@ -51,11 +60,8 @@ export function useOrderStatusBadge() {
 }
 
 export interface CustomerOrderCardProps {
-  order: import("@/types").Order;
+  readonly order: Order;
 }
-
-import { ChevronRight } from "lucide-react";
-import Link from "next/link";
 
 export function CustomerOrderCard({ order }: CustomerOrderCardProps) {
   const { t } = useLanguage();
@@ -68,7 +74,7 @@ export function CustomerOrderCard({ order }: CustomerOrderCardProps) {
         <div>
           <span className="text-base font-bold text-gray-900">{order.id}</span>
           <p className="mt-0.5 text-xs text-gray-500">
-            {new Date(order.createdAt).toLocaleDateString("de-DE", {
+            {formatOrderDate(order.createdAt, {
               day: "2-digit",
               month: "2-digit",
               year: "numeric",
@@ -79,7 +85,10 @@ export function CustomerOrderCard({ order }: CustomerOrderCardProps) {
         </div>
 
         <span
-          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${badge.bg}`}
+          className={cn(
+            "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold",
+            badge.bg
+          )}
         >
           {badge.icon}
           <span>{badge.label}</span>
@@ -87,17 +96,16 @@ export function CustomerOrderCard({ order }: CustomerOrderCardProps) {
       </div>
 
       <div className="mb-4 flex-1 space-y-1.5 text-sm">
-        {order.items?.map((item, idx) => (
-          <div key={idx} className="flex justify-between text-gray-700">
+        {order.items.map((item) => (
+          <div
+            key={item.product.id}
+            className="flex justify-between text-gray-700"
+          >
             <span className="max-w-40 truncate sm:max-w-60">
-              {item.product?.name} (
-              {item.weightKg?.toFixed(1).replace(".", ",")} kg)
+              {item.product.name} ({formatKg(item.weightKg)} kg)
             </span>
             <span className="font-medium whitespace-nowrap">
-              {(item.weightKg * (item.product?.pricePerKg || 0))
-                .toFixed(2)
-                .replace(".", ",")}{" "}
-              €
+              {formatEuro(item.weightKg * item.product.pricePerKg)} €
             </span>
           </div>
         ))}
@@ -109,7 +117,7 @@ export function CustomerOrderCard({ order }: CustomerOrderCardProps) {
             {t("orders.total")}
           </span>
           <span className="text-primary text-lg font-black">
-            {order.totalAmount?.toFixed(2).replace(".", ",")} €
+            {formatEuro(order.totalAmount)} €
           </span>
         </div>
 

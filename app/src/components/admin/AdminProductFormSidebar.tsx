@@ -1,15 +1,28 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { isOptimizableImage } from "@/lib/image";
 import { Image as ImageIcon, Save } from "lucide-react";
+import Image from "next/image";
 
 export interface AdminProductFormSidebarProps {
-  name: string;
-  category: string;
-  pricePerKg: string;
-  imageUrl: string;
-  saving: boolean;
-  isEditMode?: boolean;
+  readonly name: string;
+  readonly category: string;
+  readonly pricePerKg: string;
+  readonly imageUrl: string;
+  readonly saving: boolean;
+  readonly isEditMode?: boolean;
+}
+
+/** next/image throws on partial input (e.g. "htt"); only preview usable srcs. */
+function isRenderableSrc(src: string): boolean {
+  if (src.startsWith("/") && !src.startsWith("//")) return true;
+  try {
+    const { protocol } = new URL(src);
+    return protocol === "https:" || protocol === "http:";
+  } catch {
+    return false;
+  }
 }
 
 export function AdminProductFormSidebar({
@@ -33,11 +46,14 @@ export function AdminProductFormSidebar({
 
         <div className="overflow-hidden rounded-2xl border border-gray-100 bg-gray-50">
           <div className="relative aspect-4/3 w-full overflow-hidden bg-gray-200">
-            {imageUrl ? (
-              <img
+            {isRenderableSrc(imageUrl) ? (
+              <Image
                 src={imageUrl}
                 alt="Preview"
-                className="h-full w-full object-cover"
+                fill
+                sizes="(min-width: 1024px) 320px, 100vw"
+                unoptimized={!isOptimizableImage(imageUrl)}
+                className="object-cover"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">

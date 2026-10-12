@@ -5,10 +5,10 @@ import { LogOut, X } from "lucide-react";
 import { useEffect } from "react";
 
 interface LogoutConfirmModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  loading?: boolean;
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
+  readonly onConfirm: () => void;
+  readonly loading?: boolean;
 }
 
 export function LogoutConfirmModal({

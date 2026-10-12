@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { cn } from "@/lib/utils";
 import { Check, Heart, ShoppingCart } from "lucide-react";
 
 interface PdpAddToCartProps {
@@ -29,13 +30,14 @@ export function PdpAddToCart({
         id="add-to-cart-btn"
         onClick={onAddToCart}
         disabled={isOffline}
-        className={`flex w-full items-center justify-center gap-3 rounded-2xl px-6 py-4 text-base font-bold shadow-xl transition-all duration-200 select-none ${
+        className={cn(
+          "flex w-full items-center justify-center gap-3 rounded-2xl px-6 py-4 text-base font-bold shadow-xl transition-all duration-200 select-none",
           isOffline
             ? "cursor-not-allowed bg-gray-200 text-gray-500 shadow-none"
             : isAdded
               ? "scale-[0.99] cursor-pointer bg-emerald-500 text-white shadow-emerald-500/30"
               : "bg-primary shadow-primary/30 hover:shadow-primary/50 cursor-pointer text-white hover:bg-purple-700 active:scale-[0.98]"
-        }`}
+        )}
         aria-live="polite"
       >
         {isOffline ? (

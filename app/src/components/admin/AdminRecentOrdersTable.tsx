@@ -1,13 +1,27 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { Order } from "@/types";
+import { cn } from "@/lib/utils";
+import type { Order } from "@/types";
 import { ArrowUpRight, Eye } from "lucide-react";
 import Link from "next/link";
 
+export type RecentOrderSummary = Pick<
+  Order,
+  "id" | "customerName" | "userEmail" | "status" | "totalAmount"
+>;
+
 export interface AdminRecentOrdersTableProps {
-  orders: Order[];
+  readonly orders: readonly RecentOrderSummary[];
 }
+
+const STATUS_BADGE: Readonly<Record<Order["status"], string>> = {
+  delivered: "bg-emerald-50 text-emerald-700",
+  shipped: "bg-blue-50 text-blue-700",
+  processing: "bg-amber-50 text-amber-700",
+  pending: "text-primary bg-purple-50",
+  cancelled: "text-primary bg-purple-50",
+};
 
 export function AdminRecentOrdersTable({
   orders,
@@ -73,15 +87,10 @@ export function AdminRecentOrdersTable({
                   </td>
                   <td className="py-3.5">
                     <span
-                      className={`rounded-full px-2.5 py-1 text-[10px] font-extrabold tracking-wider uppercase ${
-                        order.status === "delivered"
-                          ? "bg-emerald-50 text-emerald-700"
-                          : order.status === "shipped"
-                            ? "bg-blue-50 text-blue-700"
-                            : order.status === "processing"
-                              ? "bg-amber-50 text-amber-700"
-                              : "text-primary bg-purple-50"
-                      }`}
+                      className={cn(
+                        "rounded-full px-2.5 py-1 text-[10px] font-extrabold tracking-wider uppercase",
+                        STATUS_BADGE[order.status]
+                      )}
                     >
                       {order.status}
                     </span>

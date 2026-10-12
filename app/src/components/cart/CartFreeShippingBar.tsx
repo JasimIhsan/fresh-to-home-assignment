@@ -1,11 +1,12 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { cn } from "@/lib/utils";
 import { CheckCircle2, Truck } from "lucide-react";
 
 interface CartFreeShippingBarProps {
-  totalAmount: number;
-  threshold: number;
+  readonly totalAmount: number;
+  readonly threshold: number;
 }
 
 export function CartFreeShippingBar({
@@ -41,9 +42,10 @@ export function CartFreeShippingBar({
 
       <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-100">
         <div
-          className={`h-full rounded-full transition-all duration-500 ${
+          className={cn(
+            "h-full rounded-full transition-all duration-500",
             isFree ? "bg-emerald-500" : "bg-primary"
-          }`}
+          )}
           style={{ width: `${progress}%` }}
         />
       </div>

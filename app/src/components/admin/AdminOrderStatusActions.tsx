@@ -1,12 +1,13 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { OrderStatus } from "@/types";
+import { cn } from "@/lib/utils";
+import type { OrderStatus } from "@/types";
 
 export interface AdminOrderStatusActionsProps {
-  currentStatus: OrderStatus;
-  updating: boolean;
-  onUpdateStatus: (newStatus: OrderStatus) => void;
+  readonly currentStatus: OrderStatus;
+  readonly updating: boolean;
+  readonly onUpdateStatus: (newStatus: OrderStatus) => void;
 }
 
 export function AdminOrderStatusActions({
@@ -57,11 +58,14 @@ export function AdminOrderStatusActions({
             type="button"
             disabled={updating}
             onClick={() => onUpdateStatus(item.status)}
-            className={`cursor-pointer rounded-2xl border-2 p-3 text-xs font-bold transition-all ${
+            aria-pressed={currentStatus === item.status}
+            className={cn(
+              "cursor-pointer rounded-2xl border-2 p-3 text-xs font-bold transition-all disabled:cursor-wait disabled:opacity-70",
               currentStatus === item.status
                 ? "bg-primary border-primary shadow-primary/20 scale-[1.02] text-white shadow-md"
-                : `border-gray-200 bg-gray-50 text-gray-700 ${item.bg}`
-            }`}
+                : "border-gray-200 bg-gray-50 text-gray-700",
+              currentStatus !== item.status && item.bg
+            )}
           >
             {item.label}
           </button>

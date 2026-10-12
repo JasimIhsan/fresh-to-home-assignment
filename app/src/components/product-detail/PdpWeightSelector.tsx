@@ -1,15 +1,18 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { cn } from "@/lib/utils";
 import { Minus, Plus } from "lucide-react";
 
 const WEIGHT_PRESETS = [0.5, 1.0, 1.5, 2.0, 3.0];
 const DEFAULT_WEIGHT = 1.0;
+/** Matches the per-line cap enforced when the order is placed. */
+const MAX_WEIGHT = 50;
 
 interface PdpWeightSelectorProps {
-  weight: number;
-  onWeightChange: (w: number) => void;
-  pricePerKg: number;
+  readonly weight: number;
+  readonly onWeightChange: (w: number) => void;
+  readonly pricePerKg: number;
 }
 
 export function PdpWeightSelector({
@@ -22,7 +25,9 @@ export function PdpWeightSelector({
   const decrease = () => {
     if (weight > 0.5) onWeightChange(Number((weight - 0.5).toFixed(1)));
   };
-  const increase = () => onWeightChange(Number((weight + 0.5).toFixed(1)));
+  const increase = () => {
+    if (weight < MAX_WEIGHT) onWeightChange(Number((weight + 0.5).toFixed(1)));
+  };
 
   const calculatedPrice = (pricePerKg * weight).toFixed(2).replace(".", ",");
 
@@ -54,11 +59,12 @@ export function PdpWeightSelector({
               key={preset}
               type="button"
               onClick={() => onWeightChange(preset)}
-              className={`cursor-pointer rounded-2xl py-2.5 text-center text-xs font-bold transition-all duration-200 select-none ${
+              className={cn(
+                "cursor-pointer rounded-2xl py-2.5 text-center text-xs font-bold transition-all duration-200 select-none",
                 isSelected
                   ? "bg-primary shadow-primary/25 ring-primary/30 scale-[1.04] text-white shadow-lg ring-2"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800"
-              }`}
+              )}
               aria-pressed={isSelected}
               aria-label={`${preset} kg`}
             >
@@ -89,7 +95,8 @@ export function PdpWeightSelector({
           <button
             type="button"
             onClick={increase}
-            className="bg-primary shadow-primary/30 flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl text-white shadow-md transition-all duration-150 hover:bg-purple-700 active:scale-90"
+            disabled={weight >= MAX_WEIGHT}
+            className="bg-primary shadow-primary/30 flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl text-white shadow-md transition-all duration-150 hover:bg-purple-700 active:scale-90 disabled:cursor-not-allowed disabled:opacity-30"
             aria-label="Increase weight"
           >
             <Plus size={16} strokeWidth={2.5} />

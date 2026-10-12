@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { useLanguage } from "@/context/LanguageContext";
 import { Check, Globe } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -17,7 +18,7 @@ interface LanguageSwitcherProps {
 export function LanguageSwitcher({
   variant = "default",
   className = "",
-}: LanguageSwitcherProps) {
+}: Readonly<LanguageSwitcherProps>) {
   const { language, setLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -64,7 +65,7 @@ export function LanguageSwitcher({
 
   return (
     <div
-      className={`relative inline-block text-left ${className}`}
+      className={cn("relative inline-block text-left", className)}
       ref={dropdownRef}
     >
       <button
@@ -73,7 +74,10 @@ export function LanguageSwitcher({
         aria-label="Change Language"
         aria-expanded={isOpen}
         aria-haspopup="true"
-        className={`flex cursor-pointer items-center gap-1.5 rounded-xl border px-2.5 py-1.5 backdrop-blur-sm transition-all duration-200 focus:ring-2 focus:outline-none active:scale-95 ${buttonStyles}`}
+        className={cn(
+          "flex cursor-pointer items-center gap-1.5 rounded-xl border px-2.5 py-1.5 backdrop-blur-sm transition-all duration-200 focus:ring-2 focus:outline-none active:scale-95",
+          buttonStyles
+        )}
       >
         <Globe
           size={15}
@@ -97,15 +101,19 @@ export function LanguageSwitcher({
                     setLanguage(lang.code);
                     setIsOpen(false);
                   }}
-                  className={`flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold transition-colors ${
+                  className={cn(
+                    "flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-xs font-semibold transition-colors",
                     isSelected
                       ? "bg-primary/10 text-primary font-bold"
                       : "text-slate-700 hover:bg-slate-100"
-                  }`}
+                  )}
                 >
                   <div className="flex items-center gap-2">
                     <span
-                      className={`w-5 text-left text-[11px] font-bold tracking-wider uppercase ${isSelected ? "text-primary" : "text-slate-400"}`}
+                      className={cn(
+                        "w-5 text-left text-[11px] font-bold tracking-wider uppercase",
+                        isSelected ? "text-primary" : "text-slate-400"
+                      )}
                     >
                       {lang.short}
                     </span>

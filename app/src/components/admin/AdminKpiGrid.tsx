@@ -4,11 +4,11 @@ import { useLanguage } from "@/context/LanguageContext";
 import { Clock, Package, ShoppingBag, TrendingUp } from "lucide-react";
 
 export interface AdminKpiGridProps {
-  totalRevenue: number;
-  totalOrdersCount: number;
-  pendingCount: number;
-  activeProductsCount: number;
-  totalProductsCount: number;
+  readonly totalRevenue: number;
+  readonly totalOrdersCount: number;
+  readonly pendingCount: number;
+  readonly activeProductsCount: number;
+  readonly totalProductsCount: number;
 }
 
 export function AdminKpiGrid({

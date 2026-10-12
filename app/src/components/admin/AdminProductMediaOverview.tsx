@@ -1,15 +1,17 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { Product } from "@/types";
+import { isOptimizableImage } from "@/lib/image";
+import { cn } from "@/lib/utils";
+import type { Product } from "@/types";
 import { Barcode, Package, Tag } from "lucide-react";
-import React from "react";
+import Image from "next/image";
 
 export interface AdminProductMediaOverviewProps {
-  product: Product;
-  selectedGalleryImage: string;
-  setSelectedGalleryImage: (img: string) => void;
-  gallery: string[];
+  readonly product: Readonly<Product>;
+  readonly selectedGalleryImage: string;
+  readonly setSelectedGalleryImage: (img: string) => void;
+  readonly gallery: readonly string[];
 }
 
 export function AdminProductMediaOverview({
@@ -19,6 +21,7 @@ export function AdminProductMediaOverview({
   gallery,
 }: AdminProductMediaOverviewProps) {
   const { t } = useLanguage();
+  const mainImage = selectedGalleryImage || product.imageUrl;
 
   return (
     <div className="space-y-6 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-2xs sm:p-7">
@@ -45,11 +48,17 @@ export function AdminProductMediaOverview({
       <div className="grid grid-cols-1 gap-5 md:grid-cols-12">
         <div className="flex flex-col items-center md:col-span-5">
           <div className="group relative aspect-4/3 w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
-            <img
-              src={selectedGalleryImage || product.imageUrl}
-              alt={product.name}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
+            {mainImage && (
+              <Image
+                src={mainImage}
+                alt={product.name}
+                fill
+                priority
+                sizes="(min-width: 1024px) 320px, (min-width: 768px) 40vw, 100vw"
+                unoptimized={!isOptimizableImage(mainImage)}
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            )}
             <div className="absolute top-2 right-2 rounded-md bg-slate-900/70 px-2 py-0.5 text-[10px] font-bold text-white backdrop-blur-xs">
               Admin Asset
             </div>
@@ -60,17 +69,24 @@ export function AdminProductMediaOverview({
             <div className="mt-3 flex w-full items-center gap-2 overflow-x-auto pb-1">
               {gallery.map((img, i) => (
                 <button
-                  key={i}
+                  key={img}
+                  type="button"
                   onClick={() => setSelectedGalleryImage(img)}
-                  className={`h-14 w-14 shrink-0 cursor-pointer overflow-hidden rounded-xl border-2 transition-all ${
+                  aria-pressed={selectedGalleryImage === img}
+                  className={cn(
+                    "h-14 w-14 shrink-0 cursor-pointer overflow-hidden rounded-xl border-2 transition-all",
                     selectedGalleryImage === img
                       ? "border-primary scale-105 shadow-xs"
                       : "border-slate-200 opacity-70 hover:opacity-100"
-                  }`}
+                  )}
                 >
-                  <img
+                  <Image
                     src={img}
-                    alt={`Thumb ${i}`}
+                    alt={`${product.name} ${i + 1}`}
+                    width={56}
+                    height={56}
+                    sizes="56px"
+                    unoptimized={!isOptimizableImage(img)}
                     className="h-full w-full object-cover"
                   />
                 </button>
@@ -141,9 +157,9 @@ export function AdminProductMediaOverview({
               {(product.tags && product.tags.length > 0
                 ? product.tags
                 : ["Frischfleisch", "Zertifiziert", "Kühlkette"]
-              ).map((tg, idx) => (
+              ).map((tg) => (
                 <span
-                  key={idx}
+                  key={tg}
                   className="rounded-lg bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-700 transition-colors hover:bg-slate-200"
                 >
                   #{tg}

@@ -3,6 +3,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { cn } from "@/lib/utils";
 import {
   Home,
   Package,
@@ -77,18 +78,20 @@ export function MobileBottomNav() {
             <Link
               key={item.href + item.label}
               href={item.href}
-              className={`group relative flex flex-col items-center justify-center rounded-2xl px-3 py-1.5 transition-all duration-200 active:scale-95 ${
+              className={cn(
+                "group relative flex flex-col items-center justify-center rounded-2xl px-3 py-1.5 transition-all duration-200 active:scale-95",
                 active
                   ? "text-primary font-bold"
                   : "font-medium text-gray-400 hover:text-gray-600"
-              }`}
+              )}
             >
               <div
-                className={`relative flex h-10 w-10 items-center justify-center rounded-2xl transition-all duration-200 ${
+                className={cn(
+                  "relative flex h-10 w-10 items-center justify-center rounded-2xl transition-all duration-200",
                   active
                     ? "bg-primary/10 text-primary scale-105 shadow-xs"
                     : "text-gray-500 group-hover:bg-gray-50"
-                }`}
+                )}
               >
                 <Icon size={20} strokeWidth={active ? 2.5 : 2} />
 
@@ -101,9 +104,10 @@ export function MobileBottomNav() {
               </div>
 
               <span
-                className={`mt-0.5 text-[10px] tracking-tight transition-colors ${
+                className={cn(
+                  "mt-0.5 text-[10px] tracking-tight transition-colors",
                   active ? "text-primary font-bold" : "text-gray-500"
-                }`}
+                )}
               >
                 {item.label}
               </span>

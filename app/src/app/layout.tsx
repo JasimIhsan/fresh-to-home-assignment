@@ -7,9 +7,17 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Inter } from "next/font/google";
 import "./globals.css";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Frisch nach Hause",
@@ -51,7 +59,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de" className={cn("font-sans", geist.variable)}>
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={cn(inter.variable, "font-sans antialiased")}>
         <LanguageProvider>
           <AuthProvider>
             <CartProvider>

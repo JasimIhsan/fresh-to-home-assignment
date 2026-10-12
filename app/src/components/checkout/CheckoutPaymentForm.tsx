@@ -1,14 +1,14 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
+import { cn } from "@/lib/utils";
 import { Banknote, CreditCard, FileText } from "lucide-react";
-import React from "react";
 
 export interface CheckoutPaymentFormProps {
-  paymentMethod: string;
-  setPaymentMethod: (method: string) => void;
-  notes: string;
-  setNotes: (notes: string) => void;
+  readonly paymentMethod: string;
+  readonly setPaymentMethod: (method: string) => void;
+  readonly notes: string;
+  readonly setNotes: (notes: string) => void;
 }
 
 export function CheckoutPaymentForm({
@@ -53,11 +53,12 @@ export function CheckoutPaymentForm({
         {paymentOptions.map((pay) => (
           <label
             key={pay.id}
-            className={`flex cursor-pointer items-center space-x-3 rounded-2xl border-2 p-3.5 transition-all ${
+            className={cn(
+              "flex cursor-pointer items-center space-x-3 rounded-2xl border-2 p-3.5 transition-all",
               paymentMethod === pay.id
                 ? "border-primary bg-primary-light/40 text-primary font-bold shadow-xs"
                 : "border-gray-100 bg-gray-50 font-medium text-gray-700 hover:bg-gray-100"
-            }`}
+            )}
           >
             <input
               type="radio"
@@ -88,6 +89,7 @@ export function CheckoutPaymentForm({
           <textarea
             rows={2}
             value={notes}
+            maxLength={500}
             onChange={(e) => setNotes(e.target.value)}
             placeholder={t("checkout.notesPlaceholder")}
             className="focus:border-primary w-full rounded-xl border border-gray-200 bg-gray-50 py-2.5 pr-4 pl-10 text-sm transition-all focus:bg-white focus:outline-hidden"

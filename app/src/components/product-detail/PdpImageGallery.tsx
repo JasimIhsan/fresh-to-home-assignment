@@ -1,19 +1,23 @@
 "use client";
 
+import { categoryLabel } from "@/components/catalog/categoryLabel";
 import { useLanguage } from "@/context/LanguageContext";
-import { Product } from "@/types";
+import { isOptimizableImage } from "@/lib/image";
+import { cn } from "@/lib/utils";
+import type { Product } from "@/types";
 import { ChevronLeft, ChevronRight, Expand, Tag } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 
 interface PdpImageGalleryProps {
-  product: Product;
+  readonly product: Readonly<Product>;
 }
 
 export function PdpImageGallery({ product }: PdpImageGalleryProps) {
   const { t } = useLanguage();
-  const images =
-    (product.galleryImages?.length ?? 0) > 0
-      ? product.galleryImages!
+  const images: readonly string[] =
+    product.galleryImages && product.galleryImages.length > 0
+      ? product.galleryImages
       : [product.imageUrl];
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -108,7 +112,12 @@ export function PdpImageGallery({ product }: PdpImageGalleryProps) {
       >
         {/* Carousel Slider Track */}
         <div
-          className={`flex h-full w-full ${isDragging ? "transition-none" : "transition-transform duration-300 ease-out"}`}
+          className={cn(
+            "flex h-full w-full",
+            isDragging
+              ? "transition-none"
+              : "transition-transform duration-300 ease-out"
+          )}
           style={{
             transform: `translateX(${effectiveTranslateX})`,
           }}
@@ -127,16 +136,25 @@ export function PdpImageGallery({ product }: PdpImageGalleryProps) {
             return (
               <div
                 key={i}
-                className={`relative h-full w-full shrink-0 ${isDragging ? "transition-none" : "transition-transform duration-300 ease-out"}`}
+                className={cn(
+                  "relative h-full w-full shrink-0",
+                  isDragging
+                    ? "transition-none"
+                    : "transition-transform duration-300 ease-out"
+                )}
                 style={{
                   transform: `scaleX(${slideScaleX})`,
                   transformOrigin: slideOrigin,
                 }}
               >
-                <img
+                <Image
                   src={src}
                   alt={`${product.name} – ${i + 1}`}
-                  className="pointer-events-none h-full w-full object-cover select-none"
+                  fill
+                  sizes="(min-width: 768px) 58vw, 100vw"
+                  priority={i === 0}
+                  unoptimized={!isOptimizableImage(src)}
+                  className="pointer-events-none object-cover select-none"
                   draggable={false}
                 />
               </div>
@@ -148,10 +166,7 @@ export function PdpImageGallery({ product }: PdpImageGalleryProps) {
         <div className="absolute top-4 left-4 flex items-center gap-1.5 rounded-full border border-white/50 bg-white/95 px-3 py-1.5 shadow-md backdrop-blur-md">
           <Tag size={12} className="text-primary" />
           <span className="text-[11px] font-bold tracking-wider text-gray-700 uppercase">
-            {t(`categories.${product.category}`) !==
-            `categories.${product.category}`
-              ? t(`categories.${product.category}`)
-              : product.category}
+            {categoryLabel(product.category, t)}
           </span>
         </div>
 
@@ -202,7 +217,10 @@ export function PdpImageGallery({ product }: PdpImageGalleryProps) {
               <button
                 key={i}
                 onClick={() => setActiveIndex(i)}
-                className={`h-1.5 cursor-pointer rounded-full transition-all duration-300 ${i === activeIndex ? "bg-primary w-5" : "w-1.5 bg-white/70"}`}
+                className={cn(
+                  "h-1.5 cursor-pointer rounded-full transition-all duration-300",
+                  i === activeIndex ? "bg-primary w-5" : "w-1.5 bg-white/70"
+                )}
                 aria-label={t("productDetail.selectImage").replace(
                   "{n}",
                   String(i + 1)
@@ -220,13 +238,25 @@ export function PdpImageGallery({ product }: PdpImageGalleryProps) {
             <button
               key={i}
               onClick={() => setActiveIndex(i)}
-              className={`h-16 w-16 shrink-0 cursor-pointer overflow-hidden rounded-xl border-2 transition-all duration-200 ${i === activeIndex ? "border-primary shadow-primary/20 scale-[1.05] shadow-md" : "border-gray-200 opacity-70 hover:border-gray-300 hover:opacity-100"}`}
+              className={cn(
+                "relative h-16 w-16 shrink-0 cursor-pointer overflow-hidden rounded-xl border-2 transition-all duration-200",
+                i === activeIndex
+                  ? "border-primary shadow-primary/20 scale-[1.05] shadow-md"
+                  : "border-gray-200 opacity-70 hover:border-gray-300 hover:opacity-100"
+              )}
               aria-label={t("productDetail.viewImage").replace(
                 "{n}",
                 String(i + 1)
               )}
             >
-              <img src={src} alt="" className="h-full w-full object-cover" />
+              <Image
+                src={src}
+                alt=""
+                fill
+                sizes="64px"
+                unoptimized={!isOptimizableImage(src)}
+                className="object-cover"
+              />
             </button>
           ))}
         </div>
@@ -248,12 +278,19 @@ export function PdpImageGallery({ product }: PdpImageGalleryProps) {
           >
             ✕
           </button>
-          <img
-            src={images[activeIndex]}
-            alt={product.name}
-            className="max-h-full max-w-full rounded-2xl object-contain"
+          <div
+            className="relative h-full max-h-[90vh] w-full max-w-5xl"
             onClick={(e) => e.stopPropagation()}
-          />
+          >
+            <Image
+              src={images[activeIndex]}
+              alt={product.name}
+              fill
+              sizes="100vw"
+              unoptimized={!isOptimizableImage(images[activeIndex])}
+              className="rounded-2xl object-contain"
+            />
+          </div>
         </div>
       )}
     </>

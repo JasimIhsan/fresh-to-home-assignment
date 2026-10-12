@@ -1,12 +1,15 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { CartItem } from "@/types";
+import { isOptimizableImage } from "@/lib/image";
+import type { CartItem } from "@/types";
 import { Package } from "lucide-react";
+import Image from "next/image";
+import { formatEuro, formatKg } from "./format";
 
 export interface OrderItemListProps {
-  items: CartItem[];
-  totalAmount: number;
+  readonly items: readonly CartItem[];
+  readonly totalAmount: number;
 }
 
 export function OrderItemList({ items, totalAmount }: OrderItemListProps) {
@@ -20,15 +23,19 @@ export function OrderItemList({ items, totalAmount }: OrderItemListProps) {
       </h3>
 
       <div className="divide-y divide-gray-100">
-        {items.map((item, idx) => (
+        {items.map((item) => (
           <div
-            key={idx}
+            key={item.product.id}
             className="flex items-center justify-between py-3 text-sm"
           >
             <div className="flex items-center space-x-3">
-              <img
+              <Image
                 src={item.product.imageUrl}
                 alt={item.product.name}
+                width={48}
+                height={48}
+                sizes="48px"
+                unoptimized={!isOptimizableImage(item.product.imageUrl)}
                 className="h-12 w-12 rounded-xl object-cover"
               />
               <div>
@@ -36,16 +43,13 @@ export function OrderItemList({ items, totalAmount }: OrderItemListProps) {
                   {item.product.name}
                 </p>
                 <p className="text-xs text-gray-500">
-                  {item.weightKg.toFixed(1).replace(".", ",")} kg ×{" "}
-                  {item.product.pricePerKg.toFixed(2).replace(".", ",")} € / kg
+                  {formatKg(item.weightKg)} kg ×{" "}
+                  {formatEuro(item.product.pricePerKg)} € / kg
                 </p>
               </div>
             </div>
             <span className="font-bold text-gray-900">
-              {(item.weightKg * item.product.pricePerKg)
-                .toFixed(2)
-                .replace(".", ",")}{" "}
-              €
+              {formatEuro(item.weightKg * item.product.pricePerKg)} €
             </span>
           </div>
         ))}
@@ -53,7 +57,7 @@ export function OrderItemList({ items, totalAmount }: OrderItemListProps) {
 
       <div className="text-primary flex items-center justify-between border-t border-gray-200 pt-4 text-lg font-black">
         <span>{t("orders.total")}</span>
-        <span>{totalAmount.toFixed(2).replace(".", ",")} €</span>
+        <span>{formatEuro(totalAmount)} €</span>
       </div>
     </div>
   );

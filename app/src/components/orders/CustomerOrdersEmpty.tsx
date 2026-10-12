@@ -12,7 +12,7 @@ export function CustomerOrdersEmpty() {
       <Package size={48} className="mx-auto text-gray-400" />
       <h3 className="text-lg font-bold text-gray-800">{t("orders.empty")}</h3>
       <p className="mx-auto max-w-sm text-sm text-gray-500">
-        Sie haben aktuell keine Bestellungen in dieser Kategorie.
+        {t("orders.emptyDesc")}
       </p>
       <Link
         href="/catalog"
